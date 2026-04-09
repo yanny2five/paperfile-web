@@ -1,0 +1,809 @@
+VERSION
+5
+ 
+ 
+ 
+ 
+CLASSCOUNT
+20
+Ag Econ::1>>0zz
+AgriBusiness::2>>0zz
+Agriculture::3>>0zz
+Business::4>>0zz
+Econ::5>>0zz
+Education::6>>0zz
+Finance::7>>0zz
+Food::8>>0zz
+Health::9>>0zz
+Health Econ::10>>0zz
+International::11>>0zz
+International Econ::12>>0zz
+Law::13>>0zz
+Marketing::14>>0zz
+Quantitative::15>>0zz
+Regional Econ::16>>0zz
+Resources::17>>0zz
+Resource Econ::18>>0zz
+Science::19>>0zz
+Other::20>>0zz
+STARTJOURNALS
+Ag Econ::Policy Issues>>AAEA Policy Issues??3
+Ag Econ::Other Ag Econ>>AgBioForum??3;PCT=40.74;Q=Q3;ABDC=C
+Ag Econ::Other Ag Econ>>Agricultural and Food Economics??2;PCT=79.97;Q=Q1
+Ag Econ::ARER/Northeast>>Agricultural and Resource Economics Review??3;PCT=58.42;Q=Q2;ABDC=B
+Ag Econ::Other Ag Econ>>Agricultural Economics??1;PCT=90.66;Q=Q1;ABDC=A
+Ag Econ::Other Ag Econ>>Agricultural Economics Research??3;ABDC=C
+Ag Econ::Other Ag Econ>>Agriculture and Economics??4
+Ag Econ::AJAE/JFE>>American Journal of Agricultural Economics??1;PCT=96.77;Q=Q1;ABDC=A*
+Ag Econ::AEPP>>Applied Economic Perspectives and Policy??1;PCT=93.08;Q=Q1;ABDC=B
+Ag Econ::Other Ag Econ>>Applied Economics Teaching Resources??3
+Ag Econ::Other Ag Econ>>Australian Journal of Agricultural and Resource Economics??2;PCT=82.49;Q=Q1
+Ag Econ::Canadian Journal of Agricultural Economics>>Canadian Journal of Agricultural Economics??2;PCT=70.45;Q=Q1
+Ag Econ::Other Ag Econ>>China Agricultural Economic Review??2;PCT=86.92;Q=Q1;ABDC=C
+Ag Econ::Choices>>Choices??3;ABDC=C
+Ag Econ::Other Ag Econ>>EuroChoices??2;PCT=80.06;Q=Q1;ABDC=C
+Ag Econ::Other Ag Econ>>European Review of Agricultural Economics??1;PCT=92.24;Q=Q1;ABDC=A
+Ag Econ::Other Ag Econ>>Farm Policy Journal??5
+Ag Econ::Other Ag Econ>>Food Economics - Acta Agricult Scand C??4
+Ag Econ::Other Ag Econ>>Indian Journal of Agricultural Economics??5;PCT=39.48;Q=Q3
+Ag Econ::Other Ag Econ>>International Journal of Agricultural Management??5
+Ag Econ::JAAE/Southern>>Journal of Agricultural and Applied Economics??2;PCT=59.41;Q=Q2;ABDC=C
+Ag Econ::Other Ag Econ>>Journal of Agricultural and Food Industrial Organization??4;PCT=52.14;Q=Q3
+Ag Econ::JARE/Western>>Journal of Agricultural and Resource Economics??2;PCT=60.08;Q=Q2;ABDC=A
+Ag Econ::Other Ag Econ>>Journal of Agricultural Economics??1;PCT=92.91;Q=Q1;ABDC=A
+Ag Econ::Other Ag Econ>>Journal of Applied Farm Economics??3
+Ag Econ::AJAE/JFE>>Journal of Farm Economics??1;PCT=96.77;Q=Q1
+Ag Econ::Other Ag Econ>>Journal of the Agricultural and Applied Economics Association??2
+Ag Econ::Farmmanagers and Rural Appraisers>>Journal of the American Society of Farm Managers and Rural Appraisers??3
+Ag Econ::Other Ag Econ>>Korean Journal of Agricultural Economics??5
+Ag Econ::NCJAE/RAE>>North Central Journal of Agricultural Economics??1;PCT=93.08;Q=Q1
+Ag Econ::ARER/Northeast>>Northeastern Journal of Agricultural and Resource Economics??5;PCT=12.43;Q=Q4;ABDC=C
+Ag Econ::Other Ag Econ>>Q Open??2;PCT=75.44;Q=Q1
+Ag Econ::NCJAE/RAE>>Review of Agricultural Economics??1;PCT=93.08;Q=Q1
+Ag Econ::Other Ag Econ>>Review of Marketing and Agricultural Economics??2;PCT=82.49;Q=Q1;ABDC=C
+Ag Econ::Other Ag Econ>>Revista de Economia Rural??5
+Ag Econ::JAAE/Southern>>Southern Journal of Agricultural Economics??2;PCT=59.41;Q=Q2
+Ag Econ::Other Ag Econ>>Sri Lankan Journal of Agricultural Economics??5;ABDC=C
+Ag Econ::Other Ag Econ>>Western Economics Forum??4;ABDC=C
+Ag Econ::JARE/Western>>Western Journal of Agricultural Economics??2;PCT=60.08;Q=Q2
+AgriBusiness::Other Ag Business>>Agribusiness??2;PCT=71.52;Q=Q1
+AgriBusiness::Agribusiness: an International Journal>>Agribusiness: An International Journal??2;PCT=60.08;Q=Q2;ABDC=C
+AgriBusiness::Other Ag Business>>Australasian Agribusiness Review??3;ABDC=C
+AgriBusiness::International Food and Agribusiness Management Review>>International Food and Agribusiness Management Review??3;PCT=57.61;Q=Q2
+AgriBusiness::Other Ag Business>>International Journal of Agribusiness??5
+AgriBusiness::Other Food and Nutrition>>International Journal of Food System Dynamics??3
+AgriBusiness::J Agribusiness>>Journal of Agribusiness??2;PCT=71.52;Q=Q1
+AgriBusiness::J Agribusiness>>Journal of Agribusiness in Developing and Emerging Economies??2;PCT=69.85;Q=Q1;ABDC=C
+AgriBusiness::J Food Distribution Research>>Journal of Food Distribution Research??5;PCT=29.94;Q=Q4;ABDC=C
+AgriBusiness::Other Business>>Journal of Food Service Business Research??4
+Agribusiness::Marketing>>Journal of International Food and Agribusiness Marketing??3;PCT=55.40;Q=Q2;ABDC=B
+Agribusiness::Other Agribusiness>>Journal of Restaurant and Food Service Marketing??3
+AgriBusiness::Other Business>>Mexican Journal of Agribusiness??4
+Agriculture::Other Ag>>Acta Horticulturae??5;PCT=23.30;Q=Q4
+Agriculture::Other Ag>>Agrarian International Journal??3
+Agriculture::Other Ag>>Agricultural Administration??4
+Agriculture::Other Ag>>Agricultural and Environmental Letters??2;PCT=73.85;Q=Q1
+Agriculture::Ag Systems>>Agricultural Systems??1;PCT=93.78;Q=Q1
+Agriculture::Other Ag>>Agriculture??2;PCT=74.16;Q=Q1
+Agriculture::Other Ag>>Agronomy??2;PCT=76.00;Q=Q1
+Agriculture::Other Ag>>Agronomy Journal??2;PCT=67.39;Q=Q2
+Agriculture::Other Ag>>American Christmas Tree Journal??4
+Agriculture::Other Ag>>Animal Health Scientific and Technical Review Journal??4
+Agriculture::Other Ag>>Animals??2;PCT=75.48;Q=Q1
+Agriculture::Other Ag>>Applied Engineering in Agriculture??4;PCT=42.09;Q=Q3
+Agriculture::Other Ag>>Biocontrol Science and Technology??4;PCT=54.58;Q=Q2
+Agriculture::Other Ag>>BMC Veterinary Research??2;PCT=75.04;Q=Q1
+Agriculture::Other Ag>>British Poultry Science??3;PCT=58.52;Q=Q2
+Agriculture::Other Ag>>CAB Reviews: Perspectives in Agriculture, Veterinary Science, Nutrition and Natural Resources??4;PCT=46.92;Q=Q2
+Agriculture::Other Ag>>Computers and Electronics in Agriculture??1;PCT=94.59;Q=Q1
+Agriculture::Other Ag>>Crop Management??3
+Agriculture::Other Ag>>Crop Protection??2;PCT=74.00;Q=Q1
+Agriculture::Other Ag>>Crop Protection Journal??3
+Agriculture::Other Ag>>Crop Science??2;PCT=66.04;Q=Q2
+Agriculture::Other Ag>>Economic Botany??4;PCT=52.42;Q=Q2
+Agriculture::Other Ag>>Emerging Infectious Diseases??1;PCT=94.81;Q=Q1
+Agriculture::Other Ag>>Global Journal of Advanced Research??4
+Agriculture::Other Ag>>Horticulturae??2;PCT=71.44;Q=Q1
+Agriculture::Other Ag>>Hortscience??3;PCT=55.00;Q=Q2
+Agriculture::Other Ag>>HortTechnology??4;PCT=53.43;Q=Q2
+Agriculture::Other Ag>>International Journal of Agricultural Studies??2
+Agriculture::Other Ag>>International Journal of Wine Research??2
+Agriculture::Other Ag>>International Rice Research Notes??4
+Agriculture::Other Ag>>Journal of Agricultural Cooperation??2
+Agriculture::Other Ag>>Journal of Agricultural Engineering??4;PCT=45.53;Q=Q3
+Agriculture::Other Ag>>Journal of Agricultural Studies??3
+Agriculture::Other Ag>>Journal of Agriculture, Food Systems and Community Development??2
+Agriculture::Other Ag>>Journal of American Society of Sugar Cane Technologists??4
+Agriculture::Other Ag>>Journal of Animal Science??2;PCT=76.46;Q=Q1
+Agriculture::Other Ag>>Journal of Cotton Science??5;PCT=24.73;Q=Q4
+Agriculture::Other Ag>>Journal of Crop Improvement??3;PCT=55.24;Q=Q2
+Agriculture::Other Ag>>Journal of Dairy Science??1;PCT=89.39;Q=Q1
+Agriculture::Other Ag>>Journal of Economic Entomology??2;PCT=71.74;Q=Q1
+Agriculture::Other Ag>>Journal of Entomology??3
+Agriculture::Other Ag>>Journal of Environmental Horticulture??5;PCT=38.05;Q=Q3
+Agriculture::Other Ag>>Journal of Equine Veterinary Science??3;PCT=62.10;Q=Q1
+Agriculture::Other Ag>>Journal of Extension??5;PCT=34.87;Q=Q3
+Agriculture::Other Ag>>Journal of Farm Management??2
+Agriculture::Other Ag>>Journal of Integrative Agriculture??1;PCT=87.00;Q=Q1
+Agriculture::Other Ag>>Journal of Nematology??2;PCT=66.81;Q=Q2
+Agriculture::Other Ag>>Journal of Preventive Veterinary Medicine??2;PCT=74.33;Q=Q1
+Agriculture::Other Ag>>Journal of Production Agriculture??2
+Agriculture::Other Ag>>Journal of Range Management??5;PCT=39.99;Q=Q3
+Agriculture::Other Ag>>Journal of Sustainable Agriculture??4;PCT=47.92;Q=Q2
+Agriculture::Other Ag>>Journal of the American Veterinary Medical Association??3;PCT=60.32;Q=Q2
+Agriculture::Other Ag>>Journal of the Asian Farming Systems Association??5
+Agriculture::Other Ag>>Journal of the National Association of County Agricultural Agents??4
+Agriculture::Other Ag>>Journal of the Society for Engineering in Agriculture??5
+Agriculture::Other Ag>>Journal of Veterinary Diagnostic Investigation??3;PCT=62.14;Q=Q2
+Agriculture::Other Ag>>Korean Journal of Agricultural Management and Policy??4
+Agriculture::Other Ag>>Land??2;PCT=77.20;Q=Q1
+Agriculture::Other Ag>>Livestock Science??2;PCT=68.17;Q=Q1
+Agriculture::Other Ag>>Marga Journal??4
+Agriculture::Other Ag>>Meat and Muscle Biology??2;PCT=76.85;Q=Q1
+Agriculture::Other Ag>>Nursery Management and Production??4
+Agriculture::Other Ag>>Open Agricultural Journal??4
+Agriculture::Other Ag>>Paddy and Water Environment??2;PCT=68.27;Q=Q1
+Agriculture::Other Ag>>Plant Biotechnology??3;PCT=59.69;Q=Q2
+Agriculture::Other Ag>>Poultry Science??1;PCT=85.94;Q=Q1
+Agriculture::Other Ag>>Preventative Veterinary Medicine??2
+Agriculture::Other Ag>>Rangeland Ecology and Management??2;PCT=80.16;Q=Q1
+Agriculture::Other Ag>>Revista Fitotecnia Mexicana (mexican Journal of Plant Science??4;PCT=27.11;Q=Q4
+Agriculture::Other Ag>>Sheep and Goat Research Journal??3
+Agriculture::Other Ag>>Soil Security??1;PCT=87.07;Q=Q1
+Agriculture::Other Ag>>Southwestern Entomologist??5;PCT=34.31;Q=Q3
+Agriculture::Other Ag>>Spanish Journal of Agricultural Research??5;PCT=37.32;Q=Q3
+Agriculture::Other Ag>>Sri Lankan Journal of Agricultural Engineering??4
+Agriculture::Other Ag>>Sri Lankan Journal of Agricultural Sciences??5;PCT=31.17;Q=Q3
+Agriculture::Other Ag>>Subtropical Agriculture and Environments??5
+Agriculture::Other Ag>>Subtropical Plant Science??3
+Agriculture::Other Ag>>Sustainable Agriculture Research??4
+Agriculture::Other Ag>>Texas Journal of Agriculture and Natural Resources??4
+Agriculture::Other Ag>>Texas Journal of Science??5;PCT=7.42;Q=Q4
+Agriculture::Other Ag>>The Professional Animal Scientist??4
+Agriculture::Other Ag>>The Southwestern Entomologist??5;PCT=34.31;Q=Q3
+Agriculture::Other Ag>>Transaction of American Society of Agricultural and Biological Engineers??2
+Agriculture::Other Ag>>Transactions of American Society of Agricultural Engineers??4;PCT=49.29;Q=Q2
+Agriculture::Other Ag>>Tropical Agricultural Research??5;PCT=22.03;Q=Q4
+Agriculture::Other Ag>>Virginia Journal of Science??4
+Agriculture::Other Ag>>Weed Science??2;PCT=70.63;Q=Q1
+Agriculture::Other Ag>>Weed Technology??2;PCT=66.58;Q=Q2
+Agriculture::Other Ag>>Western Computer Consortium Journal of Computer Applications??3
+Agriculture::Other Ag>>World Animal Review??4
+Business::Management>>Academy of Management Review??0;PCT=99.87;Q=Q1;ABDC=A*
+Business::Other Business>>Asia Pacific Journal of Marketing and Logistics??1;PCT=88.35;Q=Q1;ABDC=A
+Business::Other Business>>Assessment??1;PCT=95.99;Q=Q1
+Business::Management>>Creativity and Innovation Management??1;PCT=87.94;Q=Q1;ABDC=C
+Business::OtherBus>>Electronic Markets??1;PCT=96.51;Q=Q1;ABDC=A
+Business::Management>>Emergence: a Journal of Complex Issues in Organization and Management??4
+Business::Management>>Human Systems Management??3;PCT=55.00;Q=Q3;ABDC=C
+Business::Management>>International Journal of Complexity in Leadership and Management??4
+Business::Other Business>>International Journal of Electronic Marketing and Retailing??5;PCT=30.20;Q=Q4
+Business::Other Business>>International Journal of Entrepreneurial Venturing??4;PCT=43.29;Q=Q3
+Business::Other Business>>International Journal of Entrepreneurship and Small Business??4;PCT=43.11;Q=Q3
+Business::Other Business>>International Journal of Human Resource Development and Management??3
+Business::Other Business>>International Journal of Physical Distribution and Logistics Management??1;PCT=94.50;Q=Q1
+Business::Other Business>>International Journal of Production Economics??0;PCT=97.44;Q=Q1;ABDC=A
+Business::Other Business>>International Journal of Production Research??1;PCT=96.27;Q=Q1;ABDC=A
+Business::Other Business>>International Journal of Strategic Management??3
+Business::Other Business>>International Journal of Technology Management??4;PCT=54.75;Q=Q2;ABDC=B
+Business::Other Business>>International Journal of the Economics of Business??3;PCT=60.68;Q=Q2;ABDC=B
+Business::Other Business>>Journal of Applied Business and Economics??3;ABDC=C
+Business::Other Business>>Journal of Association of Global Strategic Information??3
+Business::Journal of Business>>Journal of Business??0
+Business::Other Business>>Journal of Business Administration??3
+Business::Other Business>>Journal of Business Market Management??2;ABDC=B
+Business::Other Business>>Journal of Economics and Management Strategy??1;PCT=86.38;Q=Q1
+Business::Other Business>>Journal of Entrepreneurship and Innovation in Emerging Economies??4;PCT=48.83;Q=Q2
+Business::Other Business>>Journal of Global Business Development??4
+Business::Other Business>>Journal of Hospitality and Tourism Insights??1;PCT=87.37;Q=Q1
+Business::Other Business>>Journal of International Business Strategy??4
+Business::Managment>>Journal of Knowledge Management??1;PCT=95.11;Q=Q1;ABDC=A
+Business::Management>>Journal of Management??0;PCT=99.65;Q=Q1;ABDC=A*
+Business::Other Business>>Journal of Management and Governance??1;PCT=85.50;Q=Q1;ABDC=C
+Business::Management>>Journal of Management Studies??0;PCT=99.18;Q=Q1;ABDC=A*
+Business::Other Business>>Journal of Non-Profit and Public Sector Marketing??3
+Business::Other Business>>Journal of Small Business and Enterprise Development??2;PCT=78.54;Q=Q1;ABDC=C
+Business::Managment>>Journal of Strategy and Management??2;PCT=82.33;Q=Q2;ABDC=C
+Business::Other Business>>Journal on Chain and Network Science??3
+Business::Other Business>>Knowledge and Process Management??2;PCT=71.89;Q=Q2;ABDC=B
+Business::Other Business>>Managerial and Decision Economics??2;PCT=69.81;Q=Q2;ABDC=B
+Business::Management>>Organization Management Journal??3;PCT=59.22;Q=Q2;ABDC=C
+Business::Other Business>>Public Performance & Management Review??1;PCT=83.62;Q=Q1;ABDC=B
+Business::Other Business>>Quality Technology and Quantitative Management??1;PCT=84.94;Q=Q1
+Business::Other Business>>Review of Economic and Business Studies??4;ABDC=C
+Business::Management>>Strategic Management Journal??0;PCT=99.73;Q=Q1;ABDC=A*
+Business::Other Management>>Technology Analysis and Strategic Management??2;PCT=78.01;Q=Q2;ABDC=B
+Business::Other Business>>The Business Review??2
+Business::Management>>The Business Review, Cambridge??4
+Business::Other Business>>The International Review of Retail, Distribution and Consumer Research??1
+Business::Other Business>>The Journal of American Academy of Business??4
+Business::Other Business>>Theory and Decision??3;PCT=61.33;Q=Q1
+Econ::Other Econ>>Advances in Management and Applied Economics??4
+Econ::American Economic Review>>American Economic Review??0;PCT=99.98;Q=Q1
+Econ::Other Econ>>Analisis Economico??4
+Econ::Other Econ>>Annals of Economic and Social Measurement??3
+Econ::Applied Economics>>Applied Economics??2;PCT=69.79;Q=Q2;ABDC=A
+Econ::Applied Economics Letters>>Applied Economics Letters??4;PCT=54.43;Q=Q3;ABDC=B
+Econ::Other Econ>>Atlantic Economic Journal??5;PCT=32.69;Q=Q3;ABDC=C
+Econ::Other Econ>>British Journal of Economics Management and Trade??4
+Econ::Other Econ>>Bulletin of Economic Research??4;PCT=53.36;Q=Q3;ABDC=B
+Econ::Other Econ>>Business and Economics Journal??3
+Econ::Other Econ>>Canadian Journal of Economics??2;PCT=72.51;Q=Q2
+Econ::Other Econ>>Canadian Public Policy??4
+Econ::Other Econ>>China Economic Review??1;PCT=93.27;Q=Q1;ABDC=A
+Econ::Other Econ>>Computational Economics??2;PCT=65.14;Q=Q2;ABDC=B
+Econ::Other Econ>>Contemporary Economic Policy??2;PCT=68.88;Q=Q2;ABDC=B
+Econ::Other Econ>>Contemporary Economics??3;PCT=58.99;Q=Q2;ABDC=C
+Econ::Other Econ>>Contemporary Policy Issues??3
+Econ::Other Econ>>Demografia Y Economia??5
+Econ::Other Econ>>Economic Analysis and Policy??1;PCT=94.78;Q=Q1;ABDC=B
+Econ::Other Econ>>Economic Bulletin??4
+Econ::Other Econ>>Economic Inquiry??1;PCT=87.19;Q=Q1;ABDC=A
+Econ::Other Econ>>Economic Modelling??1;PCT=91.53;Q=Q1;ABDC=A
+Econ::Other Econ>>Economic Research International??4
+Econ::Other Econ>>Economic Systems Research??2;PCT=78.25;Q=Q2;ABDC=B
+Econ::Other Econ>>Economic Theory??1;PCT=91.56;Q=Q1;ABDC=A*
+Econ::Other Econ>>Economics and Philosophy??2;PCT=82.70;Q=Q1;ABDC=A
+Econ::Other Econ>>Economics and Politics??2;PCT=75.75;Q=Q2
+Econ::Other Econ>>Economics Bulletin??5;PCT=21.71;Q=Q4;ABDC=C
+Econ::Other Econ>>Economics Letters??2;PCT=76.49;Q=Q2;ABDC=A
+Econ::Other Econ>>Economics of Education Review??1;PCT=89.69;Q=Q1;ABDC=A
+Econ::Other Econ>>Economics Research International??5
+Econ::Other Econ>>Education Economics??3;PCT=62.16;Q=Q2;ABDC=B
+Econ::Other Econ>>Empirical Economics??2;PCT=76.70;Q=Q1;ABDC=A
+Econ::Other Econ>>European Journal of Political Economy??1;PCT=87.60;Q=Q1;ABDC=A
+Econ::Other Econ>>Experimental Economics??1;PCT=95.75;Q=Q1;ABDC=A*
+Econ::Other Econ>>Explorations in Economic History??1;PCT=92.59;Q=Q1;ABDC=A
+Econ::Other Econ>>Forum on Public Policy Online??4
+Econ::Other Econ>>Games and Economic Behavior??1;PCT=91.80;Q=Q1;ABDC=A*
+Econ::Other Econ>>German Economic Review??4;PCT=53.93;Q=Q3
+Econ::Other Econ>>Global Business and Economics Review??5;PCT=25.20;Q=Q4;ABDC=C
+Econ::International>>Global Economic Review??4;PCT=54.29;Q=Q2;ABDC=C
+Econ::Other Econ>>Indian Economic Review??5;PCT=28.90;Q=Q3;ABDC=C
+Econ::Other Econ>>International Business and Economics Research Journal??4
+Econ::International Economics Journal>>International Economics Journal??1
+Econ::Other Econ>>International Journal of Risk Assessment and Management??5;PCT=11.38;Q=Q4;ABDC=C
+Econ::Other Econ>>Jounral of Economics Surveys??2
+Econ::Other Econ>>Journal of Applied Economics??2;PCT=65.25;Q=Q2;ABDC=B
+Econ::Other Econ>>Journal of Asia Pacific Economy??3;PCT=63.86;Q=Q2
+Econ::Other Econ>>Journal of Behavioral and Experimental Economics??2;PCT=71.20;Q=Q1;ABDC=A
+Econ::Other Econ>>Journal of Choice Modelling??1;PCT=85.17;Q=Q1;ABDC=B
+Econ::Other Econ>>Journal of Economic Analysis and Policy??3
+Econ::Other Econ>>Journal of Economic Behavior and Organization??1;PCT=91.72;Q=Q1;ABDC=A*
+Econ::Journal of Economic Literature>>Journal of Economic Literature??0;PCT=99.84;Q=Q1;ABDC=A*
+Econ::Other Econ>>Journal of Economic Methodology??2;PCT=79.95;Q=Q1;ABDC=B
+Econ::Journal of Economic Perspectives>>Journal of Economic Perspectives??0;PCT=99.62;Q=Q1;ABDC=A*
+Econ::Other Econ>>Journal of Economic Psychology??1;PCT=90.50;Q=Q1;ABDC=A
+Econ::Other Econ>>Journal of Economic Research??4;ABDC=B
+Econ::Other Econ>>Journal of Economic Surveys??0;PCT=97.00;Q=Q1;ABDC=A
+Econ::Journal of Economic Theory>>Journal of Economic Theory??0;PCT=98.22;Q=Q1;ABDC=A*
+Econ::Other Econ>>Journal of Futures Markets??2;PCT=70.64;Q=Q2
+Econ::Other Econ>>Journal of Housing Economics??2;PCT=80.22;Q=Q2;ABDC=A
+Econ::Other Econ>>Journal of Labor Economics??0;PCT=99.39;Q=Q1;ABDC=A*
+Econ::Other Econ>>Journal of Policy Analysis and Management??1;PCT=96.70;Q=Q1;ABDC=A
+Econ::Other Econ>>Journal of Policy Modeling??1;PCT=86.16;Q=Q1;ABDC=A
+Econ::Journal of Political Economy>>Journal of Political Economy??0;PCT=99.91;Q=Q1;ABDC=A*
+Econ::Other Econ>>Journal of Post-Keynesian Economics??3
+Econ::Other Econ>>Journal of Productivity Analysis??2;PCT=70.14;Q=Q1
+Econ::Other Econ>>Journal of Public Economics??0;PCT=98.71;Q=Q1;ABDC=A*
+Econ::Other Econ>>Journal of Public Sector Policy Analysis??2
+Econ::Other Econ>>Journal of Regulatory Economics??3;PCT=60.32;Q=Q2;ABDC=A
+Econ::Other Econ>>Journal of Risk and Uncertainty??2;PCT=77.89;Q=Q2;ABDC=A*
+Econ::Other Econ>>Journal of Socio-Economics??1
+Econ::Other Econ>>Journal of the Economic Science Association??3
+Econ::Other Econ>>Journal of Wine Economics??3;PCT=59.80;Q=Q2;ABDC=C
+Econ::Other Econ>>Kyklos??2;PCT=82.47;Q=Q1;ABDC=A
+Econ::Other Econ>>Public Choice??2;PCT=80.21;Q=Q1;ABDC=A
+Econ::Other Econ>>Quarterly Journal of Austrian Economics??5;PCT=35.87;Q=Q3
+Econ::Other Econ>>Research in Labor Economics??3
+Econ::Other Econ>>Review of Income and Wealth??1;PCT=91.59;Q=Q1;ABDC=A
+Econ::Other Econ>>Southern Economic Journal??2;PCT=76.89;Q=Q2;ABDC=A
+Econ::Other Econ>>Studies in Microeconomics??5;PCT=29.66;Q=Q3;ABDC=C
+Econ::Other Econ>>The Annals of Economic and Social Measurement??2
+Econ::The Economic Journal>>The Economic Journal??0;ABDC=A*
+Econ::Other Econ>>The Manchester School??3
+Econ::The Quarterly Journal of Economics>>The Quarterly Journal of Economics??0;ABDC=A*
+Econ::The Review of Economic Studies>>The Review of Economic Studies??0;ABDC=A*
+Econ::Other Econ>>The Southern Business and Economic Journal??4
+Education::Other>>Agricultural Communicators in Education Quarterly??4;PCT=44.23;Q=Q2
+Education::Other>>British Journal of Educational Technology??0;PCT=97.23;Q=Q1
+Education::Other>>Cogent Education??2;PCT=69.09;Q=Q2
+Education::Other>>College Teaching??4;PCT=47.11;Q=Q3
+Education::Other>>Educational Research??2;PCT=79.06;Q=Q1
+Education::Other>>Journal of Economic Education??2;PCT=67.91;Q=Q2
+Education::Other>>Journal of Higher Education Outreach and Engagement??4;PCT=47.61;Q=Q3
+Education::Other>>Journal of Undergraduate Research??5
+Education::Other>>Journal of Universality of Global Education Issues??5
+Finance::Agricultural Finance Review>>Agricultural Finance Review??2;PCT=65.76;Q=Q2;ABDC=C
+Finance::Other Finance>>Annals of Economics and Finance??5;PCT=19.01;Q=Q4;ABDC=C
+Finance::Other Finance>>Applied Economics and Finance??4
+Finance::Other Finance>>Applied Financial Economics??2;PCT=69.79;Q=Q2;ABDC=B
+Finance::Other Finance>>Evaluation Review??3;PCT=59.74;Q=Q1
+Finance::Other Finance>>Financial Services Review??2;ABDC=B
+Finance::Other Finance>>Geneva Papers on Risk and Insurance Practice??5
+Finance::Other Finance>>GSTF Business Review??4;ABDC=C
+Finance::Other Finance>>International Journal of Business and Finance Research??4
+Finance::Other Finance>>International Journal of Financial Studies??3;PCT=62.44;Q=Q2
+Finance::Other Finance>>International Research Journal of Finance and Economics??2
+Finance::Other Finance>>International Review of Economics and Finance??1;PCT=91.01;Q=Q1
+Finance::Other Finance>>International Review of Financial Analysis??1;PCT=96.40;Q=Q1;ABDC=A
+Finance::Other Finance>>Journal of Agricultural Lending??3
+Finance::Other Finance>>Journal of Business Finance and Accounting??1;PCT=89.58;Q=Q1
+Finance::Other Finance>>Journal of Derivatives and Hedge Funds??4;ABDC=C
+Finance::Other Finance>>Journal of Empirical Finance??2;PCT=82.91;Q=Q1;ABDC=A
+Finance::Other Finance>>Journal of Financial Counseling and Planning??3;PCT=63.92;Q=Q2;ABDC=C
+Finance::Other Finance>>Journal of Financial Economic Policy??4;PCT=49.66;Q=Q3;ABDC=B
+Finance::Other Finance>>Journal of Financial Economics??0;PCT=99.92;Q=Q1;ABDC=A*
+Finance::Other Finance>>Journal of Financial Planning??4
+Finance::Other Finance>>Journal of Financial Services Professionals??3
+Finance::Other Finance>>Journal of International Financial Markets, Institutions and Money??4;ABDC=A
+Finance::Other Finance>>Journal of International Money and Finance??1;PCT=90.13;Q=Q1;ABDC=A
+Finance::Other Finance>>Journal of Personal Finance??4
+Finance::Other Finance>>Journal of Portfolio Management??2;PCT=68.63;Q=Q2
+Finance::Other Finance>>Journal of Risk and Financial Management??3;PCT=61.51;Q=Q2;ABDC=B
+Finance::Other Finance>>Journal of Risk and Insurance??1;PCT=90.22;Q=Q1;ABDC=A
+Finance::Other Finance>>Journal of World Investment??3
+Finance::Other Finance>>Quantitative Finance??2;PCT=73.75;Q=Q1;ABDC=A
+Finance::Other Finance>>Research in International Business and Finance??1;PCT=91.51;Q=Q1;ABDC=B
+Finance::Other Finance>>Review of Finance??0;PCT=99.61;Q=Q1;ABDC=A*
+Finance::Other Finance>>Studies in Economics and Finance??3;PCT=59.90;Q=Q2;ABDC=B
+Finance::The Journal of Finance>>The Journal of Finance??0;ABDC=A*
+Food::Other Food>>Agriculture & Food Security??1;PCT=86.44;Q=Q1
+Food::Other Food>>Appetite??1;PCT=88.32;Q=Q1
+Food::Other Food>>British Food Journal??2;PCT=78.88;Q=Q1;ABDC=B
+Food::Other Food>>Food and Nutrition Sciences??2
+Food::Other Food>>Food Control??1;PCT=89.62;Q=Q1
+Food::Other Food and Nutrition>>Food Policy??1;PCT=96.56;Q=Q1;ABDC=B
+Food::Other Food>>Food Protection Trends??5;PCT=34.10;Q=Q3
+Food::Other Food>>Food Quality and Preference??1;PCT=87.49;Q=Q1;ABDC=A
+Food::Other Food>>Food Sciences and Nutrition??2
+Food::Other Food>>Food Security??1;PCT=93.14;Q=Q1
+Food::Other Food>>Foods??1;PCT=85.05;Q=Q1
+Food::Other Food>>Frontiers in Sustainable Food Systems??2;PCT=77.91;Q=Q1
+Food::Other Food>>Global Food Security??0;PCT=97.25;Q=Q1
+Food::Other Food>>International Journal of Food Properties??2;PCT=75.58;Q=Q1
+Food::Other Food>>Journal of Agriculture and Food Research??1;PCT=84.40;Q=Q1
+Food::Other Food>>Journal of Food Research??3
+Food::Other Food>>Journal of Food Science??2;PCT=78.17;Q=Q1
+Food::Other Food>>Journal of Food Science and Agriculture??1
+Food::Other Food>>Nature Food??0;PCT=99.34;Q=Q1
+Food::Other Food>>Nutrition and Food Science??4;PCT=47.44;Q=Q3
+Food::Other Food>>Renewable Agriculture and Food Systems??3;PCT=64.06;Q=Q2
+Food::Other Food>>Trends in Food Science & Technology??1
+Health::Other Health and Nutrition>>Advances in Nutrition??0;PCT=97.09;Q=Q1
+Health::Other Health and Nutrition>>American Journal of Clinical Nutrition??1;PCT=95.82;Q=Q1
+Health::Other Health>>American Journal of Health Promotion??1;PCT=86.57;Q=Q1
+Health::Other Health>>American Journal of Preventive Medicine??1;PCT=95.73;Q=Q1
+Health::Other Food and Nutrition>>Annual Review of Nutrition??0;PCT=98.85;Q=Q1
+Health::Other Health>>Asia Pacific Journal of Public Health??3
+Health::Other Health>>Asian Pacific Journal of Cancer Prevention??3;PCT=64.79;Q=Q2
+Health::Other Health>>BMC Public Health??1;PCT=90.85;Q=Q1
+Health::Other Health>>Breast Journal??3;PCT=59.67;Q=Q2
+Health::Other Health and Nutrition>>British Journal of Nutrition??2;PCT=81.60;Q=Q2
+Health::Other Health>>Childhood Obesity??2;PCT=78.00;Q=Q1
+Health::Other Health and Nutrition>>Current Developments in Nutrition??2;PCT=75.66;Q=Q1
+Health::Other Health>>Ethnicity and Health??1;PCT=88.23;Q=Q1
+Health::Other Health and Nutrition>>Frontiers in Nutrition??1;PCT=87.03;Q=Q1
+Health::Other Health>>Frontiers in Psychology??2;PCT=80.81;Q=Q2
+Health::Other Health>>Frontiers in Public Health??1;PCT=85.19;Q=Q1
+Health::Other Health>>GeoHealth??1;PCT=90.19;Q=Q1
+Health::Other Health>>Gerontologist??1;PCT=94.51;Q=Q1
+Health::Other Health>>Health and Social Welfare Review??4
+Health::Other Health>>Health Behavior and Policy Review??4;PCT=41.63;Q=Q3
+Health::Other Health>>Health Expectations??1;PCT=90.99;Q=Q1
+Health::Other Health>>Health Policy??1;PCT=90.90;Q=Q1;ABDC=A
+Health::Other Health>>International Journal of Environmental Research and Public Health??2;PCT=82.25;Q=Q2
+Health::JAMA>>JAMA Network Open??0;PCT=98.30;Q=Q1
+Health::Other Health>>Journal of Aging and Physical Activity??2;PCT=73.25;Q=Q2
+Health::Other Health>>Journal of Health and Social Policy??3
+Health::Other Health>>Journal of Health Organization and Management??2;PCT=71.50;Q=Q2
+Health::Other Health>>Journal of Neuroscience??1;PCT=95.21;Q=Q1
+Health::Other Health>>Journal of Nutritional Health and Food Science??2
+Health::Other Health>>Journal of School Health??2;PCT=82.33;Q=Q1
+Health::Other Health>>Journal of Sensory Studies??4;PCT=54.80;Q=Q2
+Health::Other Food and Nutrition>>Journal of the American Dietetic Association??1;PCT=87.98;Q=Q1
+Health::Other Health>>Maternal Child Health Journal??2
+Health::Other Health>>Metabolic Syndrome and Related Disorders??3;PCT=64.08;Q=Q3
+Health::Other Health>>Nutrients??1;PCT=92.07;Q=Q1
+Health::Other Health and Nutrition>>Nutrition Journal??1;PCT=88.92;Q=Q1
+Health::Other Health>>Preventive Medicine??1;PCT=94.39;Q=Q1
+Health::Other Health>>Preventive Medicine Reports??1;PCT=84.69;Q=Q1
+Health::Other Health and Nutrition>>Public Health Nutrition??1;PCT=84.15;Q=Q1
+Health::Other Health>>Regulatory Toxicology and Pharmacology??2;PCT=82.90;Q=Q1
+Health::Other Health>>Sciences des aliments??3
+Health::Other Health>>The Lancet Regional Healthamericas??0;PCT=97.25;Q=Q1
+Health Econ::Other Health>>Economics & Human Biology??1;PCT=85.26;Q=Q1
+Health Econ::Other Food and Nutrition>>European Journal of Health Economics??1;PCT=85.96;Q=Q1;ABDC=A
+Health Econ::Other Health and Nutrition>>Family Economics and Nutrition Review??2
+Health Econ::Other Food and Nutrition>>Health Economics??0;ABDC=A*
+Health Econ::Other Health>>Health Economics Review??2;PCT=82.16;Q=Q1;ABDC=C
+Health Econ::Other Health>>Health Marketing Quarterly??4;PCT=49.43;Q=Q2;ABDC=B
+Health Econ::Economics>>Journal of Health Economics??1;PCT=96.78;Q=Q1;ABDC=A*
+Health Econ::Other Misc>>Journal of the Economics of Ageing??2;PCT=77.04;Q=Q2;ABDC=B
+Health Econ::Other Misc>>Social Science and Medicine??1;PCT=95.79;Q=Q1
+International::Development>>African Development Review??2;PCT=79.66;Q=Q1;ABDC=C
+International::Development>>COCOS??5
+International::Development>>Development Southern Africa??3;PCT=60.19;Q=Q2;ABDC=C
+International::Other International>>IAForum??4
+International::Other International>>Industry of Free China??4
+International::Development>>Journal of Development Studies??1;PCT=83.38;Q=Q1;ABDC=A
+International::Development>>Journal of International Development??2;PCT=69.76;Q=Q2
+International::Other International>>Journal of Mongolian Demography??5
+International::Development>>Journal of Rural Development/Nongchon-Gyeongje??5;PCT=31.14;Q=Q4
+International::Development>>Journal of World Trade Law??3
+International::Development>>Pesquisa Agropecuaria Brasileira??5;PCT=38.32;Q=Q3
+International::Development>>Quarterly Journal of International Agriculture??4
+International::Other International>>Temas De La Agenda Publica??4
+International::Development>>World Development??1;PCT=96.00;Q=Q1;ABDC=A
+International Econ::Development>>African Journal of Agricultural Economics and Rural Development??5;PCT=28.12;Q=Q3
+International Econ::Development>>ASEAN Economic Bulletin??4
+International Econ::Development>>Asian Economic Journal??4;PCT=47.12;Q=Q3;ABDC=B
+International Econ::Development>>Development and Socio-Economic Progress??4
+International Econ::Development>>Economic Development and Cultural Change??1;PCT=88.21;Q=Q1;ABDC=A
+International Econ::Development>>Economic Development Quarterly??2;PCT=77.00;Q=Q1;ABDC=B
+International Econ::Development>>El Trimestre Econ??4
+International Econ::Other International>>Ethiopian Journal of Economics??4
+International Econ::Development>>International Journal of Development Issues??3;PCT=57.34;Q=Q2;ABDC=C
+International Econ::Development>>Journal of African Economies??2;PCT=74.11;Q=Q1;ABDC=A
+International Econ::Other Econ>>Journal of Asian Economics??2;PCT=79.04;Q=Q2;ABDC=B
+International Econ::Other Econ>>Journal of Comparative Economics??1;PCT=91.57;Q=Q1;ABDC=A
+International Econ::Other Econ>>Journal of Demographic Economics??3;PCT=62.70;Q=Q2
+International Econ::Development>>Journal of Development and Agricultural Economics??5
+International Econ::Development>>Journal of Development Economics??0;PCT=98.61;Q=Q1;ABDC=A*
+International Econ::Trade>>Journal of International Agricultural Trade and Development??4;ABDC=C
+International Econ::Journal of International Economics>>Journal of International Economics??0;PCT=98.82;Q=Q1;ABDC=A*
+International Econ::Development>>Pakistani Journal of Commerce and Social Sciences??4;PCT=49.28;Q=Q3
+International Econ::Development>>Review of Development Economics??2;PCT=70.25;Q=Q2;ABDC=B
+International Econ::Development>>Review of Economics of the Household??1;PCT=91.28;Q=Q1;ABDC=A
+International Econ::Other International>>Revista Economica de Catalunya??4
+International Econ::Development>>Revue Deconomie Du Developpement??5;PCT=8.68;Q=Q4
+International Econ::Development>>The Chinese Economy??3;PCT=64.86;Q=Q2
+Law::Other Law>>Agricultural Law Update??4
+Law::Other Law>>Alabama Law Review??3
+Law::Other Law>>American Bar Association Natural Resources and Environment??3
+Law::Other Law>>Antitrust Law and Economics Review??4
+Law::Other Law>>Drake Journal of Agricultural Law??2
+Law::Other Law>>International Trade Law Journal??5;PCT=10.10;Q=Q4
+Law::Other Law>>Journal of Agricultural Taxation and Law??3
+Law::Law and Economics>>Journal of Law and Economics??1;PCT=94.61;Q=Q1
+Law::Other Law>>Jurimetrics??4
+Law::Other Law>>NACTA Journal??3
+Law::Other Law>>Oxford University Commonwealth Law Journal??5;PCT=12.56;Q=Q4;ABDC=A*
+Law::Other Law>>San Joaquin Agricultural Law Review??4
+Law::Other Law>>Texas Bar Journal??4
+Law::Other Law>>Texas Tech Law Review??4
+Law::Other Law>>University of Denver Water Law Review??3
+Law::Other Law>>University of Nebraska Law Review??1
+Law::Other Law>>Willamette Journal of International Law and Dispute Resolution??3
+Law::Other Law>>William and Mary Law Review??3
+Law::Other Law>>World Competition: Law and Economics Review??2
+Marketing::Other Marketing>>Academy of Marketing Science Review??5;PCT=29.44;Q=Q4
+Marketing::Other Marketing>>Academy of Marketing Studies Journal??1;ABDC=B
+Marketing::Other Transport>>Accident Analysis and Prevention??1;PCT=95.44;Q=Q1;ABDC=A*
+Marketing::Other Marketing>>Advances in Consumer Research??5;PCT=16.98;Q=Q4;ABDC=B
+Marketing::Other Marketing>>European Journal of Marketing??1;PCT=93.93;Q=Q1;ABDC=A*
+Marketing::Other Marketing>>Home Economics Research Journal??5;PCT=13.54;Q=Q4
+Marketing::Other Marketing>>Innovative Marketing??4;PCT=44.38;Q=Q2
+Marketing::Other Marketing>>International Journal of Consumer Studies??1;PCT=96.21;Q=Q1;ABDC=A
+Marketing::Other Marketing>>International Journal of Market Research??2;PCT=81.09;Q=Q2
+Marketing::Other Marketing>>International Journal of Retail and Distribution Management??1;PCT=90.49;Q=Q1
+Marketing::Other Marketing>>Journal of Consumer Affairs??2;PCT=79.19;Q=Q1;ABDC=A
+Marketing::Other Marketing>>Journal of Consumer Marketing??1;PCT=83.57;Q=Q1;ABDC=A
+Marketing::Other Marketing>>Journal of Consumer Policy??2;PCT=68.81;Q=Q2;ABDC=C
+Marketing::Other Marketing>>Journal of Consumer Research??0;PCT=99.64;Q=Q1;ABDC=A*
+Marketing::J Consumer Studies and Home Economics>>Journal of Consumer Studies and Home Economics??1;PCT=96.21;Q=Q1
+Marketing::Other Marketing>>Journal of Cooperatives??4
+Marketing::Other Marketing>>Journal of Family and Economic Issues??2;PCT=82.31;Q=Q2;ABDC=B
+Marketing::Other Food and Nutrition>>Journal of Food Products Marketing??2;PCT=71.24;Q=Q2;ABDC=B
+Marketing::Other Marketing>>Journal of Happiness Studies??1;PCT=93.45;Q=Q1
+Marketing::Other Marketing>>Journal of Marketing Development and Competitiveness??4
+Marketing::Other Marketing>>Journal of Retailing??0;PCT=98.78;Q=Q1;ABDC=A*
+Marketing::Other Marketing>>Journal of Retailing and Consumer Services??0;PCT=98.21;Q=Q1;ABDC=A
+Marketing::J Transportation Research Forum>>Journal of the Transportation Research Forum??1;PCT=95.86;Q=Q1;ABDC=C
+Marketing::Other Marketing>>Judgment and Decision Making??1;PCT=85.27;Q=Q1;ABDC=A
+Marketing::Other Marketing>>Psychology and Marketing??0;PCT=98.27;Q=Q1
+Marketing::Trade>>The International Trade Journal??4
+Marketing::Other Misc>>The Journal of Consumer Education??4
+Marketing::Logistics and Transportation Review>>The Logistics and Transportation Review??1;PCT=96.96;Q=Q1
+Marketing::Other Transport>>Transport Policy??1;PCT=94.04;Q=Q1;ABDC=A
+Marketing::Other Transport>>Transportation Journal??4;PCT=46.52;Q=Q3;ABDC=B
+Marketing::Other Transport>>Transportation Letters??2;PCT=81.37;Q=Q2;ABDC=B
+Marketing::Other Transport>>Transportation Planning and Technology??3;PCT=63.16;Q=Q2;ABDC=B
+Marketing::Other Transport>>Transportation Research Part A: Policy and Practice??1;PCT=95.86;Q=Q1;ABDC=A*
+Marketing::Other Transport>>Transportation Research Part E: Logistics and Transportation Review??1;PCT=96.96;Q=Q1;ABDC=A*
+Marketing::Other Transport>>Transportation Research Record: the Journal of the Transportation Research Board??3
+Other::Rural>>Annals of Regional Science??2;PCT=73.50;Q=Q1
+Other::Other Misc>>Applied Science??4
+Other::Other Misc>>Cogent Social Sciences??3;PCT=57.05;Q=Q2
+Other::Other Misc>>Complexity??3;PCT=58.14;Q=Q1
+Other::Other Misc>>Current History??4;PCT=50.16;Q=Q1
+Other::Rural>>Environment and Planning??3
+Other::Other Misc>>Forum for Applied Research and Public Policy??4
+Other::Other Misc>>Geopolitics??1;PCT=90.61;Q=Q1
+Other::Rural>>Growth and Change??2;PCT=76.35;Q=Q3
+Other::Other Misc>>International Journal of Mass Emergencies and Disasters??4
+Other::Other Misc>>International Journal of Public Administration??2;PCT=75.10;Q=Q2;ABDC=B
+Other::Rural>>International Regional Science Review??2;PCT=71.96;Q=Q1
+Other::Other Misc>>Journal of Alabama Academy of Science??4
+Other::Other Misc>>Journal of Global Intelligence and Policy??4
+Other::Other Misc>>Journal of History of Political Economy??4
+Other::Other Misc>>Journal of Open Source Software??3
+Other::Rural>>Journal of Regional Analysis and Policy??5;PCT=23.15;Q=Q3
+Other::Riral>>Journal of Regional Science??1;PCT=88.07;Q=Q1
+Other::Rural>>Journal of Rural Studies??1;PCT=94.24;Q=Q1
+Other::Other Misc>>Journal of Study and Exploration??4
+Other::Rural>>Journal of the Community Development Society??3;PCT=57.24;Q=Q2
+Other::Other Misc>>Municipal Management??4
+Other::Other Misc>>Nature and Science??4
+Other::Other>>Palgrave Communications??2
+Other::Rural>>Papers in Regional Science??2;PCT=82.01;Q=Q1
+Other::Other Misc>>Physica A: Statistical Mechanics??4
+Other::Rural>>REGION??4;PCT=50.45;Q=Q2
+Other::Rural>>Review of Regional Studies??5;PCT=34.66;Q=Q3
+Other::Rural>>Rural Sociology??2;PCT=74.89;Q=Q1
+Other::Other>>Safety Science??1;PCT=91.63;Q=Q1;ABDC=A
+Other::Other Misc>>Science Scope??2
+Other::Rural>>Small Town??3
+Other::Other Misc>>Social Science Quarterly??2;PCT=80.61;Q=Q1;ABDC=B
+Other::Rural>>Sociological Abstracts??3
+Other::Rural>>Southern Rural Sociology??2;PCT=74.89;Q=Q1
+Other::Rural>>Sri Lankan Journal of Social Sciences??5;PCT=13.40;Q=Q4
+Other::Rural>>The Annals of Regional Science??2;PCT=73.50;Q=Q1
+Other::Rural>>The Rural Sociologist??3
+Other::Other Misc>>Youth and Society??1;PCT=87.56;Q=Q1
+Quantitative::Operations Res>>Annals of Operations Research??1;PCT=86.58;Q=Q1;ABDC=A
+Quantitative::Statistics>>Annals of Statistics??0;PCT=99.00;Q=Q1;ABDC=A*
+Quantitative::Statistics>>Applied Statistics: Journal of the Royal Statistical Society Series C??2
+Quantitative::Statistics>>Applied Stochastic Models in Business and Industry??3;PCT=57.79;Q=Q2;ABDC=B
+Quantitative::Operations Res>>Artificial Intelligence??1;PCT=94.60;Q=Q1
+Quantitative::Other Quant>>Computational Statistics??2;PCT=76.28;Q=Q2
+Quantitative::Operations Res>>Computers and Operations Research??1;PCT=93.18;Q=Q1;ABDC=A
+Quantitative::Operations Res>>Decision Sciences??1;PCT=93.30;Q=Q1;ABDC=A*
+Quantitative::Econometrics>>Econometric Reviews??1;PCT=92.66;Q=Q1;ABDC=A
+Quantitative::Econometrics>>Econometric Theory??0;PCT=97.21;Q=Q1;ABDC=A*
+Quantitative::Econometrics>>Econometrica??0;PCT=99.96;Q=Q1;ABDC=A*
+Quantitative::Other Quant>>Econometrics??3;PCT=64.54;Q=Q2
+Quantitative::Econometrics>>Econometrics and Statistics??2;PCT=80.13;Q=Q1;ABDC=B
+Quantitative::Econometrics Journal>>Econometrics Journal??0;PCT=98.69;Q=Q1;ABDC=A
+Quantitative::Other>>Entropy??3;PCT=64.42;Q=Q2
+Quantitative::Operations Res>>European Journal of Operational Research??1;PCT=96.26;Q=Q1;ABDC=A*
+Quantitative::Operations Res>>IIE Transitions??4
+Quantitative::Operations Res>>Institute of Industrial and systems engineers Transactions??3
+Quantitative::Assessment>>Integrated Assessment??4
+Quantitative::Operations Res>>Interfaces??4
+Quantitative::Statistics>>International Journal of Forecasting??1;PCT=96.78;Q=Q1;ABDC=A
+Quantitative::Other Quant>>International Journal of Innovative Computing Information and Control??4;PCT=50.83;Q=Q3
+Quantitative::Other Quant>>Journal of Agricultural Biological and Environmental Statistics??3;PCT=58.80;Q=Q2
+Quantitative::Econometrics>>Journal of Applied Econometrics??1;PCT=96.46;Q=Q1;ABDC=A*
+Quantitative::Other Quant>>Journal of Applied Statistics??2;PCT=66.14;Q=Q2;ABDC=B
+Quantitative::Statistics>>Journal of Business and Economic Statistics??0;PCT=98.76;Q=Q1
+Quantitative::Econometrics>>Journal of Econometrics??0;PCT=99.82;Q=Q1;ABDC=A*
+Quantitative::Econometrics>>Journal of Financial Econometrics??1;PCT=95.34;Q=Q1;ABDC=A*
+Quantitative::Statistics>>Journal of Forecasting??2;PCT=74.03;Q=Q1;ABDC=A
+Quantitative::Statistics>>Journal of Multivariate Analysis??1;PCT=84.73;Q=Q1;ABDC=A
+Quantitative::Operations Res>>Journal of Operational Research Society??3
+Quantitative::Operations Res>>Journal of Optimization Theory and Applications??2;PCT=77.34;Q=Q1;ABDC=A
+Quantitative::Other>>Journal of Risk Research??2;PCT=70.78;Q=Q1;ABDC=C
+Quantitative::Operations Res>>Journal of Statistical Computation and Simulation??2;PCT=65.92;Q=Q2;ABDC=C
+Quantitative::Journal of the American Statistical Association>>Journal of the American Statistical Association??0;PCT=98.72;Q=Q1;ABDC=A*
+Quantitative::Statistics>>Journal of the Royal Statistical Society Series B??0
+Quantitative::Statistics>>Machine Learning with Applications??3
+Quantitative::Operations Res>>Management Science??0;PCT=99.25;Q=Q1;ABDC=A*
+Quantitative::Operations Res>>Mathematical Programming??1;PCT=94.09;Q=Q1
+Quantitative::Operations Res>>Mathematical Programming Study, Mathematical Programming in Use??1;PCT=94.09;Q=Q1
+Quantitative::Other Quant>>Mathematical Social Sciences??2;PCT=67.70;Q=Q1
+Quantitative::Operations Res>>Naval Research Logistics Quarterly??3
+Quantitative::Econometrics>>Nonparametric Econometric Methods??3
+Quantitative::Operations Res>>Omega??1;ABDC=A
+Quantitative::Operations Res>>Operational Research Quarterly??2;PCT=82.20;Q=Q1
+Quantitative::Operations Res>>Operations Research??0;PCT=97.04;Q=Q1;ABDC=A*
+Quantitative::Econometrics>>Oxford Bulletin of Economics and Statistics??1;PCT=84.08;Q=Q1;ABDC=A
+Quantitative::Other Quant>>Quantitative Economics??0;PCT=98.85;Q=Q1;ABDC=A*
+Quantitative::Econometrics>>Review of Economics and Statistics??0;PCT=99.53;Q=Q1
+Quantitative::Operations Res>>Risk Analysis??2;PCT=80.68;Q=Q1
+Quantitative::Statistics>>Scandinavian Journal of Statistics??2;PCT=80.76;Q=Q1;ABDC=A
+Quantitative::Operations Res>>Simulation??4;PCT=54.22;Q=Q2
+Quantitative::Statistics>>STATA Journal??1;PCT=93.42;Q=Q1
+Regional Econ::Regional Economics>>Regional Studies??1;PCT=94.94;Q=Q1;ABDC=A*
+Resource Econ::Other Resources>>Annual Review of Resource Economics??1;PCT=96.91;Q=Q1;ABDC=B
+Resource Econ::Other Fisheries>>Aquaculture Economics and Management??1;PCT=85.93;Q=Q1;ABDC=C
+Resource Econ::Climate Change Economics>>Climate Change Economics??2;PCT=70.44;Q=Q2;ABDC=B
+Resource Econ::Climatic Change>>Climatic Change??1;PCT=92.93;Q=Q1
+Resource Econ::Other Resources>>Ecological Economics??1;PCT=95.75;Q=Q1;ABDC=A
+Resource Econ::Other Climate>>Economics of Disaster and Climate Change??2
+Resource Econ::Energy>>Energy Economics??0;PCT=98.58;Q=Q1;ABDC=A*
+Resource Econ::Other Resources>>Environmental and Resource Economics??1;PCT=91.13;Q=Q1;ABDC=A
+Resource Econ::Forestry>>Forest Policy and Economics??1;PCT=88.68;Q=Q1;ABDC=B
+Resource Econ::Forestry>>Forest Policy and Economics Review??1;PCT=88.68;Q=Q1
+Resource Econ::Energy>>International Journal of Energy Economics and Policy??4;PCT=50.74;Q=Q2;ABDC=C
+Resource Econ::Other Fisheries>>International Journal of Maritime Economics??4
+Resource Econ::Other Resources>>International Review of Environmental and Resource Economics??3;PCT=59.09;Q=Q3;ABDC=B
+Resource Econ::Journal of Environmental Economics and Management>>Journal of Environmental Economics and Management??0;PCT=97.91;Q=Q1;ABDC=A*
+Resource Econ::Other Resources>>Journal of Environmental Management??1;PCT=95.37;Q=Q1;ABDC=A
+Resource Econ::Forestry>>Journal of Forest Economics??5;PCT=26.63;Q=Q4;ABDC=B
+Resource Econ::Land Economics>>Land Economics??2;PCT=73.28;Q=Q2;ABDC=A
+Resource Econ::Marine Resource Economics>>Marine Resource Economics??4;PCT=48.98;Q=Q3;ABDC=A
+Resource Econ::Other Climate>>Mitigation and Adaptation Strategies for Global Change??2;PCT=80.07;Q=Q1
+Resource Econ::Other Resources>>Newsletter for Association of Environmental and Resource Economics??4
+Resource Econ::Energy>>Resource and Energy Economics??1;PCT=87.28;Q=Q1;ABDC=A
+Resource Econ::Review of Environmental Economics and Policy>>Review of Environmental Economics and Policy??0;PCT=98.25;Q=Q1;ABDC=A
+Resource Econ::Other Resources>>Tourism Economics??1;PCT=85.30;Q=Q1;ABDC=A
+Resource Econ::Other Water>>Water Resources and Economics??2;PCT=72.24;Q=Q2
+Resource Econ::Water Resources Research>>Water Resources Research??1;PCT=93.41;Q=Q1;ABDC=A
+Resources::Other Climate>>Agricultural and Forest Meteorology??1;PCT=94.94;Q=Q1
+Resources::Other Water>>Agricultural Water Management??1;PCT=94.21;Q=Q1
+Resources::Other Resources>>Agriculture, Ecosystems and Environment??1;PCT=95.12;Q=Q1
+Resources::Other Resources>>Agrosystems, Geosciences & Environment??3;PCT=56.11;Q=Q2
+Resources::Other Resources>>AI Applications in Natural Resource Management??4
+Resources::Energy>>Algal Research??1;PCT=84.76;Q=Q1
+Resources::Other Resources>>Ambio??1;PCT=94.72;Q=Q1
+Resources::Other Resources>>American Journal of Alternative Agriculture??4
+Resources::Climate>>Anthropocene??1;PCT=84.39;Q=Q1
+Resources::Energy>>Applied Energy??0;PCT=97.54;Q=Q1;ABDC=A
+Resources::Other Resourses>>Applied Geography??1;PCT=90.26;Q=Q1
+Resources::Other Fisheries>>Aquaculture??1;PCT=86.65;Q=Q1
+Resources::Other Fisheries>>Aquatic Conservation: Marine and Freshwater Ecosystems??2;PCT=76.65;Q=Q1
+Resources::Other Resources>>Asia Pacific Journal of Tourism Research??2;PCT=81.26;Q=Q1;ABDC=A
+Resources::Other Climate>>Atmosphere??2;PCT=70.74;Q=Q2
+Resources::Energy>>BioEnergy Research??2;PCT=72.14;Q=Q1
+Resources::Energy>>Biofuels, Bioproducts and Biorefining??3
+Resources::Energy>>Biomass??2;PCT=72.38;Q=Q1
+Resources::Energy>>Biomass and Bioenergy??1;PCT=87.90;Q=Q1
+Resources::Other Resourses>>Bioresource Technology??1;PCT=96.69;Q=Q1
+Resources::Other Climate>>British Journal of Environment and Climate Change??4
+Resources::Other Fisheries>>Canadian Journal of Fisheries and Aquatic Sciences??2;PCT=78.32;Q=Q1
+Resources::Forestry>>Canadian Journal of Forest Research??2;PCT=70.06;Q=Q1
+Resources::Forestry>>Canadian Journal of Forestry??3
+Resources::Climate>>Carbon Management??2;PCT=75.19;Q=Q2
+Resources::Other Resourses>>Circular Economy and Sustainability??1;PCT=85.63;Q=Q1
+Resources::Other Resources>>Clean Technologies and Environmental Policy??2;PCT=80.75;Q=Q1
+Resources::Other Climate>>Climate??2;PCT=77.78;Q=Q2
+Resources::Other Climate>>Climate Policy??1;PCT=96.36;Q=Q1;ABDC=C
+Resources::Other Climate>>Climate Research??3;PCT=61.25;Q=Q2
+Resources::Other Resourses>>Communications Earth & Environment??1
+Resources::Other Resources>>Conservation Biology??1;PCT=96.22;Q=Q1
+Resources::Other Resources>>Conservation Letters??1;PCT=96.71;Q=Q1
+Resources::Other Resources>>Critical Reviews in Environmental Science and Technology??0;PCT=98.47;Q=Q1
+Resources::Other Resources>>Current Issues in Tourism??1;PCT=93.88;Q=Q1;ABDC=A
+Resources::Energy>>Current Sustainable/Renewable Energy Reports??2;PCT=76.82;Q=Q1
+Resources::Other Water>>Desalination??1;PCT=94.02;Q=Q1
+Resources::Other Resources>>Disasters??2;PCT=81.92;Q=Q1;ABDC=A
+Resources::Other Resources>>Earthquake Prediction Research??5
+Resources::Other Resources>>Ecological Applications??1;PCT=94.32;Q=Q1
+Resources::Other Resources>>Ecological Modeling??2;PCT=81.60;Q=Q1
+Resources::Other Resources>>Ecosystem Services??1;PCT=95.67;Q=Q1
+Resources::Energy>>Energies??2;PCT=74.57;Q=Q1
+Resources::Energy>>Energy??1;PCT=96.18;Q=Q1
+Resources::Energy>>Energy and Environment Journal??4
+Resources::Energy>>Energy in Agriculture??4
+Resources::Energy>>Energy Journal??1;PCT=87.15;Q=Q1;ABDC=A
+Resources::Energy>>Energy Policy??0;PCT=97.24;Q=Q1;ABDC=A
+Resources::Energy>>Energy Procedia??2
+Resources::Other Resources>>Environmental Conservation??2;PCT=72.12;Q=Q2
+Resources::Other Resources>>Environmental Management??2;PCT=80.03;Q=Q1;ABDC=C
+Resources::Other Resourses>>Environmental Modelling & Software??1;PCT=91.98;Q=Q1
+Resources::Other Resources>>Environmental Modelling Software??2
+Resources::Other Resources>>Environmental Research Letters??1;PCT=95.94;Q=Q1
+Resources::Other Resourses>>Environmental Science and Technology??0;PCT=98.40;Q=Q1
+Resources::Other Resources>>Environments??4
+Resources::Other Fisheries>>Fish and Fisheries??1;PCT=95.98;Q=Q1
+Resources::Other Fisheries>>Fishery Bulletin??4;PCT=46.80;Q=Q3
+Resources::Forestry>>Forest Ecology and Management??1;PCT=90.33;Q=Q1
+Resources::Forestry>>Forest Products Journal??4;PCT=44.62;Q=Q2
+Resources::Forestry>>Forest Science??4;PCT=54.57;Q=Q2
+Resources::Other Resources>>Frontiers in Ecology and Evolution??2;PCT=79.92;Q=Q1
+Resources::Other Resources>>Frontiers in Ecology and the Environment??0;PCT=98.28;Q=Q1
+Resources::Energy>>Frontiers in Energy??2;PCT=77.35;Q=Q2
+Resources::Global Environmental Change>>Global Environmental Change??0;PCT=98.09;Q=Q1;ABDC=A*
+Resources::Other Resources>>Great Plains Research??5;PCT=14.56;Q=Q4
+Resources::Other Resources>>Human Dimensions of Wildlife??2;PCT=67.06;Q=Q2
+Resources::Other Resources>>Impact Assessment Bulletin??3;PCT=56.74;Q=Q2
+Resources::Other Resourses>>Interdisciplinary Environmental Review??4;ABDC=C
+Resources::Other Resourses>>International Journal of Disaster Risk Reduction??1;PCT=88.50;Q=Q1
+Resources::Other Resources>>International Journal of Environmental Studies??4;PCT=51.78;Q=Q2
+Resources::Other Resources>>International Journal of Remote Sensing??2;PCT=72.87;Q=Q2
+Resources::Other Resources>>International Journal of Tourism Research??1;PCT=90.80;Q=Q1;ABDC=A
+Resources::Other Water>>International Journal of Water Resources Development??2;PCT=72.05;Q=Q2
+Resources::Other Water>>Irrigation Science??2;PCT=79.08;Q=Q1
+Resources::Other Fisheries>>Journal of Applied Aquaculture??3;PCT=58.49;Q=Q2
+Resources::Other Climate>>Journal of Applied Meteorology??2;PCT=81.54;Q=Q2
+Resources::Other Resourses>>Journal of Cleaner Production??1;PCT=96.05;Q=Q1
+Resources::Other Climate>>Journal of Climate??1;PCT=96.04;Q=Q1
+Resources::Other Climate>>Journal of Climate and Applied Meteorology??3
+Resources::Other Climate>>Journal of Climatology??3
+Resources::Resources>>Journal of Contemporary Water Research and Education??4
+Resources::Energy>>Journal of Energy and Development??5;PCT=15.65;Q=Q4;ABDC=C
+Resources::Energy>>Journal of Energy Markets??5;PCT=37.10;Q=Q3
+Resources::Other Resources>>Journal of Environmental Monitoring and Restoration??4
+Resources::Other Resources>>Journal of Environmental Planning and Management??1;PCT=86.38;Q=Q1;ABDC=B
+Resources::Other Resources>>Journal of Environmental Policy and Planning??2;PCT=82.86;Q=Q2
+Resources::Other Resources>>Journal of Environmental Protection and Ecology??5;PCT=20.42;Q=Q4
+Resources::Other Resources>>Journal of Environmental Quality??2;PCT=77.05;Q=Q1
+Resources::Other Resources>>Journal of Fish and Wildlife Management??4;PCT=53.15;Q=Q2
+Resources::Forestry>>Journal of Forestry??2;PCT=67.57;Q=Q1
+Resources::Other Resources>>Journal of Hospitality and Tourism Management??1;PCT=95.99;Q=Q1;ABDC=A
+Resources::Other Resources>>Journal of Leisure Research??2;PCT=76.42;Q=Q1;ABDC=A
+Resources::Other Climate>>Journal of Meteorological Applications??3
+Resources::Other Resources>>Journal of Natural Resources and Life Sciences Education??4
+Resources::Other Resources>>Journal of Property Research??2;PCT=66.94;Q=Q2;ABDC=B
+Resources::Other Resources>>Journal of Soil and Water Conservation??2;PCT=66.42;Q=Q2
+Resources::Other Water>>Journal of South Carolina Water Resources??4
+Resources::Forestry>>Journal of Sustainable Forestry??3;PCT=55.39;Q=Q2
+Resources::Other Resources>>Journal of Sustainable Tourism??0;PCT=97.31;Q=Q1;ABDC=A*
+Resources::Other Resources>>Journal of the Air Pollution Control Association??2;PCT=68.91;Q=Q2
+Resources::Water Resources Bulletin>>Journal of the American Water Resources Association??2;PCT=82.38;Q=Q1
+Resources::Journal of AERE Assn>>Journal of the Association of Environmental and Resource Economists??0;PCT=98.11;Q=Q1;ABDC=A
+Resources::Other Fisheries>>Journal of the World Aquaculture Society??2;PCT=79.28;Q=Q1
+Resources::Other Fisheries>>Journal of the World Mariculture Society??4
+Resources::Other Water>>Journal of Transboundary Water Resources??4
+Resources::Other Resources>>Journal of Travel Research??0;PCT=97.85;Q=Q1;ABDC=A*
+Resources::Other Water>>Journal of Water and Health??2;PCT=66.47;Q=Q2
+Resources::Journal of Water Resources Planning and Management>>Journal of Water Resources Planning and Management??2;PCT=75.14;Q=Q1
+Resources::Other Resources>>Land Use Policy??1;PCT=94.90;Q=Q1;ABDC=A
+Resources::Other Resourses>>Landscape and Urban Planning??0;PCT=97.60;Q=Q1
+Resources::Other Resources>>Landslides??1;PCT=95.39;Q=Q1
+Resources::Other Resources>>Leisure Studies??2;PCT=77.85;Q=Q1;ABDC=A
+Resources::Other Fisheries>>Limnology and Oceanography??1;PCT=92.89;Q=Q1
+Resources::Other Fisheries>>Marine and Coastal Fisheries??2;PCT=68.91;Q=Q2
+Resources::Other Fisheries>>Marine Fisheries Review??5;PCT=18.11;Q=Q4
+Resources::Other Fisheries>>Marine Policy??1;PCT=88.06;Q=Q1;ABDC=A
+Resources::Other Resources>>Natural Hazards Review??3;PCT=62.95;Q=Q2
+Resources::Other Resources>>Natural Resource Modeling??3;PCT=64.15;Q=Q2
+Resources::Other Resources>>Natural Resources Forum??2;PCT=75.96;Q=Q2
+Resources::Other Resources>>Natural Resources Journal??5;PCT=31.58;Q=Q3
+Resources::Other Resourses>>Nature Communications Earth & Environment??0;PCT=97.64;Q=Q1
+Resources::Other Fisheries>>North American Journal of Fisheries Management??3;PCT=62.77;Q=Q2
+Resources::Other Resourses>>Npj Sustainable Agriculture??3
+Resources::Other Resources>>Ocean and Coastal Management??1;PCT=89.27;Q=Q1
+Resources::Energy>>OPEC Energy Review??4;PCT=53.58;Q=Q3;ABDC=C
+Resources::Other Resources>>Public Works Management and Policy??4;PCT=44.94;Q=Q2
+Resources::Other Resources>>Rangelands??1;PCT=84.81;Q=Q1
+Resources::Other Resourses>>Regional Environmental Change??1;PCT=86.55;Q=Q2
+Resources::Energy>>Renewable & Sustainable Energy Reviews??1
+Resources::Energy>>Renewable and Sustainable Energy Reviews??0;PCT=98.56;Q=Q1
+Resources::Energy>>Renewable Energy??1;PCT=95.73;Q=Q1
+Resources::Other Resources>>Resource Management and Optimization??3
+Resources::Other Resources>>Resources??2;PCT=77.32;Q=Q1
+Resources::Other Resources>>Resources Conservation and Recycling??0;PCT=97.50;Q=Q1
+Resources::Other Resourses>>Resources, Conservation and Recycling??1
+Resources::Forestry>>Scandinavian Journal of Forest Research??2;PCT=67.26;Q=Q1
+Resources::Other Resources>>Science of the Total Environment??1;PCT=95.92;Q=Q1
+Resources::Other Resources>>Society and Natural Resources??2;PCT=75.13;Q=Q1
+Resources::Forestry>>Southern Journal of Applied Forestry??4;PCT=54.57;Q=Q2
+Resources::Other Resources>>Sustainability??2;PCT=73.43;Q=Q1
+Resources::Other Resourses>>Sustainable Development??1;PCT=94.99;Q=Q1;ABDC=C
+Resources::Other Water>>Texas Water Journal??5;PCT=22.03;Q=Q4
+Resources::Other Climate>>The Climate Report??4
+Resources::Energy>>The Electricity Journal??2;PCT=76.65;Q=Q1
+Resources::Energy>>The Journal of Energy and Development??4
+Resources::Other Resourses>>Tourism and Recreation Research??1
+Resources::Other Resources>>Tourism Management??0;PCT=98.74;Q=Q1;ABDC=A*
+Resources::Other Resources>>Toursim Research??2
+Resources::Other Fisheries>>Transactions of the American Fisheries Society??3;PCT=63.34;Q=Q2
+Resources::Other Climate>>US CLIVAR VARIATIONS??5
+Resources::Other Water>>Water International??3;PCT=60.77;Q=Q2
+Resources::Other Water>>Water Policy??3;PCT=63.70;Q=Q2
+Resources::Water Resources Bulletin>>Water Resources Bulletin??2;PCT=82.38;Q=Q1
+Resources::Other Water>>Water Resources Development??4
+Resources::Other Water>>Water Resources Impacts??4
+Resources::Other Water>>Water Resources Update??3
+Resources::Other Climate>>Weather and Climate Extremes??1;PCT=96.03;Q=Q1
+Resources::Energy>>Wind Energy??1;PCT=88.41;Q=Q2
+Resources::Other Resources>>Women in Natural Resources??4
+Resources::Other Resources>>World Mountaineering and Climbing the UIAA Journal??4
+Science::Other Science>>Acs Sustainable Chemistry and Engineering??1;PCT=93.32;Q=Q1
+Science::Bioscience>>Bioscience??1;PCT=96.62;Q=Q1
+Science::Other Science>>Cell Reports Sustainability??3;PCT=0.77
+Science::Other Science>>Frontiers in Neuroscience??1;PCT=86.08;Q=Q2
+Science::Other Science>>Fundamental Research??1;PCT=88.29;Q=Q1
+Science::Other Science>>Issues in Science and Technology??5;PCT=37.11;Q=Q2
+Science::Other Science>>Joule??0;PCT=99.77;Q=Q1
+Science::Nature>>Nature??0;PCT=99.93;Q=Q1
+Science::Nature>>Nature Climate Change??0;PCT=99.59;Q=Q1
+Science::Nature Communications>>Nature Communications??0;PCT=98.99;Q=Q1
+Science::Philosophical B>>Philosophical Transactions of the Royal Society B??1;PCT=94.08;Q=Q1
+Science::Other Science>>Plos One??2;PCT=78.30;Q=Q1
+Science::Proceedings of the National Academy of Science>>Proceedings of the National Academy of Science??0;PCT=98.18;Q=Q1
+Science::Other Science>>SAGE Open??3;PCT=63.64;Q=Q1
+Science::Science>>Science??0;PCT=99.75;Q=Q1
+Science::Other Science>>Scientific Reports??2;PCT=80.87;Q=Q1

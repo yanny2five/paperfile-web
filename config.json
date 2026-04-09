@@ -1,0 +1,118 @@
+{
+    "database_path": "data/2025amccarl.cnt",
+    "faculty_file": "data/faculty.cng",
+    "journal_definition_file": "data/journal.cnj",
+    "rank_range_sjr_pct": {
+        "0": {
+            "min": "90",
+            "max": "100.00"
+        },
+        "1": {
+            "min": "80",
+            "max": "89.99"
+        },
+        "2": {
+            "min": "70",
+            "max": "79.99"
+        },
+        "3": {
+            "min": "40",
+            "max": "69.99"
+        },
+        "4": {
+            "min": "0",
+            "max": "39.99"
+        },
+        "5": {
+            "min": "",
+            "max": ""
+        }
+    },
+    "excel_export_column_justifier": {
+        "Journal": "",
+        "Rank Number": "abcdff",
+        "Calculated Rank": "",
+        "Rank Deviation": "",
+        "SJR(%)": "",
+        "SJR Quartile": "",
+        "ABDC": "",
+        "Number of papers": "",
+        "Major Class": "",
+        "Minor Class": "",
+        "Suggested Name": "",
+        "Accept Suggestion": ""
+    },
+    "excel_export_version": "2",
+    "vitatype_preference": [
+        "J",
+        "JR",
+        "JD",
+        "PA",
+        "B",
+        "BC",
+        "SB",
+        "IP",
+        "P",
+        "U",
+        "SP",
+        "PS",
+        "F",
+        "DP",
+        "CP",
+        "SM",
+        "BR",
+        "CD",
+        "WS",
+        "PR",
+        "EC",
+        "OP",
+        "PO",
+        "N",
+        "SV",
+        "CN",
+        "TH",
+        "TS",
+        "O",
+        "OI",
+        "MS"
+    ],
+    "report_for_enabled": false,
+    "merge_vitatype_preference": [
+        "J",
+        "JD",
+        "PA",
+        "B",
+        "BC",
+        "SB",
+        "IP",
+        "P",
+        "U",
+        "SP",
+        "PS",
+        "F",
+        "DP",
+        "CP",
+        "SM",
+        "BR",
+        "CD",
+        "WS",
+        "PR",
+        "EC",
+        "OP",
+        "PO",
+        "N",
+        "SV",
+        "CN",
+        "TH",
+        "TS",
+        "O",
+        "OI",
+        "MS"
+    ],
+    "sjr_file": "",
+    "abdc_file": "",
+    "journal_name_mappings": [],
+    "journal_name_mappings_clear": [],
+    "report_for_person": "mccarl",
+    "default_name": ""
+}

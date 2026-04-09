@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+build/
+dist/
+.idea/
+pages/
+main.py
+*.spec
+icon.ico
+waldorf.tcl
+data/config.json
+modules/chatgpt_format.py
+modules/__pycache__/
