@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Enter Papers — Paperfile</title>
+    <style>
+        :root {
+            --bg: #e8f0fa;
+            --bg-card: #ffffff;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #cbd5e1;
+            --radius: 12px;
+            --shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+            background: linear-gradient(165deg, #c5ddf5 0%, var(--bg) 45%, #dce8f7 100%);
+            color: var(--text);
+            line-height: 1.5;
+        }
+        .wrap {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 24px 20px 48px;
+        }
+        .top-nav {
+            margin-bottom: 20px;
+            font-size: 15px;
+        }
+        .top-nav a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .top-nav a:hover { text-decoration: underline; }
+        header {
+            margin-bottom: 24px;
+        }
+        header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        header p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 15px;
+        }
+        .next-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px 20px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .next-bar strong {
+            font-size: 1.25rem;
+            color: var(--accent);
+        }
+        .next-bar code {
+            font-size: 13px;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            word-break: break-all;
+        }
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 28px 24px 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.9);
+        }
+        .flash {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+        .flash.success { background: #dcfce7; border: 1px solid #86efac; color: #166534; }
+        .flash.error { background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+        .ro-banner {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 15px;
+        }
+        .section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin: 28px 0 12px 0;
+            font-weight: 700;
+        }
+        .section-title:first-of-type { margin-top: 0; }
+        .grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 20px;
+        }
+        @media (max-width: 720px) {
+            .grid2 { grid-template-columns: 1fr; }
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        textarea { min-height: 88px; resize: vertical; }
+        .hint { font-size: 13px; color: var(--muted); margin-top: 4px; }
+        .backup-row {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .backup-row input { width: auto; margin-top: 4px; }
+        .backup-row label { margin: 0; font-weight: 500; cursor: pointer; }
+        .actions {
+            margin-top: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        button[type="submit"] {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+            transition: background 0.15s, transform 0.1s;
+        }
+        button[type="submit"]:hover:not(:disabled) {
+            background: var(--accent-hover);
+        }
+        button[type="submit"]:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+        button[type="submit"]:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .secondary-link {
+            font-size: 16px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="top-nav">
+            <a href="{{ url_for('dashboard') }}">Main menu</a>
+            &nbsp;·&nbsp;
+            <a href="{{ url_for('retrieve_papers') }}">Retrieve Papers</a>
+        </div>
+
+        <header>
+            <h1>Enter Papers</h1>
+            <p>Add a new bibliography record. The next number is assigned automatically when you save.</p>
+        </header>
+
+        <div class="next-bar">
+            <span>Next record number:</span>
+            <strong>#{{ next_number }}</strong>
+            <span style="flex:1"></span>
+            <span>Database: <code>{{ db_path or "(none)" }}</code></span>
+        </div>
+
+        {% if read_only %}
+        <div class="ro-banner"><strong>Read-only mode</strong> — saving is disabled (set <code>PAPERFILE_READ_ONLY</code> off to allow writes).</div>
+        {% endif %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <form method="post" action="{{ url_for('enter_papers') }}" autocomplete="off">
+                <p class="section-title">Core citation</p>
+                <div class="grid2">
+                    <div>
+                        <label for="authors">Authors</label>
+                        <textarea id="authors" name="authors" rows="3" placeholder="e.g. Smith, J. and Doe, A."></textarea>
+                    </div>
+                    <div>
+                        <label for="title">Title</label>
+                        <textarea id="title" name="title" rows="3" placeholder="Paper or chapter title"></textarea>
+                    </div>
+                </div>
+                <p class="hint">At least one of authors or title is required.</p>
+
+                <div class="grid2" style="margin-top: 16px;">
+                    <div>
+                        <label for="bookjour">Journal / book</label>
+                        <input type="text" id="bookjour" name="bookjour" placeholder="Journal or book name">
+                    </div>
+                    <div>
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="Publisher, DOI note, etc.">
+                    </div>
+                </div>
+                <div class="grid2" style="margin-top: 16px;">
+                    <div>
+                        <label for="volume">Volume</label>
+                        <input type="text" id="volume" name="volume">
+                    </div>
+                    <div>
+                        <label for="pages">Pages</label>
+                        <input type="text" id="pages" name="pages">
+                    </div>
+                </div>
+                <div class="grid2" style="margin-top: 16px;">
+                    <div>
+                        <label for="year">Year</label>
+                        <input type="text" id="year" name="year" placeholder="e.g. 2026">
+                    </div>
+                    <div>
+                        <label for="vitatyp">Vita type</label>
+                        <select id="vitatyp" name="vitatyp">
+                            {% for code, name in vita_pairs %}
+                            <option value="{{ code }}" {% if code == 'MS' %}selected{% endif %}>{{ code }} — {{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <p class="section-title">Funding (optional)</p>
+                <div class="grid2">
+                    <div>
+                        <label for="funding_year">Funding year</label>
+                        <input type="text" id="funding_year" name="funding_year">
+                    </div>
+                    <div>
+                        <label for="total_amount">Total amount</label>
+                        <input type="text" id="total_amount" name="total_amount">
+                    </div>
+                </div>
+                <div class="grid2" style="margin-top: 16px;">
+                    <div>
+                        <label for="usable_amount">Usable amount</label>
+                        <input type="text" id="usable_amount" name="usable_amount">
+                    </div>
+                    <div>
+                        <label for="decision">Decision</label>
+                        <input type="text" id="decision" name="decision">
+                    </div>
+                </div>
+
+                <p class="section-title">Subjects &amp; PDF</p>
+                <div class="grid2">
+                    <div>
+                        <label for="subject1">Subject 1</label>
+                        <input type="text" id="subject1" name="subject1">
+                    </div>
+                    <div>
+                        <label for="subject2">Subject 2</label>
+                        <input type="text" id="subject2" name="subject2">
+                    </div>
+                </div>
+                <div class="grid2" style="margin-top: 16px;">
+                    <div>
+                        <label for="duplicateoknumber">Duplicate OK number</label>
+                        <input type="text" id="duplicateoknumber" name="duplicateoknumber" value="0">
+                    </div>
+                    <div>
+                        <label for="pdfpresent">PDF present</label>
+                        <input type="text" id="pdfpresent" name="pdfpresent" value="0">
+                    </div>
+                </div>
+                <label for="pdfpath" style="margin-top: 16px;">PDF path</label>
+                <input type="text" id="pdfpath" name="pdfpath" placeholder="Optional file path or URL">
+
+                <div class="backup-row">
+                    <input type="checkbox" id="backup" name="backup" value="1">
+                    <label for="backup">Create a timestamped backup folder next to the database before saving (recommended).</label>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" {% if read_only %}disabled{% endif %}>Save new record</button>
+                    <span class="secondary-link">Clears after save — add another entry anytime.</span>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

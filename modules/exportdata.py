@@ -1,9 +1,7 @@
-import pandas as pd
+import io
 import os
 import platform
 import subprocess
-
-from tkinter import filedialog, messagebox
 
 # Vitatyp to verbose mapping
 vita_type_mapping = {
@@ -44,7 +42,43 @@ def open_folder(file_path):
         subprocess.run(["xdg-open", folder])
 
 
+_XLSX_FIELDS = [
+    "number",
+    "authors",
+    "title",
+    "bookjour",
+    "location",
+    "volume",
+    "pages",
+    "year",
+    "vitatyp",
+    "subject1",
+    "subject2",
+    "pdfpresent",
+    "pdfpath",
+]
+
+
+def _records_for_xlsx(records):
+    return [{k: v for k, v in r.items() if k in _XLSX_FIELDS} for r in records]
+
+
+def generate_xlsx_bytes(records):
+    """Build an Excel workbook in memory (for web download)."""
+    if not records:
+        return b""
+    import pandas as pd
+
+    filtered = _records_for_xlsx(records)
+    df = pd.DataFrame(filtered)
+    buf = io.BytesIO()
+    df.to_excel(buf, index=False)
+    return buf.getvalue()
+
+
 def export_to_xlsx(records):
+    from tkinter import filedialog, messagebox
+
     if not records:
         messagebox.showwarning("Warning", "No records to export.")
         return
@@ -57,14 +91,10 @@ def export_to_xlsx(records):
         return
 
     try:
-        fields = ["number", "authors", "title", "bookjour", "location",
-                  "volume", "pages", "year", "vitatyp",
-                  "subject1", "subject2", "pdfpresent", "pdfpath"]
-        filtered_records = [{k: v for k, v in r.items() if k in fields} for r in records]
-        df = pd.DataFrame(filtered_records)
-        df.to_excel(file_path, index=False)
+        data = generate_xlsx_bytes(records)
+        with open(file_path, "wb") as f:
+            f.write(data)
         open_folder(file_path)
-        # messagebox.showinfo("Success", f"Exported to {file_path}")
     except Exception as e:
         messagebox.showerror("Error", f"Failed to export: {e}")
 
@@ -122,6 +152,64 @@ def generate_bibtex_key(record):
     return f"{lastname}{number}{first_word}{last_word}{year}"
 
 
+def generate_bibtex_string(records):
+    """
+    Serialize records to a BibTeX document (for web download or file save).
+    Same field mapping as export_to_bibtex.
+    """
+    if not records:
+        return ""
+
+    chunks = []
+    for record in records:
+        bib_type = bibtex_type_map.get(record.get("vitatyp", ""), "misc")
+        bib_key = generate_bibtex_key(record)
+
+        title = _clean_bib_value(record.get("title", ""))
+        author = _to_bibtex_author(record.get("authors", ""))
+        year = _clean_bib_value(record.get("year", ""))
+        volume = _clean_bib_value(record.get("volume", ""))
+        pages = _clean_bib_value(record.get("pages", ""))
+        address = _clean_bib_value(record.get("location", ""))
+        url = _clean_bib_value(record.get("pdfpath", ""))
+        bookjour = _clean_bib_value(record.get("bookjour", ""))
+
+        chunks.append(f"@{bib_type}{{{bib_key},\n")
+
+        if author:
+            chunks.append(f"  author = {{{author}}},\n")
+        if title:
+            chunks.append(f"  title = {{{title}}},\n")
+
+        if bib_type == "article":
+            if bookjour:
+                chunks.append(f"  journal = {{{bookjour}}},\n")
+        elif bib_type in ("inproceedings", "incollection"):
+            if bookjour:
+                chunks.append(f"  booktitle = {{{bookjour}}},\n")
+        elif bib_type == "book":
+            if bookjour:
+                chunks.append(f"  publisher = {{{bookjour}}},\n")
+        else:
+            if bookjour:
+                chunks.append(f"  howpublished = {{{bookjour}}},\n")
+
+        if year:
+            chunks.append(f"  year = {{{year}}},\n")
+        if volume:
+            chunks.append(f"  volume = {{{volume}}},\n")
+        if pages:
+            chunks.append(f"  pages = {{{pages}}},\n")
+        if address:
+            chunks.append(f"  address = {{{address}}},\n")
+        if url:
+            chunks.append(f"  url = {{{url}}},\n")
+
+        chunks.append("}\n\n")
+
+    return "".join(chunks)
+
+
 def export_to_bibtex(records):
     """
     Export records to BibTeX using standard field names similar to Google Scholar.
@@ -133,6 +221,8 @@ def export_to_bibtex(records):
     - DO NOT export internal record 'number' as BibTeX 'number' (issue). It is an internal id.
     - DO NOT export 'vitatyp' as note by default (Scholar usually does not include it).
     """
+    from tkinter import filedialog, messagebox
+
     if not records:
         messagebox.showwarning("Warning", "No records to export.")
         return
@@ -145,68 +235,9 @@ def export_to_bibtex(records):
         return
 
     try:
+        text = generate_bibtex_string(records)
         with open(file_path, "w", encoding="utf-8") as f:
-            for record in records:
-                bib_type = bibtex_type_map.get(record.get("vitatyp", ""), "misc")
-                bib_key = generate_bibtex_key(record)
-
-                # --- Standard BibTeX fields (Google Scholar style) ---
-                title = _clean_bib_value(record.get("title", ""))
-                author = _to_bibtex_author(record.get("authors", ""))
-                year = _clean_bib_value(record.get("year", ""))
-                volume = _clean_bib_value(record.get("volume", ""))
-                pages = _clean_bib_value(record.get("pages", ""))
-                address = _clean_bib_value(record.get("location", ""))  # best-effort mapping
-                url = _clean_bib_value(record.get("pdfpath", ""))  # best-effort mapping
-
-                # bookjour maps to journal/booktitle/publisher depending on type
-                bookjour = _clean_bib_value(record.get("bookjour", ""))
-
-                # Start entry
-                f.write(f"@{bib_type}{{{bib_key},\n")
-
-                # Write required-ish fields first (Scholar order is typically author/title/journal/year...)
-                if author:
-                    f.write(f"  author = {{{author}}},\n")
-                if title:
-                    f.write(f"  title = {{{title}}},\n")
-
-                # Type-specific container field
-                if bib_type == "article":
-                    if bookjour:
-                        f.write(f"  journal = {{{bookjour}}},\n")
-                elif bib_type in ("inproceedings", "incollection"):
-                    if bookjour:
-                        f.write(f"  booktitle = {{{bookjour}}},\n")
-                elif bib_type == "book":
-                    # Scholar often uses publisher for books when available
-                    if bookjour:
-                        f.write(f"  publisher = {{{bookjour}}},\n")
-                else:
-                    # misc / others: keep how Scholar often includes a "howpublished" or leave empty
-                    if bookjour:
-                        f.write(f"  howpublished = {{{bookjour}}},\n")
-
-                if year:
-                    f.write(f"  year = {{{year}}},\n")
-                if volume:
-                    f.write(f"  volume = {{{volume}}},\n")
-                if pages:
-                    f.write(f"  pages = {{{pages}}},\n")
-                if address:
-                    f.write(f"  address = {{{address}}},\n")
-                if url:
-                    f.write(f"  url = {{{url}}},\n")
-
-                # --- Optional: keep your internal classification info in note (OFF by default) ---
-                # If you want it, uncomment below.
-                # vtyp = _clean_bib_value(record.get("vitatyp", ""))
-                # if vtyp:
-                #     vtype_verbose = vita_type_mapping.get(vtyp, vtyp)
-                #     f.write(f"  note = {{{vtype_verbose}}},\n")
-
-                f.write("}\n\n")
-
+            f.write(text)
         open_folder(file_path)
 
     except Exception as e:

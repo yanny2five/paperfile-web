@@ -2,7 +2,6 @@ import os
 import re
 import unicodedata
 from modules.readdata import CNTReader
-from tkinter import messagebox
 
 REPLACEMENT_RULES = [
     ('\x93', '"'), ('\x94', '"'),
@@ -660,8 +659,10 @@ def title_case(text):
     return ' '.join(titled)
 
 from modules.readdata import CNTReader
+from modules.savedata import overwrite_all_records_in_cnt
 
-def clean_database(file_path):
+
+def clean_database(file_path, gui_messages=True):
     try:
         reader = CNTReader(file_path)
         reader.read_file()
@@ -758,16 +759,13 @@ def clean_database(file_path):
 
             cleaned_data.append(cleaned_record)
 
-        # Write back
-        content = []
-        for record in cleaned_data:
-            record_content = "\n".join([f"{k}||{v}" for k, v in record.items()])
-            content.append(f"{record_content}\n*********$$$$$$$$$$$$")
-
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write("\n".join(content))
-
+        overwrite_all_records_in_cnt(file_path, cleaned_data, gui_messages=gui_messages)
         print("[INFO] Database cleaned successfully.")
 
     except Exception as e:
-        messagebox.showerror("Error", f"Standardization failed: {str(e)}")
+        if gui_messages:
+            from tkinter import messagebox
+
+            messagebox.showerror("Error", f"Standardization failed: {str(e)}")
+        else:
+            raise

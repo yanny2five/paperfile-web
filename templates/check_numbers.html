@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Check Numbers - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 28px 36px; }
+        h1 { margin-top: 0; }
+        .nav { margin-bottom: 18px; font-size: 17px; }
+        .file-line { text-align: center; font-size: 15px; margin-bottom: 22px; padding: 10px; background: rgba(255,255,255,0.45); border-radius: 8px; max-width: 920px; margin-left: auto; margin-right: auto; }
+        section { background: rgba(255,255,255,0.4); padding: 20px 24px; border-radius: 8px; max-width: 920px; margin-bottom: 20px; }
+        section h2 { margin-top: 0; font-size: 20px; }
+        .stat-row { margin: 10px 0; font-size: 15px; }
+        .stat-row strong { display: inline-block; min-width: 220px; }
+        .stat-val { font-weight: 700; }
+        .flash { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; max-width: 920px; font-size: 15px; }
+        .flash.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .flash.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .flash.warning { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        form.renum label { display: block; font-weight: 600; margin-top: 12px; }
+        form.renum input[type="text"] { font-size: 16px; padding: 8px; width: 220px; }
+        form.renum .warn { font-size: 14px; color: #522; margin-top: 16px; max-width: 640px; line-height: 1.45; }
+        form.renum button { font-size: 16px; padding: 10px 20px; margin-top: 16px; cursor: pointer; }
+        .dash { color: #555; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">&larr; Main menu</a>
+    </div>
+    <h1>Check Numbers</h1>
+    <div class="file-line">
+        Current file: <strong>{{ db_path or "(none)" }}</strong>
+        &nbsp;|&nbsp; Entries: <strong>{{ entry_count }}</strong>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section>
+        <h2>Statistics</h2>
+        {% if stats.lowest is not none %}
+        <div class="stat-row"><strong>Lowest number found</strong> <span class="stat-val">{{ stats.lowest }}</span></div>
+        <div class="stat-row"><strong>Highest number found</strong> <span class="stat-val">{{ stats.highest }}</span></div>
+        <div class="stat-row"><strong>First 25 missing numbers</strong>
+            <span class="stat-val">
+                {% if stats.missing_25 %}
+                    {{ stats.missing_25 | join(', ') }}
+                    {% if stats.missing_total > 25 %} <span style="font-weight:normal;">({{ stats.missing_total }} gaps total in range)</span>{% endif %}
+                {% else %}
+                    <span class="dash">—</span>
+                {% endif %}
+            </span>
+        </div>
+        <div class="stat-row"><strong>Duplicate file numbers</strong>
+            <span class="stat-val">
+                {% if stats.duplicates_25 %}
+                    {{ stats.duplicates_25 | join(', ') }}
+                    {% if stats.duplicates_total_distinct > 25 %} (more than 25 duplicated numbers exist.){% endif %}
+                {% else %}
+                    <span class="dash">—</span>
+                {% endif %}
+            </span>
+        </div>
+        {% else %}
+        <p>No numeric paper numbers were found in the database.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Re-number</h2>
+        <p style="font-size:15px; margin-top:0;">Assigns new consecutive numbers to every record whose <em>current</em> number falls between <strong>Start</strong> and <strong>Highest</strong> (inclusive), in file order. If any of those records is number 0, numbering starts at 1 (same as the desktop app).</p>
+        <form class="renum" method="POST" action="{{ url_for('check_numbers') }}">
+            <input type="hidden" name="action" value="renumber_save">
+            <label>Start at paper number
+                <input type="text" name="start_at" value="{{ stats.suggested_start or '' }}" inputmode="numeric" autocomplete="off">
+            </label>
+            <label>Highest number (upper bound of range to renumber)
+                <input type="text" name="highest" value="{{ default_highest }}" inputmode="numeric" autocomplete="off">
+            </label>
+            <div class="warn">
+                <label style="font-weight:normal;">
+                    <input type="checkbox" name="confirm" value="1">
+                    I understand this will <strong>overwrite the entire .cnt file</strong> (header preserved) and cannot be undone from this page.
+                </label>
+            </div>
+            <button type="submit">Apply re-number and save database</button>
+        </form>
+    </section>
+</body>
+</html>

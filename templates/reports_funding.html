@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Funding proposals - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
+        h1 { margin-top: 0; }
+        .nav { margin-bottom: 20px; font-size: 17px; }
+        form.filters { background: rgba(255,255,255,0.45); padding: 16px; border-radius: 8px; margin-bottom: 20px; max-width: 900px; }
+        form.filters label { display: inline-block; margin-right: 12px; font-weight: 700; }
+        form.filters input, form.filters select { font-size: 16px; padding: 6px 10px; margin-right: 16px; }
+        button[type="submit"] { font-size: 17px; padding: 10px 20px; margin-top: 12px; cursor: pointer; }
+        .table-wrap { overflow-x: auto; background: #fff; border: 1px solid #999; max-width: 100%; }
+        table { border-collapse: collapse; font-size: 14px; min-width: 720px; }
+        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; }
+        th { background: #eee; }
+        td.num { text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('generate_reports') }}">&larr; Generate Reports</a>
+        &nbsp;|&nbsp;
+        <a href="{{ url_for('dashboard') }}">Main menu</a>
+    </div>
+    <h1>Funding Proposals Report</h1>
+    <p>Records with vita type <strong>PR</strong>. Filter by funding year (parsed from the funding year field), author, and decision.</p>
+
+    <form class="filters" method="GET" action="{{ url_for('reports_funding') }}">
+        <label>Year from <input type="number" name="y0" value="{{ y0 }}" style="width:90px;" placeholder="any"></label>
+        <label>Year to <input type="number" name="y1" value="{{ y1 }}" style="width:90px;" placeholder="any"></label>
+        <div style="margin-top:12px;">
+            <label for="author">Author</label>
+            <select name="author" id="author" style="min-width:280px;">
+                <option value="">(all)</option>
+                {% for a in author_options %}<option value="{{ a }}" {% if a == author_selected %}selected{% endif %}>{{ a }}</option>{% endfor %}
+            </select>
+        </div>
+        <div style="margin-top:12px;">
+            <label for="status">Status</label>
+            <select name="status" id="status">
+                <option value="" {% if not status_selected %}selected{% endif %}>All</option>
+                <option value="accept" {% if status_selected == 'accept' %}selected{% endif %}>Accept</option>
+                <option value="reject" {% if status_selected == 'reject' %}selected{% endif %}>Reject</option>
+                <option value="pending" {% if status_selected == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="na" {% if status_selected == 'na' %}selected{% endif %}>N/A</option>
+            </select>
+        </div>
+        <div><button type="submit">Apply filters</button></div>
+    </form>
+
+    <p><strong>{{ row_count }}</strong> proposal(s).</p>
+    {% if rows %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Number</th><th>Title</th><th>Authors</th><th>Funding year</th>
+                    <th>Total amount</th><th>Usable amount</th><th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ r[0] }}</td>
+                    <td>{{ r[1] }}</td>
+                    <td>{{ r[2] }}</td>
+                    <td>{{ r[3] }}</td>
+                    <td class="num">{{ r[4] }}</td>
+                    <td class="num">{{ r[5] }}</td>
+                    <td>{{ r[6] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p><a href="{{ url_for('reports_funding', y0=y0 or '', y1=y1 or '', author=author_selected, status=status_selected, export='tsv') }}">Download tab-separated (.txt)</a></p>
+    {% else %}
+    <p>No rows for these filters.</p>
+    {% endif %}
+</body>
+</html>

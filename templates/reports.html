@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Generate Reports - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
+        h1 { margin-top: 0; }
+        .nav { margin-bottom: 20px; font-size: 17px; }
+        .file-line { text-align: center; font-size: 15px; margin-bottom: 24px; padding: 10px; background: rgba(255,255,255,0.45); border-radius: 8px; max-width: 960px; margin-left: auto; margin-right: auto; }
+        .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 16px; max-width: 1200px; margin: 0 auto; align-items: start; }
+        @media (max-width: 1000px) { .cols { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 560px) { .cols { grid-template-columns: 1fr; } }
+        .col h2 { font-size: 15px; text-align: center; margin: 0 0 10px 0; font-weight: 700; line-height: 1.3; min-height: 2.6em; display: flex; align-items: center; justify-content: center; }
+        .col a {
+            display: block; text-align: center; padding: 12px 10px; font-size: 14px; font-weight: 600;
+            color: #111; background: #d3d3d3; border: 1px solid rgba(0,0,0,0.15); text-decoration: none; margin-bottom: 8px;
+        }
+        .col a:hover { background: #e0e0e0; }
+        .col a.working { background: #b8d4e8; }
+        .col a.working:hover { background: #c8e0f0; }
+        .report-for { max-width: 520px; margin: 32px auto 0; padding: 16px; background: rgba(255,255,255,0.4); border-radius: 8px; }
+        .report-for h3 { margin-top: 0; font-size: 17px; }
+        .report-for input[type="text"] { width: 100%; max-width: 400px; font-size: 16px; padding: 8px; box-sizing: border-box; }
+        .report-for button { font-size: 16px; padding: 8px 16px; margin-top: 10px; cursor: pointer; }
+        .exit { text-align: center; margin-top: 28px; }
+        .exit a { font-size: 17px; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">&larr; Main menu</a>
+    </div>
+    <h1>Generate Reports</h1>
+    <div class="file-line">Current file: <strong>{{ db_path }}</strong> &nbsp;|&nbsp; Total entries: <strong>{{ entry_count }}</strong></div>
+
+    <div class="cols">
+        <div class="col">
+            <h2>Funding proposals</h2>
+            <a class="working" href="{{ url_for('reports_funding') }}">Funding Proposals Report</a>
+        </div>
+        <div class="col">
+            <h2>Reports for whole data set</h2>
+            <a class="working" href="{{ url_for('reports_group_output', kind='vita', scope='whole') }}">Create a Vita</a>
+            <a class="working" href="{{ url_for('reports_group_output', kind='annual', scope='whole') }}">Create annual report</a>
+            <a class="working" href="{{ url_for('reports_group_output', kind='selected', scope='whole') }}">Selected year report</a>
+            <a class="working" href="{{ url_for('reports_journal_report', variant='use', scope='whole') }}">Journal use report</a>
+            <a class="working" href="{{ url_for('reports_journal_report', variant='rank', scope='whole') }}">Journal Rank report</a>
+            <a class="working" href="{{ url_for('reports_publication_type', mode='whole') }}">Publication type report</a>
+            <a class="working" href="{{ url_for('reports_journal_report', variant='class', scope='whole') }}">Journal rank by class</a>
+        </div>
+        <div class="col">
+            <h2>Reports for selected people in the data set</h2>
+            <a class="working" href="{{ url_for('reports_group_output', kind='vita', scope='people') }}">Create a Vita</a>
+            <a class="working" href="{{ url_for('reports_group_output', kind='annual', scope='people') }}">Create annual report</a>
+            <a class="working" href="{{ url_for('reports_group_output', kind='selected', scope='people') }}">Selected year report</a>
+            <a class="working" href="{{ url_for('reports_journal_report', variant='use', scope='people') }}">Journal use report</a>
+            <a class="working" href="{{ url_for('reports_journal_report', variant='rank', scope='people') }}">Journal Rank report</a>
+            <a class="working" href="{{ url_for('reports_publication_type', mode='people') }}">Publication type report</a>
+            <a class="working" href="{{ url_for('reports_journal_report', variant='class', scope='people') }}">Journal rank by class</a>
+        </div>
+        <div class="col">
+            <h2>Reports for a time period across people</h2>
+            <a class="working" href="{{ url_for('reports_publication_types_time', mode='whole') }}">Publication Types (whole)</a>
+            <a class="working" href="{{ url_for('reports_publication_types_time', mode='people') }}">Publication Types (selected people)</a>
+            <a class="working" href="{{ url_for('reports_journal_categories_time', mode='whole') }}">Journal Categories (whole)</a>
+            <a class="working" href="{{ url_for('reports_journal_categories_time', mode='people') }}">Journal Categories (selected people)</a>
+            <a class="working" href="{{ url_for('reports_composite_summary') }}">Composite summary</a>
+        </div>
+    </div>
+
+    <form class="report-for" method="POST" action="{{ url_for('generate_reports') }}">
+        <input type="hidden" name="action" value="save_report_for">
+        <h3>Report for</h3>
+        <p style="font-size:15px; margin: 0 0 8px 0;">When enabled, the selected person is suggested on reports that support it (desktop parity).</p>
+        <label><input type="checkbox" name="report_for_enabled" value="1" {% if report_for_enabled %}checked{% endif %}> Enable</label>
+        <p><input type="text" name="report_for_person" value="{{ report_for_person }}" placeholder="Last, FirstInitial…" list="author-names" autocomplete="off"></p>
+        <datalist id="author-names">
+            {% for n in all_names[:500] %}<option value="{{ n }}">{% endfor %}
+        </datalist>
+        <button type="submit">Save</button>
+    </form>
+
+    <div class="exit"><a href="{{ url_for('dashboard') }}">Exit to main menu</a></div>
+</body>
+</html>

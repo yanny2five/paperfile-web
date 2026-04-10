@@ -47,7 +47,8 @@ def read_json_with_guess(path, encodings=None):
     Read a JSON file with multiple encoding fallbacks.
     """
     if encodings is None:
-        encodings = ["utf-8", "utf-8-sig", "utf-16", "latin-1", "ISO-8859-1", "cp1252"]
+        # utf-8-sig before utf-8 so JSON with BOM decodes (json.load rejects BOM under utf-8)
+        encodings = ["utf-8-sig", "utf-8", "utf-16", "latin-1", "ISO-8859-1", "cp1252"]
 
     last_err = None
     for enc in encodings:

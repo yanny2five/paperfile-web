@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Utilities - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 28px 36px; }
+        h1 { margin-top: 0; }
+        h2 { font-size: 18px; margin-top: 0; }
+        .nav { margin-bottom: 18px; font-size: 17px; }
+        .file-line { text-align: center; font-size: 15px; margin-bottom: 22px; padding: 10px; background: rgba(255,255,255,0.45); border-radius: 8px; max-width: 960px; margin-left: auto; margin-right: auto; }
+        section { background: rgba(255,255,255,0.4); padding: 18px 22px; border-radius: 8px; max-width: 960px; margin-bottom: 18px; }
+        section p { font-size: 14px; line-height: 1.45; margin: 8px 0; }
+        label { font-weight: 600; font-size: 14px; }
+        input[type="text"], input[type="file"], textarea { font-size: 15px; padding: 8px; margin-top: 6px; width: 100%; max-width: 640px; box-sizing: border-box; }
+        textarea { min-height: 88px; font-family: Consolas, monospace; }
+        button[type="submit"] { font-size: 15px; padding: 10px 18px; margin-top: 12px; cursor: pointer; }
+        .row { margin-top: 12px; }
+        .flash { padding: 12px 16px; border-radius: 6px; margin-bottom: 14px; max-width: 960px; font-size: 15px; }
+        .flash.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .flash.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .flash.warning { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        .exports a { display: inline-block; margin-right: 16px; font-weight: 600; font-size: 15px; }
+        .note { font-size: 13px; color: #333; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">&larr; Main menu</a>
+    </div>
+    <h1>Use Utilities</h1>
+    <p class="note">Web port of desktop <code>pages/utilities.py</code>. Destructive actions require a confirmation checkbox. Paths are easiest as full Windows paths (you can paste from File Explorer).</p>
+
+    <div class="file-line">
+        Active database: <strong>{{ db_path or "(none)" }}</strong>
+        &nbsp;|&nbsp; Records in memory: <strong>{{ entry_count }}</strong>
+        {% if config_path %}&nbsp;|&nbsp; Config: <strong>{{ config_path }}</strong>{% endif %}
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section>
+        <h2>Load another paper file</h2>
+        <p>Updates <code>database_path</code> in config.json and reloads the reader (same idea as the desktop “Load Another Paper File”).</p>
+        <form method="POST" action="{{ url_for('use_utilities') }}">
+            <input type="hidden" name="action" value="switch_db">
+            <div class="row">
+                <label for="database_path">Path to .cnt (or .bak)</label><br>
+                <input type="text" id="database_path" name="database_path" value="{{ db_path }}" placeholder="C:\path\to\file.cnt" autocomplete="off">
+            </div>
+            <button type="submit">Switch to this file</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Merge another paper file</h2>
+        <p>Append all records from a second <strong>.cnt</strong> file. New numbers continue after the current maximum (desktop merge behavior).</p>
+        <form method="POST" action="{{ url_for('use_utilities') }}">
+            <input type="hidden" name="action" value="merge">
+            <div class="row">
+                <label for="merge_path">Second .cnt file path</label><br>
+                <input type="text" id="merge_path" name="merge_path" placeholder="C:\other\papers.cnt" autocomplete="off">
+            </div>
+            <div class="row">
+                <label><input type="checkbox" name="confirm" value="1"> Confirm append into the active database file</label>
+            </div>
+            <button type="submit">Merge</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Clean current database</h2>
+        <p>Runs the same standardization as the desktop “Clean Current Database” (spacing, journal names, title case, etc.) and saves with the original file header preserved.</p>
+        <form method="POST" action="{{ url_for('use_utilities') }}">
+            <input type="hidden" name="action" value="clean">
+            <label><input type="checkbox" name="confirm" value="1"> Confirm clean and overwrite the active .cnt file</label><br>
+            <button type="submit">Clean database</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Save current as new paper file</h2>
+        <p>Writes all in-memory records to a new path, reusing the header from the active file when possible (otherwise a default header).</p>
+        <form method="POST" action="{{ url_for('use_utilities') }}">
+            <input type="hidden" name="action" value="save_as">
+            <div class="row">
+                <label for="dest_path">Destination path (.cnt)</label><br>
+                <input type="text" id="dest_path" name="dest_path" placeholder="C:\backup\copy.cnt" autocomplete="off">
+            </div>
+            <div class="row">
+                <label><input type="checkbox" name="confirm" value="1"> Confirm write (overwrites if the file exists)</label>
+            </div>
+            <button type="submit">Save copy</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Export full database</h2>
+        <p class="exports">
+            <a href="{{ url_for('utilities_export_bibtex') }}">Download BibTeX (.bib)</a>
+            <a href="{{ url_for('utilities_export_xlsx') }}">Download Excel (.xlsx)</a>
+        </p>
+    </section>
+
+    <section>
+        <h2>Import BibTeX into current database</h2>
+        <p>Parse a <code>.bib</code> file and either <strong>merge</strong> (new numbers after max) or <strong>replace</strong> all records (header preserved on replace).</p>
+        <form method="POST" action="{{ url_for('use_utilities') }}" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="import_bibtex">
+            <div class="row">
+                <label for="bib_file">BibTeX file</label><br>
+                <input type="file" id="bib_file" name="bib_file" accept=".bib,.txt">
+            </div>
+            <div class="row">
+                <label><input type="radio" name="bib_mode" value="merge" checked> Merge into current database</label><br>
+                <label><input type="radio" name="bib_mode" value="replace"> Replace current database</label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" name="backup" value="1" checked> Backup active .cnt first (timestamped folder next to the file)</label>
+            </div>
+            <button type="submit">Import</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Preferences (config.json)</h2>
+        <p>Defaults used by the desktop app for new papers and reports. One vita type code per line (e.g. <code>J</code>, <code>PA</code>, <code>B</code>).</p>
+        <form method="POST" action="{{ url_for('use_utilities') }}">
+            <input type="hidden" name="action" value="save_prefs">
+            <div class="row">
+                <label for="default_name">Default name when entering new papers</label><br>
+                <input type="text" id="default_name" name="default_name" value="{{ default_name }}" placeholder="McCarl, B.A." autocomplete="off">
+            </div>
+            <div class="row">
+                <label for="openai_api_key">OpenAI API key (optional)</label><br>
+                <input type="text" id="openai_api_key" name="openai_api_key" value="{{ openai_api_key }}" placeholder="sk-..." autocomplete="off">
+            </div>
+            <div class="row">
+                <label for="vita_codes">Default vita types (one code per line)</label><br>
+                <textarea id="vita_codes" name="vita_codes" rows="8" cols="40">{{ vita_codes_text }}</textarea>
+            </div>
+            <button type="submit">Save preferences</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Not on the web yet</h2>
+        <p class="note">Full multi-file backup (cnt + faculty + journal definition), merge-DB wizard UI, “Delete selected papers”, and ChatGPT test UI remain desktop-only for now.</p>
+    </section>
+</body>
+</html>

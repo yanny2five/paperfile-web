@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Journal categories (time period) - Paperfile</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
+        h1 { margin-top: 0; }
+        .nav { margin-bottom: 20px; font-size: 17px; }
+        form.filters { background: rgba(255,255,255,0.45); padding: 16px; border-radius: 8px; margin-bottom: 20px; max-width: 900px; }
+        form.filters label { display: inline-block; margin-right: 16px; font-weight: 700; }
+        form.filters input, form.filters select { font-size: 16px; padding: 6px 10px; margin-right: 20px; }
+        button[type="submit"] { font-size: 18px; padding: 10px 20px; margin-top: 12px; cursor: pointer; }
+        .table-wrap { overflow-x: auto; background: #fff; border: 1px solid #999; max-width: 100%; }
+        table { border-collapse: collapse; font-size: 15px; min-width: 600px; }
+        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: center; }
+        th:first-child, td:first-child { text-align: left; min-width: 200px; }
+        .target { font-size: 17px; margin-bottom: 12px; font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('generate_reports') }}">&larr; Generate Reports</a>
+        &nbsp;|&nbsp;
+        <a href="{{ url_for('dashboard') }}">Main menu</a>
+    </div>
+    <h1>Journal categories (time period)</h1>
+    <p class="target">Report for: {{ report_label }} — journal articles (J, JR) only; rows are major classes from the journal definition file.</p>
+
+    <form class="filters" method="GET" action="{{ url_for('reports_journal_categories_time') }}">
+        <input type="hidden" name="mode" value="{{ mode }}">
+        <label>First year <input type="number" name="y0" value="{{ y0 }}" style="width:90px;"></label>
+        <label>Last year <input type="number" name="y1" value="{{ y1 }}" style="width:90px;"></label>
+        <label>Increment <input type="number" name="inc" value="{{ inc }}" style="width:70px;" min="1"></label>
+        {% if mode == 'people' %}
+        <div style="margin-top:12px;">
+            <label for="who">Person / group</label>
+            <select name="who" id="who" style="min-width:320px; max-width:100%;">
+                {% for opt in who_options %}
+                <option value="{{ opt.value }}" {% if opt.value == who_selected %}selected{% endif %}>{{ opt.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+        <div><button type="submit">Update report</button></div>
+    </form>
+
+    {% if headers and rows %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p style="margin-top:16px;">
+        <a href="{{ export_url }}">Download tab-separated (.txt)</a>
+    </p>
+    {% else %}
+    <p>No data for these settings.</p>
+    {% endif %}
+</body>
+</html>

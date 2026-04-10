@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Paperfile - Main menu</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #a6caf0;
+            margin: 0;
+            padding: 32px 48px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 20px;
+            margin: 0 0 8px 0;
+            font-weight: bold;
+        }
+        .header .sub {
+            font-size: 18px;
+            margin: 4px 0;
+        }
+        .header .menu-title {
+            font-size: 23px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .file-line {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 28px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.45);
+            border-radius: 8px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        /* Matches desktop mainpage.py: two columns, same vertical order (y: 0.324, 0.431, 0.539, 0.647, 0.755) */
+        .grid {
+            display: grid;
+            grid-template-columns: 400px 400px;
+            gap: 18px 36px;
+            justify-content: center;
+            margin: 0 auto 28px;
+        }
+        .grid a {
+            display: block;
+            text-align: center;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #111;
+            background: #c8c8c8;
+            border: 2px solid rgba(0,0,0,0.12);
+            border-radius: 2px;
+            text-decoration: none;
+            box-sizing: border-box;
+            min-height: 50px;
+            line-height: 1.3;
+        }
+        .grid a:hover {
+            background: #d4d4d4;
+        }
+        .grid a.implemented {
+            background: #b8c8d8;
+        }
+        .grid a.implemented:hover {
+            background: #c4d4e4;
+        }
+        .exit-row {
+            text-align: center;
+            margin-top: 8px;
+        }
+        .exit-row a, .exit-row button {
+            display: inline-block;
+            min-width: 400px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #111;
+            background: #c8c8c8;
+            border: 2px solid rgba(0,0,0,0.12);
+            border-radius: 2px;
+            text-decoration: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .exit-row a:hover, .exit-row button:hover {
+            background: #d4d4d4;
+        }
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+            .exit-row a, .exit-row button { min-width: unset; width: 100%; max-width: 400px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Personal Bibliographical Database</h1>
+        <div class="sub">Dr. Bruce A. McCarl</div>
+        <div class="sub">Texas A&amp;M University</div>
+        <div class="menu-title">MAIN MENU</div>
+    </div>
+
+    <div class="file-line">
+        Current file: <strong>{{ db_path }}</strong>
+        &nbsp;|&nbsp; Total entries: <strong>{{ entry_count }}</strong>
+    </div>
+    <p style="text-align:center; font-size:14px; color:#333; max-width:920px; margin:0 auto 20px; line-height:1.5;">
+        <strong>Hosting:</strong> This app uses one shared database path from <code>config.json</code> on the server.
+        Everyone who uses the same deployment sees the same data unless you run separate instances or add authentication.
+        For a public read-only demo, set environment variable <code>PAPERFILE_READ_ONLY=1</code>.
+    </p>
+
+    <div class="grid">
+        <a class="implemented" href="{{ url_for('enter_papers') }}">Enter Papers</a>
+        <a class="implemented" href="{{ url_for('journals_and_people') }}">Journals and People</a>
+
+        <a class="implemented" href="{{ url_for('retrieve_papers') }}">Retrieve Papers</a>
+        <a class="implemented" href="{{ url_for('correct_papers') }}">Correct Papers</a>
+
+        <a class="implemented" href="{{ url_for('retrieve_numbers') }}">Retrieve Paper Numbers</a>
+        <a class="implemented" href="{{ url_for('edit_and_fix_entries') }}">Edit and Fix Entries</a>
+
+        <a class="implemented" href="{{ url_for('data_export_entry') }}">Data Export</a>
+        <a class="implemented" href="{{ url_for('check_numbers') }}">Check Numbers</a>
+
+        <a class="implemented" href="{{ url_for('generate_reports') }}">Generate Reports</a>
+        <a class="implemented" href="{{ url_for('use_utilities') }}">Use Utilities</a>
+    </div>
+
+    <div class="exit-row">
+        <p style="margin: 0 0 10px 0; font-size: 15px; color: #333;">Exit (web): close this browser tab when finished.</p>
+    </div>
+</body>
+</html>

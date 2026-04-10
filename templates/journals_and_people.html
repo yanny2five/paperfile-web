@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Journals and People - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
+        h1 { margin-top: 0; }
+        h2 { font-size: 20px; margin-top: 28px; }
+        .nav { margin-bottom: 16px; font-size: 16px; }
+        .meta { background: rgba(255,255,255,0.45); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; line-height: 1.5; max-width: 1100px; }
+        .meta code { font-size: 13px; }
+        .parity { background: rgba(255,255,255,0.35); padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; line-height: 1.5; max-width: 1100px; }
+        .flash { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; max-width: 1100px; font-size: 15px; }
+        .flash.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .flash.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .ro { background: #fff3cd; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; max-width: 1100px; font-size: 14px; }
+        .warn { background: #fff3cd; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; max-width: 1100px; font-size: 14px; }
+        table.data { border-collapse: collapse; width: 100%; max-width: 1100px; background: rgba(255,255,255,0.5); font-size: 14px; }
+        table.data th, table.data td { border: 1px solid #999; padding: 6px 8px; vertical-align: top; }
+        table.data th { background: rgba(0,0,0,0.06); text-align: left; }
+        table.data input[type="text"] { width: 100%; box-sizing: border-box; font-size: 14px; padding: 4px 6px; }
+        table.data input[type="checkbox"] { width: 18px; height: 18px; }
+        .btnrow { margin: 12px 0; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        button, .btnlink { font-size: 15px; padding: 8px 14px; cursor: pointer; }
+        a.btnlink { display: inline-block; background: #e9ecef; border: 1px solid #888; color: #111; text-decoration: none; border-radius: 4px; }
+        .scroll { max-height: 420px; overflow: auto; border: 1px solid #888; border-radius: 6px; }
+        .journal-scroll { max-height: 520px; overflow: auto; }
+        #journalFilter { font-size: 16px; padding: 8px 10px; width: min(480px, 100%); margin-bottom: 10px; }
+        .class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 16px; font-size: 14px; max-width: 1100px; margin-bottom: 12px; }
+        label.small { font-weight: 400; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">&larr; Main menu</a>
+    </div>
+    <h1>Journals and People</h1>
+
+    <div class="parity">
+        <strong>People</strong> are stored in the faculty file (<code>.cng</code>): one line per person, same <code>name::positions;;year;;citations;;…</code> layout the desktop uses.
+        Trailing fields after citations are preserved when you save from the web.
+        <strong>Journals</strong> use the journal definition file (<code>.cnj</code>): browse parsed entries here; replace the whole file only if you have a valid backup (upload creates a <code>.webbak_</code> copy of the previous file).
+    </div>
+
+    <div class="meta">
+        {% if cfg_path %}
+        Config: <code>{{ cfg_path }}</code><br>
+        {% else %}
+        <strong>No config.json found.</strong><br>
+        {% endif %}
+        Faculty file: <code>{{ faculty_path or "(not set)" }}</code><br>
+        Journal file: <code>{{ journal_path or "(not set)" }}</code>
+    </div>
+
+    {% if read_only %}
+    <div class="ro"><strong>Read-only mode</strong> — saving people or uploading a journal file is disabled.</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <h2 id="people">People (faculty .cng)</h2>
+    {% if faculty_path %}
+    <p class="small"><a class="btnlink" href="{{ url_for('journals_and_people_download', kind='faculty') }}">Download current faculty file</a></p>
+    <form method="post" action="{{ url_for('journals_and_people') }}">
+        <input type="hidden" name="action" value="save_faculty">
+        <div class="scroll">
+            <table class="data">
+                <thead>
+                    <tr>
+                        <th style="width:22%">Name</th>
+                        <th style="width:32%">Positions (comma-separated)</th>
+                        <th style="width:8%">Year</th>
+                        <th style="width:8%">Citations</th>
+                        <th style="width:8%">Remove</th>
+                    </tr>
+                </thead>
+                <tbody id="faculty_tbody">
+                    {% for row in faculty_rows %}
+                    {% set i = row.form_id %}
+                    <tr>
+                        <td><input type="text" name="f_name_{{ i }}" value="{{ row.name }}" autocomplete="off">
+                            <input type="hidden" name="f_tail_{{ i }}" value="{{ row.tail_quoted }}"></td>
+                        <td><input type="text" name="f_pos_{{ i }}" value="{{ row.positions_text }}" autocomplete="off"></td>
+                        <td><input type="text" name="f_year_{{ i }}" value="{{ row.year }}" autocomplete="off"></td>
+                        <td><input type="text" name="f_cit_{{ i }}" value="{{ row.citations }}" autocomplete="off"></td>
+                        <td style="text-align:center;"><label class="small"><input type="checkbox" name="f_del_{{ i }}" value="1"> delete</label></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="btnrow">
+            <button type="button" id="add_faculty_btn" {% if read_only %}disabled{% endif %}>Add person</button>
+            <button type="submit" {% if read_only %}disabled{% endif %}>Save people</button>
+        </div>
+    </form>
+    {% else %}
+    <p>Set <code>faculty_file</code> in config.json to enable editing.</p>
+    {% endif %}
+
+    <h2 id="journals">Journals (.cnj)</h2>
+    {% if journal_path %}
+    <p>
+        <a class="btnlink" href="{{ url_for('journals_and_people_download', kind='journal') }}">Download current journal file</a>
+        &nbsp;— {{ journal_count }} parsed journal line(s).
+    </p>
+    {% if journal_class_rows %}
+    <p><strong>Major classes</strong> ({{ journal_class_rows|length }}):</p>
+    <div class="class-grid">
+        {% for major, pair in journal_class_rows %}
+        <span><strong>{{ major }}</strong> — order {{ pair[0] }}, norm {{ pair[1] }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% if journal_warn %}
+    <div class="warn">{{ journal_warn }}</div>
+    {% endif %}
+    <input type="text" id="journalFilter" placeholder="Filter by journal name, class, rank, SJR…" autocomplete="off">
+    <div class="journal-scroll">
+        <table class="data" id="journal_table">
+            <thead>
+                <tr>
+                    <th>Journal name</th>
+                    <th>Class</th>
+                    <th>Rank</th>
+                    <th>SJR %</th>
+                    <th>Q</th>
+                    <th>ABDC</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for jr in journal_rows %}
+                <tr data-search="{{ (jr.name ~ ' ' ~ jr.class ~ ' ' ~ jr.rank ~ ' ' ~ jr.pct ~ ' ' ~ jr.quartile ~ ' ' ~ jr.abdc)|lower }}">
+                    <td>{{ jr.name }}</td>
+                    <td>{{ jr.class }}</td>
+                    <td>{{ jr.rank }}</td>
+                    <td>{{ jr.pct }}</td>
+                    <td>{{ jr.quartile }}</td>
+                    <td>{{ jr.abdc }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <h3 style="font-size:17px; margin-top:20px;">Replace journal file</h3>
+    <form method="post" action="{{ url_for('journals_and_people') }}" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="upload_cnj">
+        <p class="small">Upload a complete <code>.cnj</code> from the desktop app or a backup. Previous file is copied to <code>journal.cnj.webbak_…</code> in the same folder.</p>
+        <input type="file" name="cnj_file" accept=".cnj,text/plain" {% if read_only %}disabled{% endif %}>
+        <button type="submit" {% if read_only %}disabled{% endif %} style="margin-left:8px;">Upload and replace</button>
+    </form>
+    {% else %}
+    <p>Set <code>journal_definition_file</code> in config.json to browse or replace journals.</p>
+    {% endif %}
+
+    <script>
+        let nextFacultyId = {{ faculty_next_id|default(0) }};
+
+        function addFacultyRow() {
+            const tbody = document.getElementById('faculty_tbody');
+            if (!tbody) return;
+            const id = nextFacultyId++;
+            const tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td><input type="text" name="f_name_' + id + '" autocomplete="off">' +
+                '<input type="hidden" name="f_tail_' + id + '" value=""></td>' +
+                '<td><input type="text" name="f_pos_' + id + '" autocomplete="off"></td>' +
+                '<td><input type="text" name="f_year_' + id + '" autocomplete="off"></td>' +
+                '<td><input type="text" name="f_cit_' + id + '" autocomplete="off"></td>' +
+                '<td style="text-align:center;"><label class="small"><input type="checkbox" name="f_del_' + id + '" value="1"> delete</label></td>';
+            tbody.appendChild(tr);
+        }
+
+        const addBtn = document.getElementById('add_faculty_btn');
+        if (addBtn) addBtn.addEventListener('click', addFacultyRow);
+
+        const jf = document.getElementById('journalFilter');
+        if (jf) {
+            jf.addEventListener('input', function() {
+                const q = this.value.trim().toLowerCase();
+                document.querySelectorAll('#journal_table tbody tr').forEach(function(tr) {
+                    const hay = (tr.getAttribute('data-search') || '');
+                    tr.style.display = (!q || hay.indexOf(q) !== -1) ? '' : 'none';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

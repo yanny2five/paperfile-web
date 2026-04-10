@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Correct elements - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
+        h1 { margin-top: 0; font-size: 22px; }
+        .nav { margin-bottom: 16px; font-size: 16px; }
+        form.filters { margin-bottom: 16px; background: rgba(255,255,255,0.45); padding: 14px; border-radius: 8px; max-width: 960px; }
+        form.filters label { font-weight: 600; margin-right: 8px; }
+        select, input[type="text"] { font-size: 15px; padding: 6px 10px; }
+        button { font-size: 15px; padding: 8px 16px; margin-top: 10px; cursor: pointer; }
+        .table-wrap { overflow: auto; background: #fff; border: 1px solid #999; max-width: 960px; max-height: 65vh; }
+        table { border-collapse: collapse; font-size: 14px; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; vertical-align: top; }
+        th { background: #eee; position: sticky; top: 0; }
+        td.num { white-space: nowrap; width: 72px; }
+        .meta { font-size: 14px; color: #333; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="{{ url_for('edit_and_fix_entries') }}">&larr; Edit and Fix Entries</a>
+        &nbsp;|&nbsp;
+        <a href="{{ url_for('dashboard') }}">Main menu</a>
+    </div>
+    <h1>Correct elements</h1>
+    <p class="meta">Desktop parity: filter list only (<code>correctelements.refresh_table</code>). {{ db_path }}</p>
+
+    <form class="filters" method="GET" action="{{ url_for('edit_and_fix_correct_elements') }}">
+        <div>
+            <label for="field">Field</label>
+            <select name="field" id="field">
+                {% for f in allowed_fields %}
+                <option value="{{ f }}" {% if f == field %}selected{% endif %}>{{ f }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="margin-top:10px;">
+            <label for="q">Contains (blank = all)</label><br>
+            <input type="text" name="q" id="q" value="{{ q }}" size="50" placeholder="substring, case-insensitive">
+        </div>
+        <button type="submit">Refresh</button>
+    </form>
+
+    <p class="meta"><strong>{{ row_count }}</strong> row(s) — column: <strong>{{ field_label }}</strong></p>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th class="num">Number</th><th>Value</th></tr></thead>
+            <tbody>
+                {% for num, val in rows %}
+                <tr><td class="num">{{ num }}</td><td>{{ val }}</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

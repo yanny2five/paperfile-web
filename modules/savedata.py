@@ -1,6 +1,5 @@
 import os
 import datetime
-from tkinter import messagebox
 
 
 def build_record_block(data):
@@ -92,6 +91,8 @@ def save_to_cnt(file_path, data):
     """
     try:
         if not data.get("authors", "").strip() and not data.get("title", "").strip():
+            from tkinter import messagebox
+
             messagebox.showwarning("Invalid Data", "Authors and Title cannot both be empty.")
             return
 
@@ -102,21 +103,25 @@ def save_to_cnt(file_path, data):
         print(f"[INFO] Appended 1 record to {file_path}")
 
     except Exception as e:
+        from tkinter import messagebox
+
         messagebox.showerror("Error", f"An error occurred while saving data: {str(e)}")
 
 
-
-def overwrite_record_in_cnt(file_path, data, show_message=True):
+def overwrite_record_in_cnt(file_path, data, gui_messages=True):
     """
     Overwrite a specific record (by number) in the .cnt file.
-    Record blocks produced by build_record_block() include a trailing separator,
-    so we strip that off here and re-insert separators uniformly when joining.
+    gui_messages: when False (web), raise on error / missing record instead of Tk dialogs.
     """
     try:
         target_number = str(data.get("number", "")).strip()
         if not target_number:
-            if show_message:
+            if gui_messages:
+                from tkinter import messagebox
+
                 messagebox.showerror("Error", "No valid number provided for overwrite.")
+            else:
+                raise ValueError("No valid number provided for overwrite.")
             return
 
         header, records = split_header_and_records(file_path)
@@ -143,8 +148,12 @@ def overwrite_record_in_cnt(file_path, data, show_message=True):
                 updated_records.append("\n".join(lines))
 
         if not replaced:
-            if show_message:
+            if gui_messages:
+                from tkinter import messagebox
+
                 messagebox.showwarning("Warning", f"Record number {target_number} not found.")
+            else:
+                raise FileNotFoundError(f"Record number {target_number} not found in file.")
             return
 
         # Uniformly join with one separator between records and one at the end
@@ -155,18 +164,25 @@ def overwrite_record_in_cnt(file_path, data, show_message=True):
             f.write(final_content)
 
         print(f"[INFO] Record {target_number} updated.")
-        if show_message:
+        if gui_messages:
+            from tkinter import messagebox
+
             messagebox.showinfo("Success", f"Record {target_number} updated.")
 
     except Exception as e:
-        if show_message:
+        if gui_messages:
+            from tkinter import messagebox
+
             messagebox.showerror("Error", f"Failed to overwrite record: {str(e)}")
+        else:
+            raise
 
 
 
-def overwrite_all_records_in_cnt(file_path, data_list):
+def overwrite_all_records_in_cnt(file_path, data_list, gui_messages=True):
     """
     Overwrite the entire .cnt file with a list of new records, preserving the original header.
+    If gui_messages is False (e.g. web), raise on failure instead of Tk message boxes.
     """
     try:
         header, _ = split_header_and_records(file_path)
@@ -179,9 +195,15 @@ def overwrite_all_records_in_cnt(file_path, data_list):
         print(f"[INFO] All records overwritten in {file_path}")
 
     except Exception as e:
-        messagebox.showerror("Error", f"Failed to overwrite all records: {str(e)}")
+        if gui_messages:
+            from tkinter import messagebox
 
-def append_records_to_cnt(file_path, data_list):
+            messagebox.showerror("Error", f"Failed to overwrite all records: {str(e)}")
+        else:
+            raise
+
+
+def append_records_to_cnt(file_path, data_list, gui_messages=True):
     """
     Append a list of new records to the end of a .cnt file (preserve original content).
     """
@@ -192,6 +214,11 @@ def append_records_to_cnt(file_path, data_list):
                 f.write(block)
         print(f"[INFO] {len(data_list)} new records appended to {file_path}")
     except Exception as e:
-        messagebox.showerror("Error", f"Failed to append records: {str(e)}")
+        if gui_messages:
+            from tkinter import messagebox
+
+            messagebox.showerror("Error", f"Failed to append records: {str(e)}")
+        else:
+            raise
 
 

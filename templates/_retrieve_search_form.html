@@ -1,0 +1,243 @@
+<form id="main-search-form" method="POST" action="{{ search_form_action }}">
+        <div class="main-grid">
+            <div>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="search_type" value="number"
+                            {% if search_type_display == 'number' %}checked{% endif %}>
+                        Select by Number
+                    </label>
+
+                    <label>
+                        <input type="radio" name="search_type" value="multiple_numbers"
+                            {% if search_type_display == 'multiple_numbers' %}checked{% endif %}>
+                        Select multiple papers by Number
+                    </label>
+
+                    <label>
+                        <input type="radio" name="search_type" value="vita_type"
+                            {% if search_type_display == 'vita_type' %}checked{% endif %}>
+                        Select by Vita Type
+                    </label>
+
+                    <label>
+                        <input type="radio" name="search_type" value="year"
+                            {% if search_type_display == 'year' %}checked{% endif %}>
+                        Select by Year
+                    </label>
+
+                    <label>
+                        <input type="radio" name="search_type" value="author_title"
+                            {% if search_type_display == 'author_title' %}checked{% endif %}>
+                        Select by Author and/or Title
+                    </label>
+
+                    <label>
+                        <input type="radio" name="search_type" value="keyword"
+                            {% if search_type_display == 'keyword' %}checked{% endif %}>
+                        Select by keyword
+                    </label>
+
+                    <label>
+                        <input type="radio" name="search_type" value="journal_book"
+                            {% if search_type_display == 'journal_book' %}checked{% endif %}>
+                        Select by book or journal title
+                    </label>
+
+                    <label>
+                        <input type="radio" name="search_type" value="any_field"
+                            {% if search_type_display == 'any_field' %}checked{% endif %}>
+                        Select for text in any field
+                    </label>
+                </div>
+
+                <div class="sort-group">
+                    <div class="sort-group-title">Sort by</div>
+
+                    <label>
+                        <input type="radio" name="sort_by" value="number"
+                            {% if request.form.get('sort_by') == 'number' %}checked{% endif %}>
+                        number
+                    </label>
+
+                    <label>
+                        <input type="radio" name="sort_by" value="author"
+                            {% if request.form.get('sort_by') == 'author' %}checked{% endif %}>
+                        author
+                    </label>
+
+                    <label>
+                        <input type="radio" name="sort_by" value="title"
+                            {% if request.form.get('sort_by', 'title') == 'title' %}checked{% endif %}>
+                        title
+                    </label>
+
+                    <label>
+                        <input type="radio" name="sort_by" value="vita_type"
+                            {% if request.form.get('sort_by') == 'vita_type' %}checked{% endif %}>
+                        vita type
+                    </label>
+
+                    <label>
+                        <input type="radio" name="sort_by" value="journal_book"
+                            {% if request.form.get('sort_by') == 'journal_book' %}checked{% endif %}>
+                        journal/book
+                    </label>
+                </div>
+
+                <div class="checkbox-group" style="margin-top:24px;">
+                    <label>
+                        <input type="checkbox" name="italics"
+                            {% if request.form.get('italics') %}checked{% endif %}>
+                        Put titles in Italics
+                    </label>
+
+                    <label>
+                        <input type="checkbox" name="omit_number"
+                            {% if request.form.get('omit_number') %}checked{% endif %}>
+                        Omit number
+                    </label>
+
+                    <label>
+                        <input type="checkbox" name="omit_keywords"
+                            {% if request.form.get('omit_keywords') %}checked{% endif %}>
+                        Omit keywords
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <div class="field-panel">
+                    <div class="field-row mode-author_title mode-any_field active-field-target">
+                        <label for="query">Text to find</label>
+                        <input type="text" id="query" name="query_author_title" value="{{ request.form.get('query_author_title', '') }}">
+                    </div>
+
+                    <div class="field-row mode-number active-field-target">
+                        <label for="number_query">Paper number</label>
+                        <input type="text" id="number_query" name="query_number" value="{{ request.form.get('query_number', '') }}" placeholder="e.g., 10">
+                    </div>
+
+                    <div class="field-row mode-multiple_numbers active-field-target">
+                        <label for="multiple_numbers_query">Numbers (comma separated)</label>
+                        <input type="text" id="multiple_numbers_query" name="query_multiple_numbers" placeholder="74, 312, 708" value="{{ request.form.get('query_multiple_numbers', '') }}">
+                    </div>
+
+                    <div class="field-row mode-vita_type active-field-target">
+                        <label for="vita_query">Text to find in Vita Type</label>
+                        <input type="text" id="vita_query" name="query_vita_type" value="{{ request.form.get('query_vita_type', '') }}">
+                    </div>
+
+                    <div class="field-row mode-year active-field-target">
+                        <label for="year_query">Year</label>
+                        <input type="text" id="year_query" name="query_year" value="{{ request.form.get('query_year', '') }}">
+                    </div>
+
+                    <div class="field-row mode-keyword active-field-target">
+                        <label for="keyword_query">Text to find in Keyword field</label>
+                        <input type="text" id="keyword_query" name="query_keyword" value="{{ request.form.get('query_keyword', '') }}">
+                    </div>
+
+                    <div class="field-row mode-journal_book active-field-target">
+                        <label for="journal_query">Text to find in Journal/Book field</label>
+                        <input type="text" id="journal_query" name="query_journal_book" value="{{ request.form.get('query_journal_book', '') }}">
+                    </div>
+
+                    <div class="field-row mode-author_title active-field-target">
+                        <label for="author_query">Text to find in Author field</label>
+                        <input type="text" id="author_query" name="author_query" value="{{ request.form.get('author_query', request.form.get('query', '')) }}">
+                    </div>
+
+                    <div class="field-row mode-author_title active-field-target">
+                        <label for="title_query">Text to find in Title field</label>
+                        <input type="text" id="title_query" name="title_query" value="{{ request.form.get('title_query', '') }}">
+                    </div>
+
+                    <div class="field-row mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
+                        <label for="year_min">First Year wanted</label>
+                        <input class="small-input" type="number" id="year_min" name="year_min" value="{{ request.form.get('year_min', '') }}">
+                    </div>
+
+                    <div class="field-row mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
+                        <label for="year_max">Last Year wanted</label>
+                        <input class="small-input" type="number" id="year_max" name="year_max" value="{{ request.form.get('year_max', '') }}">
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="restrict_vita_types" name="restrict_vita_types"
+                            {% if request.form.get('restrict_vita_types') %}checked{% endif %}>
+                        Restrict vita types
+                    </label>
+                </div>
+
+                <div id="vita-box" class="vita-box {% if request.form.get('restrict_vita_types') %}show{% endif %}">
+                    <label><input type="checkbox" name="vita_types" value="journal"
+                        {% if 'journal' in request.form.getlist('vita_types') %}checked{% endif %}> Journal</label>
+
+                    <label><input type="checkbox" name="vita_types" value="book"
+                        {% if 'book' in request.form.getlist('vita_types') %}checked{% endif %}> Book</label>
+
+                    <label><input type="checkbox" name="vita_types" value="conference"
+                        {% if 'conference' in request.form.getlist('vita_types') %}checked{% endif %}> Conference</label>
+
+                    <label><input type="checkbox" name="vita_types" value="report"
+                        {% if 'report' in request.form.getlist('vita_types') %}checked{% endif %}> Report</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <button type="submit">{{ search_submit_label }}</button>
+            <button type="button" onclick="window.location='{{ done_href }}'">Done</button>
+        </div>
+    </form>
+
+    <script>
+        function updateVisibleFields() {
+            const selected = document.querySelector('input[name="search_type"]:checked');
+            const mode = selected ? selected.value : 'author_title';
+
+            console.log('Switching to mode:', mode);
+
+            document.querySelectorAll('.field-row').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            document.querySelectorAll('.mode-' + mode).forEach(el => {
+                el.classList.add('active');
+                console.log('Activated field:', el.querySelector('input')?.id || 'unknown');
+            });
+        }
+
+        function updateVitaBox() {
+            const box = document.getElementById('vita-box');
+            const checked = document.getElementById('restrict_vita_types').checked;
+
+            if (checked) {
+                box.classList.add('show');
+            } else {
+                box.classList.remove('show');
+            }
+        }
+
+        document.getElementById('main-search-form').addEventListener('submit', function(e) {
+            const selectedSearchType = document.querySelector('input[name="search_type"]:checked');
+            if (!selectedSearchType) {
+                document.querySelector('input[name="search_type"][value="author_title"]').checked = true;
+            }
+
+            const searchType = document.querySelector('input[name="search_type"]:checked').value;
+            console.log('Form submitting with search_type:', searchType);
+        });
+
+        document.querySelectorAll('input[name="search_type"]').forEach(radio => {
+            radio.addEventListener('change', updateVisibleFields);
+        });
+
+        document.getElementById('restrict_vita_types').addEventListener('change', updateVitaBox);
+
+        updateVisibleFields();
+        updateVitaBox();
+    </script>
