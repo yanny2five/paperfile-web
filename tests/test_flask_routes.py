@@ -56,6 +56,7 @@ class TestFlaskAppIsolated:
         r = self.client.get("/")
         assert r.status_code == 200
         assert b"MAIN MENU" in r.data or b"Main menu" in r.data
+        assert b"pf-ui-classic" in r.data
 
     def test_enter_papers_get(self):
         r = self.client.get("/enter-papers")

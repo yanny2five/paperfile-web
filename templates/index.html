@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
+    <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Paperfile Search</title>
     {% include '_paperfile_search_styles.html' %}
 </head>
 <body>
+
     <p style="margin: 0 0 12px 0;"><a href="{{ url_for('dashboard') }}" style="font-size: 18px;">Main menu</a></p>
     <h1>Paperfile</h1>
 
@@ -14,9 +17,9 @@
     </div>
 
     {% if ui_mode == 'retrieve' %}
-        <p class="mode-hint">Search and view results. Use <strong>Export</strong> below to download everything from the last retrieve (BibTeX or Excel).</p>
+        <p class="mode-hint">Search, then use <strong>Export</strong> below for BibTeX or Excel from the last retrieve.</p>
     {% else %}
-        <p class="mode-hint">Run <strong>Retrieve</strong> as usual, tick papers in <strong>Results</strong>, then <strong>Add selected to export list</strong>. Run another retrieve to add more. Export only the list on the right (or clear it).</p>
+        <p class="mode-hint">Select papers in <strong>Results</strong>, add them to the export list, then export from the right-hand panel.</p>
     {% endif %}
 
     {% set search_form_action = url_for('retrieve') %}
@@ -60,7 +63,6 @@
                             <button type="button" id="pick-none">Unselect all</button>
                             <button type="submit" class="btn-add-export">Add selected to export list</button>
                         </div>
-                        <p class="muted" style="margin: 0 0 12px 0; font-size: 17px;">Check the papers you want, then click <strong>Add selected to export list</strong> (same control is also at the bottom if you scroll).</p>
                         {% for row in result_rows %}
                             <div class="result-row">
                                 <input type="checkbox" name="pick" value="{{ row.num }}" id="pick-{{ row.num }}">

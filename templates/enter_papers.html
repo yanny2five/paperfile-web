@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Enter Papers — Paperfile</title>
     <style>
@@ -191,7 +192,11 @@
     </style>
 </head>
 <body>
-    <div class="wrap">
+
+
+    
+
+<div class="wrap">
         <div class="top-nav">
             <a href="{{ url_for('dashboard') }}">Main menu</a>
             &nbsp;·&nbsp;
@@ -211,7 +216,7 @@
         </div>
 
         {% if read_only %}
-        <div class="ro-banner"><strong>Read-only mode</strong> — saving is disabled (set <code>PAPERFILE_READ_ONLY</code> off to allow writes).</div>
+        <div class="ro-banner"><strong>Read-only mode</strong> — saving new records is disabled.</div>
         {% endif %}
 
         {% with messages = get_flashed_messages(with_categories=true) %}

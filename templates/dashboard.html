@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Paperfile - Main menu</title>
     <style>
         body {
@@ -39,7 +40,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-        /* Matches desktop mainpage.py: two columns, same vertical order (y: 0.324, 0.431, 0.539, 0.647, 0.755) */
         .grid {
             display: grid;
             grid-template-columns: 400px 400px;
@@ -102,6 +102,7 @@
     </style>
 </head>
 <body>
+
     <div class="header">
         <h1>Personal Bibliographical Database</h1>
         <div class="sub">Dr. Bruce A. McCarl</div>
@@ -113,11 +114,6 @@
         Current file: <strong>{{ db_path }}</strong>
         &nbsp;|&nbsp; Total entries: <strong>{{ entry_count }}</strong>
     </div>
-    <p style="text-align:center; font-size:14px; color:#333; max-width:920px; margin:0 auto 20px; line-height:1.5;">
-        <strong>Hosting:</strong> This app uses one shared database path from <code>config.json</code> on the server.
-        Everyone who uses the same deployment sees the same data unless you run separate instances or add authentication.
-        For a public read-only demo, set environment variable <code>PAPERFILE_READ_ONLY=1</code>.
-    </p>
 
     <div class="grid">
         <a class="implemented" href="{{ url_for('enter_papers') }}">Enter Papers</a>
@@ -137,7 +133,7 @@
     </div>
 
     <div class="exit-row">
-        <p style="margin: 0 0 10px 0; font-size: 15px; color: #333;">Exit (web): close this browser tab when finished.</p>
+        <p style="margin: 0 0 10px 0; font-size: 15px; color: #333;">Close this tab when finished.</p>
     </div>
 </body>
 </html>

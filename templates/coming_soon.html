@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>{{ title }} - Paperfile</title>
     <style>
         body {
@@ -23,8 +24,11 @@
     </style>
 </head>
 <body>
-    <h1>{{ title }}</h1>
-    <p class="meta">Desktop reference: <code>{{ desktop_module }}</code></p>
+
+
+    
+
+<h1>{{ title }}</h1>
     <div class="body">
         {% for line in description_lines %}
             <p>{{ line }}</p>

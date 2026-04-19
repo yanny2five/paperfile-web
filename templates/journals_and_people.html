@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Journals and People - Paperfile</title>
     <style>
         body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
@@ -32,15 +33,18 @@
     </style>
 </head>
 <body>
-    <div class="nav">
+
+
+    
+
+<div class="nav">
         <a href="{{ url_for('dashboard') }}">&larr; Main menu</a>
     </div>
     <h1>Journals and People</h1>
 
     <div class="parity">
-        <strong>People</strong> are stored in the faculty file (<code>.cng</code>): one line per person, same <code>name::positions;;year;;citations;;…</code> layout the desktop uses.
-        Trailing fields after citations are preserved when you save from the web.
-        <strong>Journals</strong> use the journal definition file (<code>.cnj</code>): browse parsed entries here; replace the whole file only if you have a valid backup (upload creates a <code>.webbak_</code> copy of the previous file).
+        <strong>People</strong> are stored in the faculty file (<code>.cng</code>), one line per person. Extra fields after citations are preserved when you save.
+        <strong>Journals</strong> use the journal definition file (<code>.cnj</code>). Replacing the file creates a dated backup beside it.
     </div>
 
     <div class="meta">
@@ -153,7 +157,7 @@
     <h3 style="font-size:17px; margin-top:20px;">Replace journal file</h3>
     <form method="post" action="{{ url_for('journals_and_people') }}" enctype="multipart/form-data">
         <input type="hidden" name="action" value="upload_cnj">
-        <p class="small">Upload a complete <code>.cnj</code> from the desktop app or a backup. Previous file is copied to <code>journal.cnj.webbak_…</code> in the same folder.</p>
+        <p class="small">Upload a complete <code>.cnj</code>. A dated backup of the current file is saved in the same folder.</p>
         <input type="file" name="cnj_file" accept=".cnj,text/plain" {% if read_only %}disabled{% endif %}>
         <button type="submit" {% if read_only %}disabled{% endif %} style="margin-left:8px;">Upload and replace</button>
     </form>

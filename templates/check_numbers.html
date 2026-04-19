@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Check Numbers - Paperfile</title>
     <style>
         body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 28px 36px; }
@@ -25,7 +26,11 @@
     </style>
 </head>
 <body>
-    <div class="nav">
+
+
+    
+
+<div class="nav">
         <a href="{{ url_for('dashboard') }}">&larr; Main menu</a>
     </div>
     <h1>Check Numbers</h1>
@@ -74,7 +79,7 @@
 
     <section>
         <h2>Re-number</h2>
-        <p style="font-size:15px; margin-top:0;">Assigns new consecutive numbers to every record whose <em>current</em> number falls between <strong>Start</strong> and <strong>Highest</strong> (inclusive), in file order. If any of those records is number 0, numbering starts at 1 (same as the desktop app).</p>
+        <p style="font-size:15px; margin-top:0;">Assigns new consecutive numbers to every record whose <em>current</em> number is between <strong>Start</strong> and <strong>Highest</strong> (inclusive), in file order. If any of those records is number 0, numbering starts at 1.</p>
         <form class="renum" method="POST" action="{{ url_for('check_numbers') }}">
             <input type="hidden" name="action" value="renumber_save">
             <label>Start at paper number

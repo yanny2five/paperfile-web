@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Correct elements - Paperfile</title>
     <style>
         body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
@@ -20,13 +21,17 @@
     </style>
 </head>
 <body>
-    <div class="nav">
+
+
+    
+
+<div class="nav">
         <a href="{{ url_for('edit_and_fix_entries') }}">&larr; Edit and Fix Entries</a>
         &nbsp;|&nbsp;
         <a href="{{ url_for('dashboard') }}">Main menu</a>
     </div>
     <h1>Correct elements</h1>
-    <p class="meta">Desktop parity: filter list only (<code>correctelements.refresh_table</code>). {{ db_path }}</p>
+    <p class="meta">Database: <code>{{ db_path }}</code></p>
 
     <form class="filters" method="GET" action="{{ url_for('edit_and_fix_correct_elements') }}">
         <div>

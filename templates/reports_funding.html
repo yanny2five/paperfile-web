@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Funding proposals - Paperfile</title>
     <style>
         body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
@@ -19,7 +20,11 @@
     </style>
 </head>
 <body>
-    <div class="nav">
+
+
+    
+
+<div class="nav">
         <a href="{{ url_for('generate_reports') }}">&larr; Generate Reports</a>
         &nbsp;|&nbsp;
         <a href="{{ url_for('dashboard') }}">Main menu</a>

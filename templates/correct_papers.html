@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Correct Papers - Paperfile</title>
     {% include '_paperfile_search_styles.html' %}
     <style>
@@ -16,16 +17,19 @@
     </style>
 </head>
 <body>
-    <p style="margin: 0 0 12px 0;"><a href="{{ url_for('dashboard') }}" style="font-size: 18px;">Main menu</a></p>
+
+
+    
+
+<p style="margin: 0 0 12px 0;"><a href="{{ url_for('dashboard') }}" style="font-size: 18px;">Main menu</a></p>
     <h1>Correct Papers</h1>
 
     <div class="parity">
-        Search matches <strong>Retrieve Papers</strong> (same form). Each hit has <strong>Edit</strong> to change fields and save back to the <code>.cnt</code> using the same
-        <code>overwrite_record_in_cnt</code> / <code>build_record_block</code> path as the desktop editor (not the full EditPaper window).
+        Search like <strong>Retrieve Papers</strong>, then use <strong>Edit</strong> on a result to change fields and save.
     </div>
 
     {% if read_only %}
-    <div class="ro"><strong>Read-only mode</strong> — you can search and open the form, but Save is disabled (<code>PAPERFILE_READ_ONLY</code>).</div>
+    <div class="ro"><strong>Read-only mode</strong> — search and open records are allowed; saving changes is disabled.</div>
     {% endif %}
 
     {% with messages = get_flashed_messages(with_categories=true) %}

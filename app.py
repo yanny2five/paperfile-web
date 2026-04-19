@@ -89,6 +89,48 @@ from modules.utilities_web import (
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key-change-for-production")
 
+# --- Google Sites / iframe embedding (HTTPS only for Secure / SameSite=None) ---
+# Set PAPERFILE_FRAME_ANCESTORS to a space-separated list, e.g.
+#   https://sites.google.com https://*.google.com
+# Or use the shortcut PAPERFILE_EMBED_GOOGLE_SITES=1 for a default Google-friendly list.
+def _frame_ancestors_value() -> str | None:
+    raw = os.environ.get("PAPERFILE_FRAME_ANCESTORS", "").strip()
+    if raw:
+        return raw
+    if os.environ.get("PAPERFILE_EMBED_GOOGLE_SITES", "").lower() in ("1", "true", "yes"):
+        return "https://sites.google.com https://*.google.com"
+    return None
+
+
+_ss = os.environ.get("PAPERFILE_SESSION_SAMESITE", "").strip().lower()
+if _ss == "none":
+    app.config["SESSION_COOKIE_SAMESITE"] = "None"
+    app.config["SESSION_COOKIE_SECURE"] = True
+elif _ss == "lax":
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+elif _ss == "strict":
+    app.config["SESSION_COOKIE_SAMESITE"] = "Strict"
+
+if os.environ.get("PAPERFILE_SECURE_COOKIES", "").lower() in ("1", "true", "yes"):
+    app.config["SESSION_COOKIE_SECURE"] = True
+
+
+@app.after_request
+def _embed_headers(response):
+    ancestors = _frame_ancestors_value()
+    if ancestors:
+        # Allow this app to be framed by the listed origins (e.g. Google Sites embed).
+        response.headers["Content-Security-Policy"] = (
+            "frame-ancestors 'self' " + ancestors
+        )
+    return response
+
+
+@app.context_processor
+def inject_ui_theme():
+    return {"ui_theme": "classic"}
+
+
 reader = CNTReader()
 PAPERS = reader.get_data()
 

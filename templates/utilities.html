@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pf-ui-{{ ui_theme }}">
 <head>
     <meta charset="utf-8">
+    {% include '_ui_head.html' %}
     <title>Utilities - Paperfile</title>
     <style>
         body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 28px 36px; }
@@ -21,15 +22,17 @@
         .flash.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
         .flash.warning { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
         .exports a { display: inline-block; margin-right: 16px; font-weight: 600; font-size: 15px; }
-        .note { font-size: 13px; color: #333; }
     </style>
 </head>
 <body>
-    <div class="nav">
+
+
+    
+
+<div class="nav">
         <a href="{{ url_for('dashboard') }}">&larr; Main menu</a>
     </div>
     <h1>Use Utilities</h1>
-    <p class="note">Web port of desktop <code>pages/utilities.py</code>. Destructive actions require a confirmation checkbox. Paths are easiest as full Windows paths (you can paste from File Explorer).</p>
 
     <div class="file-line">
         Active database: <strong>{{ db_path or "(none)" }}</strong>
@@ -47,7 +50,7 @@
 
     <section>
         <h2>Load another paper file</h2>
-        <p>Updates <code>database_path</code> in config.json and reloads the reader (same idea as the desktop “Load Another Paper File”).</p>
+        <p>Sets the active database path in configuration and reloads data.</p>
         <form method="POST" action="{{ url_for('use_utilities') }}">
             <input type="hidden" name="action" value="switch_db">
             <div class="row">
@@ -60,7 +63,7 @@
 
     <section>
         <h2>Merge another paper file</h2>
-        <p>Append all records from a second <strong>.cnt</strong> file. New numbers continue after the current maximum (desktop merge behavior).</p>
+        <p>Append all records from a second <strong>.cnt</strong> file. New numbers continue after the current maximum.</p>
         <form method="POST" action="{{ url_for('use_utilities') }}">
             <input type="hidden" name="action" value="merge">
             <div class="row">
@@ -76,7 +79,7 @@
 
     <section>
         <h2>Clean current database</h2>
-        <p>Runs the same standardization as the desktop “Clean Current Database” (spacing, journal names, title case, etc.) and saves with the original file header preserved.</p>
+        <p>Standardizes spacing, journal names, title case, and related fields; saves with the original file header preserved.</p>
         <form method="POST" action="{{ url_for('use_utilities') }}">
             <input type="hidden" name="action" value="clean">
             <label><input type="checkbox" name="confirm" value="1"> Confirm clean and overwrite the active .cnt file</label><br>
@@ -130,7 +133,7 @@
 
     <section>
         <h2>Preferences (config.json)</h2>
-        <p>Defaults used by the desktop app for new papers and reports. One vita type code per line (e.g. <code>J</code>, <code>PA</code>, <code>B</code>).</p>
+        <p>Defaults for new papers and reports. One vita type code per line (e.g. <code>J</code>, <code>PA</code>, <code>B</code>).</p>
         <form method="POST" action="{{ url_for('use_utilities') }}">
             <input type="hidden" name="action" value="save_prefs">
             <div class="row">
@@ -149,9 +152,5 @@
         </form>
     </section>
 
-    <section>
-        <h2>Not on the web yet</h2>
-        <p class="note">Full multi-file backup (cnt + faculty + journal definition), merge-DB wizard UI, “Delete selected papers”, and ChatGPT test UI remain desktop-only for now.</p>
-    </section>
 </body>
 </html>
