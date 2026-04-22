@@ -19,7 +19,7 @@ from tests.isolated_app_env import write_deep_isolated_env
 @pytest.mark.parametrize(
     "path,ok_codes,follow",
     [
-        ("/", (200,), False),
+        ("/", (301, 302, 303, 307, 308), False),
         ("/enter-papers", (200,), False),
         ("/retrieve-papers", (200,), True),
         ("/data-export", (200,), True),

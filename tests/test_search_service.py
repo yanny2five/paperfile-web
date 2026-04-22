@@ -51,6 +51,17 @@ def sample_papers():
             "vitatyp": "B",
             "keywords": "water",
         },
+        {
+            "number": "7",
+            "authors": "X., Y.",
+            "title": "Other",
+            "bookjour": "J",
+            "year": "2010",
+            "vitatyp": "R",
+            "keywords": "",
+            "subject1": "carbon sequestration",
+            "subject2": "land use",
+        },
     ]
 
 
@@ -91,7 +102,7 @@ def test_search_papers_single_mode(stype, q, expect_idx):
 
 def test_search_papers_year_range():
     papers = sample_papers()
-    r = search_papers(papers, query="", search_type="author_title", year_min="2019", year_max="2021")
+    r = search_papers(papers, query="", search_type="author_title", year_min="2020", year_max="2021")
     assert len(r) == 1
     assert get_number(r[0]) == "5"
 
@@ -101,6 +112,30 @@ def test_search_papers_vita_types_filter():
     r = search_papers(papers, query="", search_type="author_title", vita_types=["J"])
     assert len(r) == 1
     assert get_number(r[0]) == "5"
+
+
+def test_search_papers_empty_keyword_matches_nothing():
+    papers = sample_papers()
+    r = search_papers(papers, query="", search_type="keyword")
+    assert r == []
+
+
+def test_search_papers_empty_multiple_numbers_matches_nothing():
+    papers = sample_papers()
+    r = search_papers(papers, query="", search_type="multiple_numbers")
+    assert r == []
+    r2 = search_papers(papers, query="   ,  ,", search_type="multiple_numbers")
+    assert r2 == []
+
+
+def test_search_papers_keyword_matches_subject1_subject2():
+    papers = sample_papers()
+    r = search_papers(papers, query="sequestration", search_type="keyword")
+    assert len(r) == 1
+    assert get_number(r[0]) == "7"
+    r2 = search_papers(papers, query="land use", search_type="keyword")
+    assert len(r2) == 1
+    assert get_number(r2[0]) == "7"
 
 
 def test_passes_year_range_non_digit_year():

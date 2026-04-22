@@ -20,8 +20,8 @@ How to decide "same":
     should be one row with that paper number).
 
 Known differences vs desktop SearchData (tkinter):
-  - Keyword: web searches the "keywords" field; desktop fuzzy_search_by_keyword
-    uses subject1/subject2. Counts match only if your data aligns.
+  - Keyword: web matches the same subject1/subject2 blob as desktop, and also
+    any explicit "keywords" column on the record.
   - Partial paper number: web has no partial mode; this script prints desktop
     counts in section 1b using SearchData for comparison only.
   - Vita "Restrict" checkboxes: web sends labels (journal, book, ...); record

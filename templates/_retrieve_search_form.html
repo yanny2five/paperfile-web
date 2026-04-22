@@ -3,18 +3,6 @@
             <div>
                 <div class="radio-group">
                     <label>
-                        <input type="radio" name="search_type" value="number"
-                            {% if search_type_display == 'number' %}checked{% endif %}>
-                        Select by Number
-                    </label>
-
-                    <label>
-                        <input type="radio" name="search_type" value="multiple_numbers"
-                            {% if search_type_display == 'multiple_numbers' %}checked{% endif %}>
-                        Select multiple papers by Number
-                    </label>
-
-                    <label>
                         <input type="radio" name="search_type" value="vita_type"
                             {% if search_type_display == 'vita_type' %}checked{% endif %}>
                         Select by Vita Type
@@ -53,12 +41,6 @@
 
                 <div class="sort-group">
                     <div class="sort-group-title">Sort by</div>
-
-                    <label>
-                        <input type="radio" name="sort_by" value="number"
-                            {% if request.form.get('sort_by') == 'number' %}checked{% endif %}>
-                        number
-                    </label>
 
                     <label>
                         <input type="radio" name="sort_by" value="author"
@@ -113,16 +95,6 @@
                         <input type="text" id="query" name="query_author_title" value="{{ request.form.get('query_author_title', '') }}">
                     </div>
 
-                    <div class="field-row mode-number active-field-target">
-                        <label for="number_query">Paper number</label>
-                        <input type="text" id="number_query" name="query_number" value="{{ request.form.get('query_number', '') }}" placeholder="e.g., 10">
-                    </div>
-
-                    <div class="field-row mode-multiple_numbers active-field-target">
-                        <label for="multiple_numbers_query">Numbers (comma separated)</label>
-                        <input type="text" id="multiple_numbers_query" name="query_multiple_numbers" placeholder="74, 312, 708" value="{{ request.form.get('query_multiple_numbers', '') }}">
-                    </div>
-
                     <div class="field-row mode-vita_type active-field-target">
                         <label for="vita_query">Text to find in Vita Type</label>
                         <input type="text" id="vita_query" name="query_vita_type" value="{{ request.form.get('query_vita_type', '') }}">
@@ -134,7 +106,7 @@
                     </div>
 
                     <div class="field-row mode-keyword active-field-target">
-                        <label for="keyword_query">Text to find in Keyword field</label>
+                        <label for="keyword_query">Keywords and subjects (Subject1 / Subject2)</label>
                         <input type="text" id="keyword_query" name="query_keyword" value="{{ request.form.get('query_keyword', '') }}">
                     </div>
 

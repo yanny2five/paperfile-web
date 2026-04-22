@@ -208,6 +208,16 @@ def _run_retrieve_form_search(papers, form):
     return results, formatted_results, display_opts, log_info
 
 
+def _search_type_display_from_request():
+    """Which search mode radio to show; map removed legacy modes to author/title."""
+    st = request.form.get("search_type")
+    if request.method == "GET" and request.args.get("search_type"):
+        st = request.args.get("search_type")
+    if st in ("number", "multiple_numbers"):
+        st = "author_title"
+    return st or "author_title"
+
+
 def _paper_by_number(papers, token):
     if not str(token or "").strip():
         return None
@@ -367,6 +377,12 @@ def staging_clear():
 
 
 @app.route("/")
+def home():
+    """Landing page: go straight to retrieve (full main menu stays at /dashboard)."""
+    return redirect(url_for("retrieve"))
+
+
+@app.route("/dashboard")
 def dashboard():
     db_path = getattr(reader, "file_path", None) or "(no database path)"
     return render_template(
@@ -394,10 +410,10 @@ def data_export_entry():
 
 @app.route("/retrieve-numbers")
 def retrieve_numbers():
-    """Desktop: Retrieve Paper Numbers -> same screen, number mode."""
+    """Legacy URL; number-only retrieve UI removed — same as Retrieve Papers."""
     session["ui_mode"] = "retrieve"
     session.modified = True
-    return redirect(url_for("retrieve", search_type="number"))
+    return redirect(url_for("retrieve"))
 
 
 @app.route("/enter-papers", methods=["GET", "POST"])
@@ -616,11 +632,7 @@ def correct_papers():
         {"num": str(get_number(p)).strip(), "html": h}
         for p, h in zip(results, formatted_results)
     ]
-    search_type_display = request.form.get("search_type")
-    if request.method == "GET" and request.args.get("search_type"):
-        search_type_display = request.args.get("search_type")
-    if not search_type_display:
-        search_type_display = "author_title"
+    search_type_display = _search_type_display_from_request()
 
     return render_template(
         "correct_papers.html",
@@ -1751,11 +1763,7 @@ def retrieve():
         for p, h in zip(results, formatted_results)
     ]
 
-    search_type_display = request.form.get("search_type")
-    if request.method == "GET" and request.args.get("search_type"):
-        search_type_display = request.args.get("search_type")
-    if not search_type_display:
-        search_type_display = "author_title"
+    search_type_display = _search_type_display_from_request()
 
     return render_template(
         "index.html",

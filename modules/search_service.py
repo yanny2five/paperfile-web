@@ -31,6 +31,16 @@ def get_keywords(paper):
     return get_field(paper, "keywords", "keyword", "key words")
 
 
+def get_keyword_search_blob(paper):
+    """Haystack for keyword mode: keywords column plus subject1/subject2 (desktop parity)."""
+    parts = (
+        get_keywords(paper),
+        get_field(paper, "subject1", "subject 1"),
+        get_field(paper, "subject2", "subject 2"),
+    )
+    return normalize(" ".join(str(p) for p in parts))
+
+
 def get_year(paper):
     return get_field(paper, "year", "publication year")
 
@@ -44,7 +54,8 @@ def get_vita_type(paper):
 
 
 def passes_search_type(paper, query, search_type):
-    # 🔥 NEW: special handling for author/title split queries
+    # Author + title (dict): each nonempty term must appear in its field (AND).
+    # Both empty => True so search_papers can still narrow by year / vita only.
     if search_type == "author_title" and isinstance(query, dict):
         author_q = normalize(query.get("author", ""))
         title_q = normalize(query.get("title", ""))
@@ -57,7 +68,8 @@ def passes_search_type(paper, query, search_type):
 
         return author_ok and title_ok
 
-    # 🔥 fallback: author_title search with string query (search both author and title)
+    # Author + title (legacy string): substring in author OR title; empty => True
+    # for year-only / vita-only searches through search_papers.
     if search_type == "author_title" and not isinstance(query, dict):
         q = normalize(query)
         if not q:
@@ -66,14 +78,20 @@ def passes_search_type(paper, query, search_type):
         title_text = normalize(get_title(paper))
         return q in author_text or q in title_text
 
-    # 🔥 fallback for normal single query modes
-    q = normalize(query)
+    # Comma-separated numbers; empty / whitespace-only list matches nothing.
+    if search_type == "multiple_numbers":
+        nums = {x.strip().lower() for x in str(query or "").split(",") if x.strip()}
+        if not nums:
+            return False
+        return normalize(get_number(paper)) in nums
 
+    # Empty query must not match every record for these modes.
+    q = normalize(query)
     if not q:
-        return True
+        return False
 
     if search_type == "keyword":
-        return q in normalize(get_keywords(paper))
+        return q in get_keyword_search_blob(paper)
 
     if search_type == "journal_book":
         return q in normalize(get_journal(paper))
@@ -84,17 +102,13 @@ def passes_search_type(paper, query, search_type):
     if search_type == "number":
         return q == normalize(get_number(paper))
 
-    if search_type == "multiple_numbers":
-        nums = {x.strip().lower() for x in str(query).split(",") if x.strip()}
-        return normalize(get_number(paper)) in nums
-
     if search_type == "vita_type":
         return q in normalize(get_vita_type(paper))
 
     if search_type == "any_field":
         return any(q in normalize(v) for v in paper.values())
 
-    return True
+    return False
 
 
 def passes_year_range(paper, year_min, year_max):
@@ -129,7 +143,6 @@ def passes_vita_type(paper, vita_types):
     paper_type = normalize(get_vita_type(paper))
     selected = {normalize(v) for v in vita_types}
 
-    # 🔥 exact match
     return paper_type in selected
 
 

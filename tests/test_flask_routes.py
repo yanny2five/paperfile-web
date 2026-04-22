@@ -52,8 +52,13 @@ class TestFlaskAppIsolated:
         sys.modules.pop("app", None)
         shutil.rmtree(cls._root, ignore_errors=True)
 
+    def test_home_redirects_to_retrieve(self):
+        r = self.client.get("/", follow_redirects=False)
+        assert r.status_code in (301, 302, 303, 307, 308)
+        assert "/retrieve" in (r.headers.get("Location") or "")
+
     def test_dashboard_ok(self):
-        r = self.client.get("/")
+        r = self.client.get("/dashboard")
         assert r.status_code == 200
         assert b"MAIN MENU" in r.data or b"Main menu" in r.data
         assert b"pf-ui-classic" in r.data
