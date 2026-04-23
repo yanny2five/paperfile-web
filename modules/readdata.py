@@ -3,6 +3,15 @@ import sys
 import json
 
 
+def _database_path_from_environment() -> str | None:
+    """Optional override for hosted / second-instance deploys (Render, etc.)."""
+    raw = (os.environ.get("PAPERFILE_DATABASE_PATH") or "").strip().strip('"')
+    if not raw:
+        return None
+    p = os.path.abspath(os.path.normpath(raw))
+    return p if os.path.isfile(p) else None
+
+
 def get_config_path():
     """
     Locate config.json with a consistent strategy:
@@ -107,8 +116,14 @@ class CNTReader:
     def _load_database_path_from_config(self):
         """
         Load database path from config.json with robust encoding and path resolution.
+        If PAPERFILE_DATABASE_PATH is set to an existing file, it wins over config.json
+        (useful for a second Render service or a filtered .cnt without editing config).
         """
         try:
+            env_db = _database_path_from_environment()
+            if env_db:
+                return env_db
+
             cfg = get_config_path()
             if not cfg:
                 print("[CNTReader] config.json not found (get_config_path returned None)")

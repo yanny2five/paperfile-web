@@ -16,6 +16,7 @@ from flask import (
     session,
     url_for,
 )
+from markupsafe import escape
 
 from modules.exportdata import generate_bibtex_string, generate_xlsx_bytes
 from modules.extract_names import get_all_formatted_names
@@ -85,6 +86,11 @@ from modules.utilities_web import (
     write_config_value,
     write_cnt_new_file,
 )
+from modules.filter_cnt_by_vita import (
+    DEFAULT_PUBLIC_DROP_VITATYPES,
+    filter_out_vita_types,
+    vita_types_reference_lines,
+)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key-change-for-production")
@@ -129,6 +135,12 @@ def _embed_headers(response):
 @app.context_processor
 def inject_ui_theme():
     return {"ui_theme": "classic"}
+
+
+@app.context_processor
+def inject_instance_label():
+    """Optional banner (e.g. Personal vs Department) from PAPERFILE_APP_LABEL."""
+    return {"paperfile_instance_label": (os.environ.get("PAPERFILE_APP_LABEL") or "").strip()}
 
 
 reader = CNTReader()
@@ -1710,6 +1722,81 @@ def utilities_export_xlsx():
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         as_attachment=True,
         download_name="paperfile_database.xlsx",
+    )
+
+
+@app.route("/vita-types")
+def vita_types_plain():
+    """All vitatyp codes + names (for email / review)."""
+    body = "\n".join(vita_types_reference_lines()) + "\n"
+    return Response(
+        body,
+        mimetype="text/plain; charset=utf-8",
+        headers={"Content-Disposition": 'attachment; filename="paperfile-vita-types.txt"'},
+    )
+
+
+@app.route("/vita-types.html")
+def vita_types_html():
+    rows = []
+    for line in vita_types_reference_lines():
+        code, _, name = line.partition("\t")
+        rows.append(f"<tr><td><code>{escape(code)}</code></td><td>{escape(name)}</td></tr>")
+    drop = ", ".join(sorted(DEFAULT_PUBLIC_DROP_VITATYPES))
+    html = f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Vita types - Paperfile</title>
+<style>
+body {{ font-family: "Segoe UI", Arial, sans-serif; margin: 24px; background: #e8f0fa; }}
+table {{ border-collapse: collapse; background: #fff; }}
+th, td {{ border: 1px solid #ccc; padding: 8px 12px; text-align: left; }}
+th {{ background: #f0f4f8; }}
+.note {{ max-width: 720px; margin-bottom: 16px; }}
+</style></head>
+<body>
+<h1>Vita type codes</h1>
+<p class="note">Default types removed when building a <strong>public .cnt</strong> for the web: <code>{escape(drop)}</code>.
+Use <a href="{url_for('vita_types_plain')}">plain text download</a> to copy into email.</p>
+<table><thead><tr><th>Code</th><th>Name</th></tr></thead><tbody>{"".join(rows)}</tbody></table>
+<p style="margin-top:20px"><a href="{url_for('dashboard')}">Main menu</a></p>
+</body></html>"""
+    return Response(html, mimetype="text/html; charset=utf-8")
+
+
+@app.route("/utilities/export/public-cnt")
+def utilities_export_public_cnt():
+    """
+    Download a .cnt with vita types JD, OI, PR, F removed (read-only safe).
+    Optional query: drop=JD,OI,PR,F
+    """
+    reader.reload_data()
+    papers = reader.get_data() or []
+    raw = (request.args.get("drop") or "").strip()
+    if raw:
+        drop_codes = {x.strip().upper() for x in raw.split(",") if x.strip()}
+    else:
+        drop_codes = set(DEFAULT_PUBLIC_DROP_VITATYPES)
+    kept, _stats = filter_out_vita_types(papers, drop_codes)
+    src = getattr(reader, "file_path", None)
+    fd, tmp = tempfile.mkstemp(suffix=".cnt", prefix="paperfile_public_")
+    os.close(fd)
+    try:
+        write_cnt_new_file(tmp, kept, src if (src and os.path.isfile(src)) else None)
+        with open(tmp, "rb") as f:
+            data = f.read()
+    finally:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+    base = "paperfile_public"
+    if src:
+        stem = os.path.splitext(os.path.basename(src))[0]
+        base = f"{stem}_public"
+    return Response(
+        data,
+        mimetype="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{base}.cnt"'},
     )
 
 

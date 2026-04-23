@@ -112,6 +112,21 @@
     </section>
 
     <section>
+        <h2>Public / web copy of database (.cnt)</h2>
+        <p>Download a <strong>.cnt</strong> with vita types removed that you do not want on the public site:
+        <code>JD</code> (journal drafts), <code>OI</code> (inactive draft), <code>PR</code> (funding proposals), <code>F</code> (contract reports).
+        Keep your full file on your computer; upload this filtered file to Render (or set <code>PAPERFILE_DATABASE_PATH</code> to it).</p>
+        <p class="exports">
+            <a href="{{ url_for('utilities_export_public_cnt') }}">Download filtered .cnt</a>
+            <span style="margin:0 8px">|</span>
+            <a href="{{ url_for('vita_types_html') }}">Vita types (table)</a>
+            <a href="{{ url_for('vita_types_plain') }}">Vita types (plain text)</a>
+        </p>
+        <p style="font-size:14px">Local CLI (same filter): <code>python tools/export_public_cnt.py --input full.cnt --output public.cnt</code>
+        &nbsp;·&nbsp; <code>python tools/export_public_cnt.py --list-types</code></p>
+    </section>
+
+    <section>
         <h2>Import BibTeX into current database</h2>
         <p>Parse a <code>.bib</code> file and either <strong>merge</strong> (new numbers after max) or <strong>replace</strong> all records (header preserved on replace).</p>
         <form method="POST" action="{{ url_for('use_utilities') }}" enctype="multipart/form-data">

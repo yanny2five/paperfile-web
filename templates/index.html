@@ -10,6 +10,9 @@
 
     <p style="margin: 0 0 12px 0;"><a href="{{ url_for('dashboard') }}" style="font-size: 18px;">Main menu</a></p>
     <h1>Paperfile</h1>
+    {% if paperfile_instance_label %}
+    <p class="instance-banner">{{ paperfile_instance_label }}</p>
+    {% endif %}
 
     <div class="mode-bar">
         <a href="/mode/retrieve" class="{% if ui_mode == 'retrieve' %}active{% endif %}">Retrieve papers</a>
