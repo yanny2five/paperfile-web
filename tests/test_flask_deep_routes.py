@@ -149,6 +149,41 @@ def test_flask_retrieve_post_search():
         shutil.rmtree(root, ignore_errors=True)
 
 
+def test_flask_retrieve_post_author_title_respects_text_to_find():
+    """query_author_title must be used when author/title boxes are empty (author OR title)."""
+    root = tempfile.mkdtemp(prefix="pf_ret2_")
+    p = None
+    try:
+        cfg_path, _ = write_deep_isolated_env(root)
+        p = mock.patch("modules.readdata.get_config_path", lambda: cfg_path)
+        p.start()
+        sys.modules.pop("app", None)
+        import importlib
+
+        import app as app_module
+
+        importlib.reload(app_module)
+        client = app_module.app.test_client()
+        r = client.post(
+            "/retrieve",
+            data={
+                "search_type": "author_title",
+                "query_author_title": "McCarl",
+                "author_query": "",
+                "title_query": "",
+                "sort_by": "title",
+            },
+            follow_redirects=True,
+        )
+        assert r.status_code == 200
+        assert b"McCarl" in r.data
+    finally:
+        if p:
+            p.stop()
+        sys.modules.pop("app", None)
+        shutil.rmtree(root, ignore_errors=True)
+
+
 def test_flask_export_bibtex_from_retrieve():
     root = tempfile.mkdtemp(prefix="pf_ebib_")
     p = None

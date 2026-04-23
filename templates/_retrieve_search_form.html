@@ -91,8 +91,8 @@
             <div>
                 <div class="field-panel">
                     <div class="field-row mode-author_title mode-any_field active-field-target">
-                        <label for="query">Text to find</label>
-                        <input type="text" id="query" name="query_author_title" value="{{ request.form.get('query_author_title', '') }}">
+                        <label for="query">Text to find (author or title)</label>
+                        <input type="text" id="query" name="query_author_title" value="{{ request.form.get('query_author_title', '') }}" placeholder="Author OR title; or leave blank and use the two fields below (AND)">
                     </div>
 
                     <div class="field-row mode-vita_type active-field-target">

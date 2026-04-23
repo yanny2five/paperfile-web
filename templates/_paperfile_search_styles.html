@@ -3,20 +3,30 @@
             font-family: Arial, sans-serif;
             background: #b8d3f0;
             margin: 0;
-            padding: 28px 40px;
+            padding: clamp(12px, 2.5vw, 28px) clamp(10px, 3vw, 40px);
+            box-sizing: border-box;
+            max-width: 100%;
+            overflow-x: hidden;
         }
 
         h1 {
             margin-top: 0;
             margin-bottom: 24px;
-            font-size: 44px;
+            font-size: clamp(26px, 5vw, 44px);
         }
 
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 48px;
+            gap: clamp(16px, 3vw, 48px);
             align-items: start;
+            max-width: 100%;
+        }
+
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         .radio-group label,
@@ -50,10 +60,11 @@
 
         .field-row {
             display: none;
-            grid-template-columns: 380px 300px;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
             align-items: center;
-            gap: 20px;
+            gap: 12px 20px;
             margin-bottom: 14px;
+            max-width: 100%;
         }
 
         .field-row.active {
@@ -173,9 +184,9 @@
         }
 
         .mode-hint {
-            font-size: 18px;
+            font-size: clamp(15px, 2.2vw, 18px);
             margin-bottom: 16px;
-            max-width: 900px;
+            max-width: min(100%, 1200px);
             line-height: 1.45;
         }
 

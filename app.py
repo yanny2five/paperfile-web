@@ -157,10 +157,17 @@ def _run_retrieve_form_search(papers, form):
     omit_number = "omit_number" in form
     omit_keywords = "omit_keywords" in form
     if search_type == "author_title":
-        query = {
-            "author": form.get("author_query", ""),
-            "title": form.get("title_query", ""),
-        }
+        author = (form.get("author_query") or "").strip()
+        title = (form.get("title_query") or "").strip()
+        combined = (form.get("query_author_title") or "").strip()
+        if author or title:
+            query = {"author": author, "title": title}
+        elif combined:
+            # "Text to find" box (query_author_title): same as desktop single-line
+            # search — substring in author OR title (search_service author_title string).
+            query = combined
+        else:
+            query = {"author": "", "title": ""}
     else:
         query_field_map = {
             "number": "query_number",
