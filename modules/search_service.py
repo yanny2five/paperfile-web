@@ -1,3 +1,10 @@
+from __future__ import annotations
+
+from typing import Sequence
+
+from modules.report_group_output import VITA_TYPE_NAMES
+
+
 def normalize(value):
     return str(value or "").strip().lower()
 
@@ -53,6 +60,63 @@ def get_vita_type(paper):
     return get_field(paper, "vitatyp", "vita_type", "vita type", "type")
 
 
+# Web retrieve form sends restrict checkboxes value=journal|book|conference|report (not J/B/...).
+# Map those buckets to vitatyp codes so passes_vita_type matches the desktop "include these codes" behavior.
+_WEB_RESTRICT_BUCKETS: dict[str, frozenset[str]] = {
+    "journal": frozenset({"J", "JR", "JD", "PA", "OI"}),
+    "book": frozenset({"B", "BC"}),
+    "conference": frozenset({"P", "U", "SP", "IP", "PS"}),
+    "report": frozenset(
+        {
+            "SB",
+            "F",
+            "DP",
+            "CP",
+            "SM",
+            "PR",
+            "BR",
+            "EC",
+            "OP",
+            "PO",
+            "N",
+            "SV",
+            "CN",
+            "TH",
+            "TS",
+            "O",
+            "MS",
+            "WS",
+            "CD",
+        }
+    ),
+}
+
+
+def expand_restrict_vita_types(vita_types: Sequence[str] | None) -> set[str] | None:
+    """
+    Turn form tokens (journal/book/...) and raw vitatyp codes into a set of normalized
+    codes for comparison with normalize(get_vita_type(paper)).
+    Returns None if there is no restriction.
+    """
+    if not vita_types:
+        return None
+    allowed: set[str] = set()
+    for t in vita_types:
+        key = normalize(str(t))
+        if not key:
+            continue
+        if key in _WEB_RESTRICT_BUCKETS:
+            for code in _WEB_RESTRICT_BUCKETS[key]:
+                allowed.add(normalize(code))
+            continue
+        up = str(t).strip().upper()
+        if up in VITA_TYPE_NAMES:
+            allowed.add(normalize(up))
+    if not allowed:
+        return set()
+    return allowed
+
+
 def passes_search_type(paper, query, search_type):
     # Author + title (dict): each nonempty term must appear in its field (AND).
     # Both empty => True so search_papers can still narrow by year / vita only.
@@ -103,7 +167,10 @@ def passes_search_type(paper, query, search_type):
         return q == normalize(get_number(paper))
 
     if search_type == "vita_type":
-        return q in normalize(get_vita_type(paper))
+        raw = str(get_vita_type(paper) or "").strip()
+        code_key = raw.upper() if raw else ""
+        label = VITA_TYPE_NAMES.get(code_key, "")
+        return q in normalize(raw) or (bool(label) and q in normalize(label))
 
     if search_type == "any_field":
         return any(q in normalize(v) for v in paper.values())
@@ -140,10 +207,14 @@ def passes_vita_type(paper, vita_types):
     if not vita_types:
         return True
 
-    paper_type = normalize(get_vita_type(paper))
-    selected = {normalize(v) for v in vita_types}
+    allowed = expand_restrict_vita_types(vita_types)
+    if allowed is None:
+        return True
+    if not allowed:
+        return False
 
-    return paper_type in selected
+    paper_type = normalize(get_vita_type(paper))
+    return paper_type in allowed
 
 
 def search_papers(

@@ -145,17 +145,18 @@
                 </div>
 
                 <div id="vita-box" class="vita-box {% if request.form.get('restrict_vita_types') %}show{% endif %}">
+                    <p class="vita-box-hint" style="margin:0 0 8px 0;font-size:15px;">Include records whose vita code falls in these groups (same idea as desktop checkboxes):</p>
                     <label><input type="checkbox" name="vita_types" value="journal"
-                        {% if 'journal' in request.form.getlist('vita_types') %}checked{% endif %}> Journal</label>
+                        {% if 'journal' in request.form.getlist('vita_types') %}checked{% endif %}> Journal (J, JR, JD, PA, OI)</label>
 
                     <label><input type="checkbox" name="vita_types" value="book"
-                        {% if 'book' in request.form.getlist('vita_types') %}checked{% endif %}> Book</label>
+                        {% if 'book' in request.form.getlist('vita_types') %}checked{% endif %}> Book (B, BC)</label>
 
                     <label><input type="checkbox" name="vita_types" value="conference"
-                        {% if 'conference' in request.form.getlist('vita_types') %}checked{% endif %}> Conference</label>
+                        {% if 'conference' in request.form.getlist('vita_types') %}checked{% endif %}> Conference / proceedings (P, U, SP, IP, PS)</label>
 
                     <label><input type="checkbox" name="vita_types" value="report"
-                        {% if 'report' in request.form.getlist('vita_types') %}checked{% endif %}> Report</label>
+                        {% if 'report' in request.form.getlist('vita_types') %}checked{% endif %}> Reports &amp; misc. (SB, PR, F, DP, …)</label>
                 </div>
             </div>
         </div>

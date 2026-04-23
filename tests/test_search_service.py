@@ -153,3 +153,28 @@ def test_sort_results_title():
 
 def test_passes_vita_type_empty_list():
     assert passes_vita_type({"vitatyp": "J"}, []) is True
+
+
+def test_passes_vita_type_web_journal_bucket():
+    """Restrict checkbox value 'journal' must match J (and related codes)."""
+    assert passes_vita_type({"vitatyp": "J"}, ["journal"]) is True
+    assert passes_vita_type({"vitatyp": "B"}, ["journal"]) is False
+    assert passes_vita_type({"vitatyp": "B"}, ["book"]) is True
+
+
+def test_search_papers_restrict_vita_journal():
+    papers = sample_papers()
+    r = search_papers(
+        papers,
+        query={"author": "", "title": ""},
+        search_type="author_title",
+        vita_types=["journal"],
+    )
+    assert all(get_vita_type(p).upper() in {"J", "JR", "JD", "PA", "OI"} for p in r)
+
+
+def test_passes_search_type_vita_type_by_name():
+    p = {"vitatyp": "PR"}
+    assert passes_search_type(p, "funding", "vita_type") is True
+    assert passes_search_type(p, "pr", "vita_type") is True
+    assert passes_search_type(p, "book", "vita_type") is False
