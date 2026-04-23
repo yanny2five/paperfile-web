@@ -137,8 +137,13 @@
         }
 
         h2 {
-            font-size: 34px;
+            font-size: clamp(22px, 4.5vw, 34px);
             margin-bottom: 18px;
+        }
+
+        #main-search-form {
+            width: 100%;
+            max-width: 100%;
         }
 
         .result {
@@ -147,12 +152,12 @@
             border-radius: 8px;
             padding: 14px 16px;
             margin-bottom: 12px;
-            font-size: 18px;
+            font-size: clamp(15px, 2.4vw, 18px);
             line-height: 1.5;
         }
 
         .muted {
-            font-size: 18px;
+            font-size: clamp(15px, 2.4vw, 18px);
         }
 
         .mode-bar {
@@ -250,5 +255,34 @@
         .btn-add-export {
             font-weight: 700;
             border-width: 2px;
+        }
+
+        /* Narrow windows / embedded Sites: less wasted margin, slightly larger readable type */
+        @media (max-width: 600px) {
+            .sort-group {
+                margin-left: 8px;
+            }
+
+            .vita-box {
+                margin-left: 8px;
+            }
+
+            .mode-bar a {
+                font-size: clamp(15px, 3.8vw, 19px);
+                padding: 10px 14px;
+            }
+
+            .button-row button {
+                display: block;
+                width: 100%;
+                max-width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+                box-sizing: border-box;
+            }
+
+            .panel-actions button {
+                font-size: clamp(14px, 3.2vw, 17px);
+            }
         }
     </style>
