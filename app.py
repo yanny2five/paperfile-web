@@ -248,15 +248,23 @@ def _paper_by_number(papers, token):
 
 
 def _vita_type_dropdown_pairs():
+    """
+    Vita types for web enter/edit dropdowns. Excludes types Bruce asked not to host
+    on the public web (same set as public .cnt export); existing records may still
+    show those codes via _vita_pairs_for_paper.
+    """
     out = []
     seen = set()
     for code in VITATYPE_ORDER:
+        if code in DEFAULT_PUBLIC_DROP_VITATYPES:
+            continue
         if code in VITA_TYPE_NAMES:
             out.append((code, VITA_TYPE_NAMES[code]))
             seen.add(code)
     for code in sorted(VITA_TYPE_NAMES.keys()):
-        if code not in seen:
-            out.append((code, VITA_TYPE_NAMES[code]))
+        if code in seen or code in DEFAULT_PUBLIC_DROP_VITATYPES:
+            continue
+        out.append((code, VITA_TYPE_NAMES[code]))
     return out
 
 
@@ -1082,8 +1090,11 @@ def reports_group_output():
         scope = "whole"
 
     pref = load_vitatype_preference()
+    pref = [c for c in pref if c not in DEFAULT_PUBLIC_DROP_VITATYPES]
     vita_options = []
     for code in VITATYPE_ORDER:
+        if code in DEFAULT_PUBLIC_DROP_VITATYPES:
+            continue
         if code in VITA_TYPE_NAMES:
             vita_options.append(
                 {
@@ -1758,6 +1769,7 @@ th {{ background: #f0f4f8; }}
 <p class="note">Default types removed when building a <strong>public .cnt</strong> for the web: <code>{escape(drop)}</code>.
 Use <a href="{url_for('vita_types_plain')}">plain text download</a> to copy into email.</p>
 <table><thead><tr><th>Code</th><th>Name</th></tr></thead><tbody>{"".join(rows)}</tbody></table>
+<p class="note"><strong>Web app:</strong> types <code>JD</code>, <code>OI</code>, <code>PR</code>, <code>F</code> are omitted from enter/edit dropdowns and vita report checkboxes (Ke / McCarl public copy policy). They still appear here for reference; existing records keep their code until changed.</p>
 <p style="margin-top:20px"><a href="{url_for('dashboard')}">Main menu</a></p>
 </body></html>"""
     return Response(html, mimetype="text/html; charset=utf-8")
