@@ -102,7 +102,7 @@ def _frame_ancestors_value() -> str | None:
     return None
 
 
-_ss = os.environ.get("PAPERFILE_SESSION_SAMESITE", "").strip().lower()
+_ss = (os.environ.get("PAPERFILE_SESSION_SAMESITE") or "none").strip().lower()
 if _ss == "none":
     app.config["SESSION_COOKIE_SAMESITE"] = "None"
     app.config["SESSION_COOKIE_SECURE"] = True

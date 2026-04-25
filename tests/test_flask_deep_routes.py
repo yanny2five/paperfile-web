@@ -6,6 +6,7 @@ Uses a fresh temp tree and patched ``get_config_path`` — never your real ``con
 
 from __future__ import annotations
 
+import os
 import shutil
 import sys
 import tempfile
@@ -316,6 +317,37 @@ def test_flask_correct_papers_edit_redirect_without_num():
         r = client.get("/correct-papers/edit", follow_redirects=False)
         assert r.status_code in (302, 303, 307, 308)
     finally:
+        if p:
+            p.stop()
+        sys.modules.pop("app", None)
+        shutil.rmtree(root, ignore_errors=True)
+
+
+def test_flask_default_session_cookie_is_iframe_safe():
+    root = tempfile.mkdtemp(prefix="pf_cookie_")
+    p = None
+    env_patch = None
+    try:
+        cfg_path, _ = write_deep_isolated_env(root)
+        p = mock.patch("modules.readdata.get_config_path", lambda: cfg_path)
+        p.start()
+        env_patch = mock.patch.dict(
+            os.environ,
+            {"PAPERFILE_SESSION_SAMESITE": "", "PAPERFILE_SECURE_COOKIES": ""},
+            clear=False,
+        )
+        env_patch.start()
+        sys.modules.pop("app", None)
+        import importlib
+
+        import app as app_module
+
+        importlib.reload(app_module)
+        assert app_module.app.config.get("SESSION_COOKIE_SAMESITE") == "None"
+        assert app_module.app.config.get("SESSION_COOKIE_SECURE") is True
+    finally:
+        if env_patch:
+            env_patch.stop()
         if p:
             p.stop()
         sys.modules.pop("app", None)
