@@ -1,24 +1,52 @@
 <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #b8d3f0;
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            background: #edf2f7;
             margin: 0;
-            padding: clamp(12px, 2.5vw, 28px) clamp(10px, 3vw, 40px);
+            padding: clamp(10px, 2vw, 24px);
             box-sizing: border-box;
             max-width: 100%;
             overflow-x: hidden;
+            color: #1f2937;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 14px;
+        }
+
+        .menu-link-wrap {
+            margin: 0 0 12px 0;
+        }
+
+        .menu-link {
+            font-size: 15px;
+            color: #1d4f91;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .menu-link:hover {
+            text-decoration: underline;
         }
 
         h1 {
             margin-top: 0;
-            margin-bottom: 24px;
-            font-size: clamp(26px, 5vw, 44px);
+            margin-bottom: 0;
+            font-size: clamp(28px, 4vw, 38px);
+            font-weight: 700;
         }
 
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(16px, 3vw, 48px);
+            grid-template-columns: minmax(240px, 0.9fr) minmax(320px, 1.1fr);
+            gap: clamp(18px, 3vw, 30px);
             align-items: start;
             max-width: 100%;
         }
@@ -29,41 +57,59 @@
             }
         }
 
+        .section-card,
+        .results-section {
+            background: #ffffff;
+            border: 1px solid #d9e2ec;
+            border-radius: 10px;
+            padding: clamp(14px, 2.2vw, 24px);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+            margin-bottom: 14px;
+        }
+
+        .form-section h3 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #334155;
+        }
+
         .radio-group label,
         .checkbox-group label,
         .sort-group label {
             display: block;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
         .sort-group {
-            margin-top: 10px;
-            margin-left: 34px;
+            margin-top: 14px;
+            margin-left: 18px;
         }
 
         .sort-group-title {
-            font-size: 20px;
-            margin-bottom: 6px;
+            font-size: 16px;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .sort-group label {
             font-weight: 400;
-            font-size: 18px;
-            margin-bottom: 6px;
+            font-size: 15px;
+            margin-bottom: 8px;
         }
 
         .field-panel {
-            margin-bottom: 18px;
+            margin-bottom: 14px;
         }
 
         .field-row {
             display: none;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+            grid-template-columns: minmax(170px, 0.8fr) minmax(220px, 1.2fr);
             align-items: center;
-            gap: 12px 20px;
-            margin-bottom: 14px;
+            gap: 8px 14px;
+            margin-bottom: 10px;
             max-width: 100%;
         }
 
@@ -72,39 +118,45 @@
         }
 
         .field-row label {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
         }
 
         input[type="text"],
         input[type="number"],
         select {
-            font-size: 18px;
-            padding: 8px 10px;
+            font-size: 15px;
+            padding: 9px 10px;
             width: 100%;
             box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            background: #fff;
         }
 
         .small-input {
-            width: 160px;
+            width: 180px;
+            max-width: 100%;
         }
 
         .checkbox-group {
-            margin-top: 18px;
+            margin-top: 14px;
         }
 
         .checkbox-group label {
             font-weight: 400;
-            font-size: 18px;
+            font-size: 15px;
         }
 
         .vita-box {
             display: none;
-            margin-top: 14px;
-            margin-left: 26px;
-            padding: 12px 14px;
-            background: rgba(255,255,255,0.25);
-            border-radius: 8px;
+            margin-top: 10px;
+            margin-left: 14px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            border: 1px solid #dbe5ef;
         }
 
         .vita-box.show {
@@ -114,31 +166,42 @@
         .vita-box label {
             display: inline-block;
             margin-right: 16px;
-            margin-bottom: 10px;
-            font-size: 17px;
+            margin-bottom: 8px;
+            font-size: 14px;
             font-weight: 400;
         }
 
         .button-row {
-            margin-top: 28px;
+            margin-top: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         button {
-            font-size: 20px;
-            padding: 12px 28px;
-            margin-right: 14px;
+            font-size: 15px;
+            padding: 9px 16px;
+            margin-right: 0;
             cursor: pointer;
+            border: 1px solid #c3cedb;
+            background: #f8fafc;
+            color: #1f2937;
+            border-radius: 6px;
+        }
+
+        button:hover {
+            background: #eef2f7;
         }
 
         hr {
-            margin: 34px 0 24px 0;
+            margin: 22px 0 18px 0;
             border: none;
-            border-top: 1px solid rgba(0,0,0,0.2);
+            border-top: 1px solid #dbe4ef;
         }
 
         h2 {
-            font-size: clamp(22px, 4.5vw, 34px);
-            margin-bottom: 18px;
+            font-size: clamp(21px, 3vw, 28px);
+            margin: 0 0 14px 0;
         }
 
         #main-search-form {
@@ -147,17 +210,18 @@
         }
 
         .result {
-            background: rgba(255,255,255,0.6);
-            border: 1px solid rgba(0,0,0,0.15);
+            background: #f8fafc;
+            border: 1px solid #dbe5ef;
             border-radius: 8px;
-            padding: 14px 16px;
+            padding: 14px;
             margin-bottom: 12px;
-            font-size: clamp(15px, 2.4vw, 18px);
-            line-height: 1.5;
+            font-size: clamp(15px, 1.8vw, 17px);
+            line-height: 1.65;
         }
 
         .muted {
-            font-size: clamp(15px, 2.4vw, 18px);
+            font-size: 15px;
+            color: #64748b;
         }
 
         .mode-bar {
@@ -169,36 +233,37 @@
         }
 
         .mode-bar a {
-            font-size: 20px;
-            padding: 10px 22px;
+            font-size: 14px;
+            padding: 8px 14px;
             text-decoration: none;
-            color: #000;
-            background: rgba(255,255,255,0.45);
-            border: 2px solid rgba(0,0,0,0.2);
-            border-radius: 8px;
-            font-weight: 700;
+            color: #1f2937;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-weight: 600;
         }
 
         .mode-bar a.active {
-            background: rgba(255,255,255,0.85);
-            border-color: rgba(0,0,0,0.45);
+            background: #eaf2ff;
+            border-color: #8ca9d0;
         }
 
         .mode-bar a:hover {
-            background: rgba(255,255,255,0.7);
+            background: #eef2f7;
         }
 
         .mode-hint {
-            font-size: clamp(15px, 2.2vw, 18px);
-            margin-bottom: 16px;
-            max-width: min(100%, 1200px);
-            line-height: 1.45;
+            font-size: 15px;
+            margin-bottom: 14px;
+            max-width: 100%;
+            line-height: 1.55;
+            color: #334155;
         }
 
         .export-panels {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
+            gap: 16px;
             align-items: start;
         }
 
@@ -209,15 +274,15 @@
         }
 
         .panel {
-            background: rgba(255,255,255,0.35);
-            border: 1px solid rgba(0,0,0,0.15);
+            background: #f8fafc;
+            border: 1px solid #dbe5ef;
             border-radius: 8px;
             padding: 14px 16px;
         }
 
         .panel h3 {
             margin: 0 0 12px 0;
-            font-size: 22px;
+            font-size: 18px;
         }
 
         .result-row {
@@ -248,8 +313,8 @@
         }
 
         .panel-actions button {
-            font-size: 17px;
-            padding: 8px 16px;
+            font-size: 14px;
+            padding: 8px 12px;
         }
 
         .btn-add-export {
@@ -259,17 +324,30 @@
 
         /* Narrow windows / embedded Sites: less wasted margin, slightly larger readable type */
         @media (max-width: 600px) {
+            body {
+                padding: 8px;
+            }
+
+            .section-card,
+            .results-section {
+                padding: 12px;
+            }
+
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+
             .sort-group {
-                margin-left: 8px;
+                margin-left: 0;
             }
 
             .vita-box {
-                margin-left: 8px;
+                margin-left: 0;
             }
 
             .mode-bar a {
-                font-size: clamp(15px, 3.8vw, 19px);
-                padding: 10px 14px;
+                font-size: 13px;
+                padding: 8px 10px;
             }
 
             .button-row button {
@@ -282,7 +360,7 @@
             }
 
             .panel-actions button {
-                font-size: clamp(14px, 3.2vw, 17px);
+                font-size: 13px;
             }
         }
     </style>

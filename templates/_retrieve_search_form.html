@@ -1,6 +1,7 @@
 <form id="main-search-form" method="POST" action="{{ search_form_action }}">
         <div class="main-grid">
-            <div>
+            <section class="form-section">
+                <h3>Search options</h3>
                 <div class="radio-group">
                     <label>
                         <input type="radio" name="search_type" value="vita_type"
@@ -86,9 +87,10 @@
                         Omit keywords
                     </label>
                 </div>
-            </div>
+            </section>
 
-            <div>
+            <section class="form-section">
+                <h3>Filters</h3>
                 <div class="field-panel">
                     <div class="field-row mode-author_title mode-any_field active-field-target">
                         <label for="query">Text to find (author or title)</label>
@@ -157,7 +159,7 @@
                     <label><input type="checkbox" name="vita_types" value="report"
                         {% if 'report' in request.form.getlist('vita_types') %}checked{% endif %}> Report</label>
                 </div>
-            </div>
+            </section>
         </div>
 
         <div class="button-row">

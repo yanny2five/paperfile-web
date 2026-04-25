@@ -7,32 +7,35 @@
     {% include '_paperfile_search_styles.html' %}
 </head>
 <body>
+    <div class="page-shell">
+        <header class="page-header">
+            <p class="menu-link-wrap"><a href="{{ url_for('dashboard') }}" class="menu-link">Main menu</a></p>
+            <h1>Paperfile</h1>
+        </header>
 
-    <p style="margin: 0 0 12px 0;"><a href="{{ url_for('dashboard') }}" style="font-size: 18px;">Main menu</a></p>
-    <h1>Paperfile</h1>
+        <section class="section-card">
+            <div class="mode-bar">
+                <a href="/mode/retrieve" class="{% if ui_mode == 'retrieve' %}active{% endif %}">Retrieve papers</a>
+                <a href="/mode/export" class="{% if ui_mode == 'export' %}active{% endif %}">Data export</a>
+            </div>
 
-    <div class="mode-bar">
-        <a href="/mode/retrieve" class="{% if ui_mode == 'retrieve' %}active{% endif %}">Retrieve papers</a>
-        <a href="/mode/export" class="{% if ui_mode == 'export' %}active{% endif %}">Data export</a>
-    </div>
+            {% if ui_mode == 'retrieve' %}
+                <p class="mode-hint">Search, then use <strong>Export</strong> below for BibTeX or Excel from the last retrieve.
+                Words stored as <strong>subjects / keywords</strong> on the record need <strong>Select by keyword</strong>; <strong>Author and/or Title</strong> only searches those two lines (plus the single “Text to find” line for author-or-title).</p>
+            {% else %}
+                <p class="mode-hint">Select papers in <strong>Results</strong>, add them to the export list, then export from the right-hand panel.</p>
+            {% endif %}
 
-    {% if ui_mode == 'retrieve' %}
-        <p class="mode-hint">Search, then use <strong>Export</strong> below for BibTeX or Excel from the last retrieve.
-        Words stored as <strong>subjects / keywords</strong> on the record need <strong>Select by keyword</strong>; <strong>Author and/or Title</strong> only searches those two lines (plus the single “Text to find” line for author-or-title).</p>
-    {% else %}
-        <p class="mode-hint">Select papers in <strong>Results</strong>, add them to the export list, then export from the right-hand panel.</p>
-    {% endif %}
+            {% set search_form_action = url_for('retrieve') %}
+            {% set search_submit_label = 'Retrieve' %}
+            {% set done_href = url_for('dashboard') %}
+            {% include '_retrieve_search_form.html' %}
+        </section>
 
-    {% set search_form_action = url_for('retrieve') %}
-    {% set search_submit_label = 'Retrieve' %}
-    {% set done_href = url_for('dashboard') %}
-    {% include '_retrieve_search_form.html' %}
+        <section class="results-section">
+            <h2>Results</h2>
 
-    <hr>
-
-    <h2>Results</h2>
-
-    {% if ui_mode == 'retrieve' %}
+        {% if ui_mode == 'retrieve' %}
         {% if export_numbers %}
             <div class="button-row" style="margin-bottom: 18px;">
                 <form method="POST" action="/export/bibtex" style="display: inline;">
@@ -53,7 +56,7 @@
         {% else %}
             <div class="muted">No results yet.</div>
         {% endif %}
-    {% else %}
+        {% else %}
         <div class="export-panels">
             <div class="panel">
                 <h3>Results</h3>
@@ -117,7 +120,9 @@
                 {% endif %}
             </div>
         </div>
-    {% endif %}
+        {% endif %}
+        </section>
+    </div>
 
     <script>
         const pickAll = document.getElementById('pick-all');
