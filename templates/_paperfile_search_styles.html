@@ -219,6 +219,23 @@
             font-size: clamp(17px, 1.55vw, 19px);
             line-height: 1.72;
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+            overflow-wrap: anywhere;
+            word-break: normal;
+            white-space: normal;
+        }
+
+        .results-count {
+            margin: 0 0 12px 0;
+            font-size: 15px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .results-list {
+            max-height: min(72vh, 920px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 6px;
         }
 
         .muted {
@@ -292,7 +309,7 @@
             display: flex;
             gap: 10px;
             align-items: flex-start;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .result-row input[type="checkbox"] {

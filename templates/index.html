@@ -36,6 +36,7 @@
             <h2>Results</h2>
 
         {% if ui_mode == 'retrieve' %}
+        <p class="results-count">Showing {{ formatted_results|length if formatted_results else 0 }} results.</p>
         {% if export_numbers %}
             <div class="button-row" style="margin-bottom: 18px;">
                 <form method="POST" action="/export/bibtex" style="display: inline;">
@@ -50,9 +51,11 @@
         {% endif %}
 
         {% if formatted_results %}
-            {% for r in formatted_results %}
-                <div class="result">{{ r | safe }}</div>
-            {% endfor %}
+            <div class="results-list">
+                {% for r in formatted_results %}
+                    <div class="result">{{ r | safe }}</div>
+                {% endfor %}
+            </div>
         {% else %}
             <div class="muted">No results yet.</div>
         {% endif %}
@@ -61,18 +64,21 @@
             <div class="panel">
                 <h3>Results</h3>
                 {% if result_rows %}
+                    <p class="results-count">Showing {{ result_rows|length }} results.</p>
                     <form method="POST" action="/staging/add" id="add-staging-form">
                         <div class="panel-actions">
                             <button type="button" id="pick-all">Select all</button>
                             <button type="button" id="pick-none">Unselect all</button>
                             <button type="submit" class="btn-add-export">Add selected to export list</button>
                         </div>
-                        {% for row in result_rows %}
-                            <div class="result-row">
-                                <input type="checkbox" name="pick" value="{{ row.num }}" id="pick-{{ row.num }}">
-                                <div class="result">{{ row.html | safe }}</div>
-                            </div>
-                        {% endfor %}
+                        <div class="results-list">
+                            {% for row in result_rows %}
+                                <div class="result-row">
+                                    <input type="checkbox" name="pick" value="{{ row.num }}" id="pick-{{ row.num }}">
+                                    <div class="result">{{ row.html | safe }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
                         <div class="button-row" style="margin-top: 16px;">
                             <button type="submit">Add selected to export list</button>
                         </div>
