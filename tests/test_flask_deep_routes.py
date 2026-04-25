@@ -264,6 +264,41 @@ def test_flask_staging_flow():
         shutil.rmtree(root, ignore_errors=True)
 
 
+def test_flask_export_mode_keeps_last_retrieve_results():
+    root = tempfile.mkdtemp(prefix="pf_modeexp_")
+    p = None
+    try:
+        cfg_path, _ = write_deep_isolated_env(root)
+        p = mock.patch("modules.readdata.get_config_path", lambda: cfg_path)
+        p.start()
+        sys.modules.pop("app", None)
+        import importlib
+
+        import app as app_module
+
+        importlib.reload(app_module)
+        client = app_module.app.test_client()
+
+        # First run a retrieve search to seed session-backed results.
+        r1 = client.post(
+            "/retrieve",
+            data={"search_type": "author_title", "query_author_title": "corn", "sort_by": "title"},
+            follow_redirects=True,
+        )
+        assert r1.status_code == 200
+
+        # Enter export mode and confirm rows remain available for selection.
+        r2 = client.get("/mode/export", follow_redirects=True)
+        assert r2.status_code == 200
+        assert b"Add selected to export list" in r2.data
+        assert b"name=\"pick\"" in r2.data
+    finally:
+        if p:
+            p.stop()
+        sys.modules.pop("app", None)
+        shutil.rmtree(root, ignore_errors=True)
+
+
 def test_flask_correct_papers_edit_redirect_without_num():
     root = tempfile.mkdtemp(prefix="pf_cred_")
     p = None

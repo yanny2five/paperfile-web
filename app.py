@@ -1717,6 +1717,7 @@ def utilities_export_xlsx():
 def retrieve():
     results = []
     formatted_results = []
+    result_source_numbers = []
     ui_mode = session.get("ui_mode", "retrieve")
     display_opts = session.get(
         "display_opts",
@@ -1728,6 +1729,10 @@ def retrieve():
             PAPERS, request.form
         )
         session["display_opts"] = display_opts
+        result_source_numbers = [
+            str(get_number(p)).strip() for p in results if str(get_number(p)).strip()
+        ]
+        session["last_retrieve_numbers"] = result_source_numbers
 
         print("=" * 80)
         print("SEARCH EXECUTION LOG")
@@ -1739,12 +1744,26 @@ def retrieve():
         print(f"Sort By:           {meta['sort_by']}")
         print(f"Results Found:     {meta['n']}")
         print("=" * 80)
+    else:
+        last_nums = session.get("last_retrieve_numbers") or []
+        if ui_mode == "export" and last_nums:
+            results = _papers_for_numbers(PAPERS, last_nums)
+            formatted_results = [
+                format_paper(
+                    p,
+                    italics=display_opts["italics"],
+                    omit_number=display_opts["omit_number"],
+                    omit_keywords=display_opts["omit_keywords"],
+                )
+                for p in results
+            ]
+            result_source_numbers = [
+                str(get_number(p)).strip() for p in results if str(get_number(p)).strip()
+            ]
 
     export_numbers = ""
-    if results:
-        export_numbers = ",".join(
-            str(get_number(p)).strip() for p in results if str(get_number(p)).strip()
-        )
+    if result_source_numbers:
+        export_numbers = ",".join(result_source_numbers)
 
     staging_nums = _staging_numbers()
     staging_records = _papers_for_numbers(PAPERS, staging_nums)
