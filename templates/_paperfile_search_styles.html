@@ -3,18 +3,19 @@
             font-family: "Segoe UI", Tahoma, Arial, sans-serif;
             background: #edf2f7;
             margin: 0;
-            padding: clamp(10px, 2vw, 24px);
+            padding: clamp(8px, 1.4vw, 18px);
             box-sizing: border-box;
             max-width: 100%;
             overflow-x: hidden;
             color: #1f2937;
-            font-size: 16px;
+            font-size: 17px;
             line-height: 1.5;
         }
 
         .page-shell {
-            max-width: 980px;
+            max-width: 1180px;
             margin: 0 auto;
+            width: min(100%, 1180px);
         }
 
         .page-header {
@@ -39,14 +40,14 @@
         h1 {
             margin-top: 0;
             margin-bottom: 0;
-            font-size: clamp(28px, 4vw, 38px);
+            font-size: clamp(30px, 3.4vw, 40px);
             font-weight: 700;
         }
 
         .main-grid {
             display: grid;
-            grid-template-columns: minmax(240px, 0.9fr) minmax(320px, 1.1fr);
-            gap: clamp(18px, 3vw, 30px);
+            grid-template-columns: minmax(280px, 0.9fr) minmax(420px, 1.1fr);
+            gap: clamp(20px, 2.6vw, 34px);
             align-items: start;
             max-width: 100%;
         }
@@ -61,15 +62,15 @@
         .results-section {
             background: #ffffff;
             border: 1px solid #d9e2ec;
-            border-radius: 10px;
-            padding: clamp(14px, 2.2vw, 24px);
-            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-            margin-bottom: 14px;
+            border-radius: 12px;
+            padding: clamp(16px, 1.8vw, 26px);
+            box-shadow: 0 2px 7px rgba(15, 23, 42, 0.06);
+            margin-bottom: 16px;
         }
 
         .form-section h3 {
             margin: 0 0 12px 0;
-            font-size: 18px;
+            font-size: 19px;
             font-weight: 700;
             color: #334155;
         }
@@ -78,7 +79,7 @@
         .checkbox-group label,
         .sort-group label {
             display: block;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 600;
             margin-bottom: 10px;
         }
@@ -89,14 +90,14 @@
         }
 
         .sort-group-title {
-            font-size: 16px;
+            font-size: 17px;
             margin-bottom: 8px;
             font-weight: 700;
         }
 
         .sort-group label {
             font-weight: 400;
-            font-size: 15px;
+            font-size: 16px;
             margin-bottom: 8px;
         }
 
@@ -118,7 +119,7 @@
         }
 
         .field-row label {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: #475569;
         }
@@ -126,8 +127,8 @@
         input[type="text"],
         input[type="number"],
         select {
-            font-size: 15px;
-            padding: 9px 10px;
+            font-size: 16px;
+            padding: 10px 11px;
             width: 100%;
             box-sizing: border-box;
             border: 1px solid #cbd5e1;
@@ -146,7 +147,7 @@
 
         .checkbox-group label {
             font-weight: 400;
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .vita-box {
@@ -167,7 +168,7 @@
             display: inline-block;
             margin-right: 16px;
             margin-bottom: 8px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 400;
         }
 
@@ -179,8 +180,8 @@
         }
 
         button {
-            font-size: 15px;
-            padding: 9px 16px;
+            font-size: 16px;
+            padding: 10px 18px;
             margin-right: 0;
             cursor: pointer;
             border: 1px solid #c3cedb;
@@ -200,7 +201,7 @@
         }
 
         h2 {
-            font-size: clamp(21px, 3vw, 28px);
+            font-size: clamp(23px, 2.5vw, 32px);
             margin: 0 0 14px 0;
         }
 
@@ -211,16 +212,17 @@
 
         .result {
             background: #f8fafc;
-            border: 1px solid #dbe5ef;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 12px;
-            font-size: clamp(15px, 1.8vw, 17px);
-            line-height: 1.65;
+            border: 1px solid #d3deea;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 16px;
+            font-size: clamp(17px, 1.55vw, 19px);
+            line-height: 1.72;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
         }
 
         .muted {
-            font-size: 15px;
+            font-size: 16px;
             color: #64748b;
         }
 
@@ -233,8 +235,8 @@
         }
 
         .mode-bar a {
-            font-size: 14px;
-            padding: 8px 14px;
+            font-size: 15px;
+            padding: 9px 15px;
             text-decoration: none;
             color: #1f2937;
             background: #f8fafc;
@@ -253,7 +255,7 @@
         }
 
         .mode-hint {
-            font-size: 15px;
+            font-size: 16px;
             margin-bottom: 14px;
             max-width: 100%;
             line-height: 1.55;
@@ -263,7 +265,7 @@
         .export-panels {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 18px;
             align-items: start;
         }
 
@@ -276,13 +278,14 @@
         .panel {
             background: #f8fafc;
             border: 1px solid #dbe5ef;
-            border-radius: 8px;
-            padding: 14px 16px;
+            border-radius: 10px;
+            padding: 16px 18px;
+            box-shadow: 0 2px 7px rgba(15, 23, 42, 0.05);
         }
 
         .panel h3 {
             margin: 0 0 12px 0;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         .result-row {
@@ -313,7 +316,7 @@
         }
 
         .panel-actions button {
-            font-size: 14px;
+            font-size: 15px;
             padding: 8px 12px;
         }
 
