@@ -260,14 +260,27 @@ def _vita_pairs_for_paper(paper, base_pairs):
 
 
 def _expand_vita_aliases(code, label):
+    def _last_word_plural_forms(text):
+        words = [w for w in text.split() if w]
+        if not words:
+            return set()
+        last = words[-1]
+        out = set()
+        if last.endswith("ies") and len(last) > 3:
+            out.add(" ".join(words[:-1] + [last[:-3] + "y"]))
+        elif last.endswith("s") and len(last) > 1:
+            out.add(" ".join(words[:-1] + [last[:-1]]))
+        else:
+            out.add(" ".join(words[:-1] + [last + "s"]))
+            if last.endswith("y") and len(last) > 1:
+                out.add(" ".join(words[:-1] + [last[:-1] + "ies"]))
+        return {x for x in out if x and x != text}
+
     norm_code = normalize(code)
     norm_label = normalize(label)
     aliases = {norm_code, norm_label}
     if norm_label:
-        aliases.add(norm_label.replace("articles", "article"))
-        aliases.add(norm_label.replace("article", "articles"))
-        aliases.add(norm_label.replace("journals", "journal"))
-        aliases.add(norm_label.replace("journal", "journals"))
+        aliases.update(_last_word_plural_forms(norm_label))
     # Desktop-style human labels that commonly refer to J.
     if str(code).strip().upper() == "J":
         aliases.update(

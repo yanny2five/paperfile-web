@@ -114,6 +114,25 @@ def test_search_papers_vita_types_filter():
     assert get_number(r[0]) == "5"
 
 
+def test_search_papers_vita_types_filter_accepts_label_variants():
+    papers = sample_papers()
+    papers[0]["vitatyp"] = "Journal Articles"
+    r = search_papers(papers, query="", search_type="author_title", vita_types=["J"])
+    assert len(r) == 1
+    assert get_number(r[0]) == "5"
+
+
+def test_search_papers_select_by_vita_type_accepts_labels_and_codes():
+    papers = sample_papers()
+    papers[0]["vitatyp"] = "Journal Articles"
+    r_label = search_papers(papers, query="Journal Articles", search_type="vita_type")
+    assert len(r_label) == 1
+    assert get_number(r_label[0]) == "5"
+    r_code = search_papers(papers, query="J", search_type="vita_type")
+    assert len(r_code) == 1
+    assert get_number(r_code[0]) == "5"
+
+
 def test_search_papers_empty_keyword_matches_nothing():
     papers = sample_papers()
     r = search_papers(papers, query="", search_type="keyword")
@@ -153,3 +172,22 @@ def test_sort_results_title():
 
 def test_passes_vita_type_empty_list():
     assert passes_vita_type({"vitatyp": "J"}, []) is True
+
+
+def test_passes_vita_type_matches_label_stored_record():
+    assert passes_vita_type({"vitatyp": "Journal Articles"}, ["J"]) is True
+
+
+def test_passes_vita_type_matches_plural_singular_book_variants():
+    assert passes_vita_type({"vitatyp": "Book"}, ["B"]) is True
+    assert passes_vita_type({"vitatyp": "Books"}, ["B"]) is True
+
+
+def test_passes_vita_type_matches_plural_singular_report_variants():
+    assert passes_vita_type({"vitatyp": "Contract Report"}, ["F"]) is True
+    assert passes_vita_type({"vitatyp": "Contract Reports"}, ["F"]) is True
+
+
+def test_passes_vita_type_matches_plural_singular_proceeding_variants():
+    assert passes_vita_type({"vitatyp": "Published Proceeding"}, ["P"]) is True
+    assert passes_vita_type({"vitatyp": "Published Proceedings"}, ["P"]) is True

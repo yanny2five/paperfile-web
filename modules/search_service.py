@@ -1,6 +1,8 @@
 import re
 import unicodedata
 
+from modules.report_group_output import VITA_TYPE_NAMES
+
 
 def normalize(value):
     text = str(value or "").strip().lower()
@@ -79,6 +81,79 @@ def get_vita_type(paper):
     return get_field(paper, "vitatyp", "vita_type", "vita type", "type")
 
 
+def _vita_aliases_for(code, label):
+    def _last_word_plural_forms(text):
+        words = [w for w in text.split() if w]
+        if not words:
+            return set()
+        last = words[-1]
+        out = set()
+        # Very small, safe inflection set for vita labels.
+        if last.endswith("ies") and len(last) > 3:
+            out.add(" ".join(words[:-1] + [last[:-3] + "y"]))
+        elif last.endswith("s") and len(last) > 1:
+            out.add(" ".join(words[:-1] + [last[:-1]]))
+        else:
+            out.add(" ".join(words[:-1] + [last + "s"]))
+            if last.endswith("y") and len(last) > 1:
+                out.add(" ".join(words[:-1] + [last[:-1] + "ies"]))
+        return {x for x in out if x and x != text}
+
+    code_n = normalize(code)
+    label_n = normalize(label)
+    out = {code_n, label_n}
+    if label_n:
+        out.update(_last_word_plural_forms(label_n))
+    if str(code).strip().upper() == "J":
+        out.update(
+            {
+                "journal article",
+                "journal articles",
+                "refereed journal article",
+                "refereed journal articles",
+                "journals",
+            }
+        )
+    return {x for x in out if x}
+
+
+def _vita_alias_lookup():
+    by_alias = {}
+    for code, label in VITA_TYPE_NAMES.items():
+        code_u = str(code).strip().upper()
+        for alias in _vita_aliases_for(code_u, label):
+            by_alias.setdefault(alias, set()).add(code_u)
+    return by_alias
+
+
+def _resolve_selected_vita_codes(selected_values):
+    selected_norm = {normalize(v) for v in selected_values if str(v or "").strip()}
+    if not selected_norm:
+        return set(), set()
+    alias_lookup = _vita_alias_lookup()
+    codes = set()
+    unresolved = set()
+    for v in selected_norm:
+        hit = alias_lookup.get(v)
+        if hit:
+            codes.update(hit)
+        elif v.upper() in VITA_TYPE_NAMES:
+            codes.add(v.upper())
+        else:
+            unresolved.add(v)
+    return codes, unresolved
+
+
+def _paper_vita_aliases(paper):
+    raw = str(get_vita_type(paper) or "").strip()
+    code_u = raw.upper()
+    label = VITA_TYPE_NAMES.get(code_u, raw)
+    aliases = {normalize(raw), normalize(label)}
+    if code_u in VITA_TYPE_NAMES:
+        aliases.update(_vita_aliases_for(code_u, VITA_TYPE_NAMES[code_u]))
+    return {a for a in aliases if a}
+
+
 def passes_search_type(paper, query, search_type):
     # Author + title (dict): each nonempty term must appear in its field (AND).
     # Both empty => True so search_papers can still narrow by year / vita only.
@@ -135,7 +210,14 @@ def passes_search_type(paper, query, search_type):
         return q == normalize(get_number(paper))
 
     if search_type == "vita_type":
-        return q == normalize(get_vita_type(paper))
+        selected_codes, unresolved = _resolve_selected_vita_codes([query])
+        paper_aliases = _paper_vita_aliases(paper)
+        paper_code = str(get_vita_type(paper) or "").strip().upper()
+        if paper_code in selected_codes:
+            return True
+        if selected_codes and (paper_aliases & set().union(*[_vita_aliases_for(c, VITA_TYPE_NAMES.get(c, c)) for c in selected_codes])):
+            return True
+        return bool(unresolved and paper_aliases.intersection(unresolved))
 
     if search_type == "any_field":
         all_text = " ".join(normalize(v) for v in paper.values())
@@ -173,12 +255,19 @@ def passes_vita_type(paper, vita_types):
     if not vita_types:
         return True
 
-    # Match against raw stored vita codes (normalized only for case/spacing),
-    # not the human-readable labels.
-    paper_type = normalize(get_vita_type(paper))
-    selected = {normalize(v) for v in vita_types if str(v).strip()}
+    selected_codes, unresolved = _resolve_selected_vita_codes(vita_types)
+    paper_aliases = _paper_vita_aliases(paper)
+    paper_code = str(get_vita_type(paper) or "").strip().upper()
 
-    return paper_type in selected
+    if paper_code in selected_codes:
+        return True
+    if selected_codes:
+        selected_aliases = set()
+        for c in selected_codes:
+            selected_aliases.update(_vita_aliases_for(c, VITA_TYPE_NAMES.get(c, c)))
+        if paper_aliases.intersection(selected_aliases):
+            return True
+    return bool(unresolved and paper_aliases.intersection(unresolved))
 
 
 def search_papers(
