@@ -28,7 +28,7 @@ class TestFlaskAppIsolated:
         cls._cnt = f"{root}/db.cnt"
         cls._cfg = f"{root}/config.json"
         recs = [
-            sample_record("10", "Alpha, A.", "First"),
+            sample_record("10", "Alpha, A.", "First", vitatyp="Journal Articles"),
             sample_record("20", "Beta, B.", "Second"),
         ]
         write_cnt_new_file(cls._cnt, recs, None)

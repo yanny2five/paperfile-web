@@ -313,11 +313,19 @@ def _apply_vita_type_filter(records, selected_values):
         return records
 
     resolved_codes, unresolved_norm = _resolve_vita_filter_codes(selected_values)
+    # Accept both code-based values (e.g., "J") and label-like values that may
+    # be stored directly in legacy datasets (e.g., "Journal Articles").
+    resolved_aliases = set()
+    for code, label in _vita_type_dropdown_pairs():
+        code_u = str(code).strip().upper()
+        if code_u in resolved_codes:
+            resolved_aliases.update(_expand_vita_aliases(code_u, label))
     print("=" * 80)
     print("VITA FILTER DEBUG")
     print("=" * 80)
     print(f"Selected raw values: {selected_values}")
     print(f"Resolved vita codes: {sorted(resolved_codes)}")
+    print(f"Resolved vita aliases: {sorted(resolved_aliases)}")
     if unresolved_norm:
         print(f"Unresolved normalized values: {sorted(unresolved_norm)}")
     print(f"Input records before vita filter: {len(records)}")
@@ -334,6 +342,9 @@ def _apply_vita_type_filter(records, selected_values):
         if vt_code in resolved_codes:
             keep = True
             reason.append(f"code {vt_code} in resolved_codes")
+        if not keep and (vt_norm in resolved_aliases or label_norm in resolved_aliases):
+            keep = True
+            reason.append("record value/label matched resolved aliases")
         if not keep and unresolved_norm and (vt_norm in unresolved_norm or label_norm in unresolved_norm):
             keep = True
             reason.append("matched unresolved value against record type/label")
