@@ -189,7 +189,7 @@ def _run_retrieve_form_search(papers, form):
         year_max=year_max,
         vita_types=None,
     )
-    results = _apply_vita_type_filter(pre_filter_results, vita_types)
+    results, vita_debug = _apply_vita_type_filter(pre_filter_results, vita_types)
     results = sort_results(results, sort_by)
     display_opts = {
         "italics": italics,
@@ -212,6 +212,7 @@ def _run_retrieve_form_search(papers, form):
         "year_max": year_max,
         "vita_types": vita_types,
         "pre_vita_filter_n": len(pre_filter_results),
+        "vita_debug": vita_debug,
         "sort_by": sort_by,
         "n": len(results),
     }
@@ -323,7 +324,14 @@ def _resolve_vita_filter_codes(selected_values):
 
 def _apply_vita_type_filter(records, selected_values):
     if not selected_values:
-        return records
+        return records, {
+            "selected_raw": [],
+            "resolved_codes": [],
+            "resolved_aliases": [],
+            "unresolved_values": [],
+            "pre_count": len(records),
+            "post_count": len(records),
+        }
 
     resolved_codes, unresolved_norm = _resolve_vita_filter_codes(selected_values)
     # Accept both code-based values (e.g., "J") and label-like values that may
@@ -373,7 +381,15 @@ def _apply_vita_type_filter(records, selected_values):
         )
     print(f"Output records after vita filter: {len(out)}")
     print("=" * 80)
-    return out
+    debug_info = {
+        "selected_raw": list(selected_values),
+        "resolved_codes": sorted(resolved_codes),
+        "resolved_aliases": sorted(resolved_aliases),
+        "unresolved_values": sorted(unresolved_norm),
+        "pre_count": len(records),
+        "post_count": len(out),
+    }
+    return out, debug_info
 
 
 def _parse_paper_numbers(raw):
@@ -1846,11 +1862,13 @@ def retrieve():
         {"italics": False, "omit_number": True, "omit_keywords": False},
     )
     display_opts["omit_number"] = True
+    search_meta = {}
 
     if request.method == "POST":
         results, formatted_results, display_opts, meta = _run_retrieve_form_search(
             PAPERS, request.form
         )
+        search_meta = meta or {}
         session["display_opts"] = display_opts
         result_source_numbers = [
             str(get_number(p)).strip() for p in results if str(get_number(p)).strip()
@@ -1937,6 +1955,7 @@ def retrieve():
         year_min=request.form.get("year_min", ""),
         year_max=request.form.get("year_max", ""),
         vita_type_pairs=_vita_type_dropdown_pairs(),
+        search_meta=search_meta,
     )
 
 

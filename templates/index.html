@@ -37,6 +37,19 @@
 
         {% if ui_mode == 'retrieve' %}
         <p class="results-count">Showing {{ formatted_results|length if formatted_results else 0 }} results.</p>
+        {% if search_meta and search_meta.get('vita_debug') and search_meta.get('vita_types') %}
+            {% set vd = search_meta.get('vita_debug') %}
+            <div class="muted" style="margin-bottom:10px; padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+                <strong>Vita filter debug:</strong>
+                selected={{ vd.get('selected_raw', []) }},
+                resolved_codes={{ vd.get('resolved_codes', []) }},
+                pre_count={{ vd.get('pre_count', 0) }},
+                post_count={{ vd.get('post_count', 0) }}
+                {% if vd.get('unresolved_values') %}
+                , unresolved={{ vd.get('unresolved_values', []) }}
+                {% endif %}
+            </div>
+        {% endif %}
         {% if export_numbers %}
             <div class="button-row" style="margin-bottom: 18px;">
                 <form method="POST" action="/export/bibtex" style="display: inline;">
