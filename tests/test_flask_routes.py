@@ -105,3 +105,19 @@ class TestFlaskAppIsolated:
         after = CNTReader(self._cnt)
         after.read_file()
         assert len(after.get_data() or []) == n0 + 1
+
+    def test_retrieve_author_with_journal_articles_label_filter(self):
+        # Web filter can arrive as a human label (not only code); it should map to J.
+        r = self.client.post(
+            "/retrieve",
+            data={
+                "search_type": "author_title",
+                "author_query": "Alpha",
+                "title_query": "",
+                "restrict_vita_types": "1",
+                "vita_types": "Journal Articles",
+            },
+            follow_redirects=True,
+        )
+        assert r.status_code == 200
+        assert b"Showing 1 results." in r.data

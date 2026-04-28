@@ -154,7 +154,8 @@ def _run_retrieve_form_search(papers, form):
     year_max = form.get("year_max") or None
     vita_types = form.getlist("vita_types") if form.get("restrict_vita_types") else []
     italics = "italics" in form
-    omit_number = "omit_number" in form
+    # Retrieval views permanently hide paper numbers in the rendered citation text.
+    omit_number = True
     omit_keywords = "omit_keywords" in form
     if search_type == "author_title":
         author = (form.get("author_query") or "").strip()
@@ -180,14 +181,15 @@ def _run_retrieve_form_search(papers, form):
         }
         field_name = query_field_map.get(search_type, "query_author_title")
         query = form.get(field_name, "")
-    results = search_papers(
+    pre_filter_results = search_papers(
         papers,
         query=query,
         search_type=search_type,
         year_min=year_min,
         year_max=year_max,
-        vita_types=vita_types,
+        vita_types=None,
     )
+    results = _apply_vita_type_filter(pre_filter_results, vita_types)
     results = sort_results(results, sort_by)
     display_opts = {
         "italics": italics,
@@ -209,6 +211,7 @@ def _run_retrieve_form_search(papers, form):
         "year_min": year_min,
         "year_max": year_max,
         "vita_types": vita_types,
+        "pre_vita_filter_n": len(pre_filter_results),
         "sort_by": sort_by,
         "n": len(results),
     }
@@ -254,6 +257,99 @@ def _vita_pairs_for_paper(paper, base_pairs):
     if vt and vt not in codes:
         return [(vt, f"{vt} (from record)")] + list(base_pairs)
     return base_pairs
+
+
+def _expand_vita_aliases(code, label):
+    norm_code = normalize(code)
+    norm_label = normalize(label)
+    aliases = {norm_code, norm_label}
+    if norm_label:
+        aliases.add(norm_label.replace("articles", "article"))
+        aliases.add(norm_label.replace("article", "articles"))
+        aliases.add(norm_label.replace("journals", "journal"))
+        aliases.add(norm_label.replace("journal", "journals"))
+    # Desktop-style human labels that commonly refer to J.
+    if str(code).strip().upper() == "J":
+        aliases.update(
+            {
+                "journal article",
+                "journal articles",
+                "refereed journal article",
+                "refereed journal articles",
+                "journals",
+            }
+        )
+    return {a for a in aliases if a}
+
+
+def _resolve_vita_filter_codes(selected_values):
+    selected_norm = {normalize(v) for v in selected_values if str(v or "").strip()}
+    if not selected_norm:
+        return set(), set()
+
+    alias_to_codes = {}
+    for code, label in _vita_type_dropdown_pairs():
+        code_u = str(code).strip().upper()
+        for alias in _expand_vita_aliases(code_u, label):
+            alias_to_codes.setdefault(alias, set()).add(code_u)
+
+    resolved_codes = set()
+    unresolved_norm = set()
+    for val in selected_norm:
+        hit = alias_to_codes.get(val)
+        if hit:
+            resolved_codes.update(hit)
+            continue
+        # If user typed an actual code, keep it.
+        if val.upper() in {str(c).strip().upper() for c, _ in _vita_type_dropdown_pairs()}:
+            resolved_codes.add(val.upper())
+        else:
+            unresolved_norm.add(val)
+    return resolved_codes, unresolved_norm
+
+
+def _apply_vita_type_filter(records, selected_values):
+    if not selected_values:
+        return records
+
+    resolved_codes, unresolved_norm = _resolve_vita_filter_codes(selected_values)
+    print("=" * 80)
+    print("VITA FILTER DEBUG")
+    print("=" * 80)
+    print(f"Selected raw values: {selected_values}")
+    print(f"Resolved vita codes: {sorted(resolved_codes)}")
+    if unresolved_norm:
+        print(f"Unresolved normalized values: {sorted(unresolved_norm)}")
+    print(f"Input records before vita filter: {len(records)}")
+
+    out = []
+    for rec in records:
+        vt_raw = str(rec.get("vitatyp") or "").strip()
+        vt_code = vt_raw.upper()
+        vt_label = VITA_TYPE_NAMES.get(vt_code, vt_raw)
+        vt_norm = normalize(vt_raw)
+        label_norm = normalize(vt_label)
+        keep = False
+        reason = []
+        if vt_code in resolved_codes:
+            keep = True
+            reason.append(f"code {vt_code} in resolved_codes")
+        if not keep and unresolved_norm and (vt_norm in unresolved_norm or label_norm in unresolved_norm):
+            keep = True
+            reason.append("matched unresolved value against record type/label")
+        if keep:
+            out.append(rec)
+            verdict = "KEEP"
+        else:
+            verdict = "DROP"
+            reason.append("no selected vita match")
+        print(
+            f"{verdict}: number={str(get_number(rec)).strip() or '?'} "
+            f"vitatyp='{vt_raw}' label='{vt_label}' reason={' | '.join(reason)}"
+        )
+    print(f"Output records after vita filter: {len(out)}")
+    print("=" * 80)
+    return out
 
 
 def _parse_paper_numbers(raw):
@@ -615,8 +711,9 @@ def correct_papers():
     papers = PAPERS or []
     display_opts = session.get(
         "display_opts",
-        {"italics": False, "omit_number": False, "omit_keywords": False},
+        {"italics": False, "omit_number": True, "omit_keywords": False},
     )
+    display_opts["omit_number"] = True
     results = []
     formatted_results = []
     if request.method == "POST":
@@ -648,6 +745,7 @@ def correct_papers():
         search_type_display=search_type_display,
         display_opts=display_opts,
         read_only=_paperfile_read_only(),
+        vita_type_pairs=_vita_type_dropdown_pairs(),
     )
 
 
@@ -1721,8 +1819,9 @@ def retrieve():
     ui_mode = session.get("ui_mode", "retrieve")
     display_opts = session.get(
         "display_opts",
-        {"italics": False, "omit_number": False, "omit_keywords": False},
+        {"italics": False, "omit_number": True, "omit_keywords": False},
     )
+    display_opts["omit_number"] = True
 
     if request.method == "POST":
         results, formatted_results, display_opts, meta = _run_retrieve_form_search(
@@ -1813,6 +1912,7 @@ def retrieve():
         sort_by=request.form.get("sort_by", "title"),
         year_min=request.form.get("year_min", ""),
         year_max=request.form.get("year_max", ""),
+        vita_type_pairs=_vita_type_dropdown_pairs(),
     )
 
 

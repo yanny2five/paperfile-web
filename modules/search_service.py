@@ -117,7 +117,7 @@ def passes_search_type(paper, query, search_type):
     q = normalize(query)
     terms = _query_terms(query)
     if not q:
-        return search_type in {"keyword", "journal_book", "any_field"}
+        return search_type in {"journal_book", "any_field"}
 
     if search_type == "keyword":
         blob = get_keyword_search_blob(paper)
