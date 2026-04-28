@@ -3,6 +3,18 @@ import unicodedata
 
 from modules.report_group_output import VITA_TYPE_NAMES
 
+VITA_GROUP_ALIASES = {
+    # Legacy web UI values observed in production
+    "journal": {"J", "JR", "JD"},
+    "journals": {"J", "JR", "JD"},
+    "book": {"B", "BC", "BR"},
+    "books": {"B", "BC", "BR"},
+    "conference": {"P", "U", "IP", "SP", "PS", "SM", "PA"},
+    "conferences": {"P", "U", "IP", "SP", "PS", "SM", "PA"},
+    "report": {"SB", "F", "DP", "CP", "EC", "PR"},
+    "reports": {"SB", "F", "DP", "CP", "EC", "PR"},
+}
+
 
 def normalize(value):
     text = str(value or "").strip().lower()
@@ -134,6 +146,9 @@ def _resolve_selected_vita_codes(selected_values):
     codes = set()
     unresolved = set()
     for v in selected_norm:
+        if v in VITA_GROUP_ALIASES:
+            codes.update(VITA_GROUP_ALIASES[v])
+            continue
         hit = alias_lookup.get(v)
         if hit:
             codes.update(hit)

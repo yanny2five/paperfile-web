@@ -191,3 +191,10 @@ def test_passes_vita_type_matches_plural_singular_report_variants():
 def test_passes_vita_type_matches_plural_singular_proceeding_variants():
     assert passes_vita_type({"vitatyp": "Published Proceeding"}, ["P"]) is True
     assert passes_vita_type({"vitatyp": "Published Proceedings"}, ["P"]) is True
+
+
+def test_passes_vita_type_matches_legacy_group_alias_values():
+    assert passes_vita_type({"vitatyp": "J"}, ["journal"]) is True
+    assert passes_vita_type({"vitatyp": "BC"}, ["book"]) is True
+    assert passes_vita_type({"vitatyp": "P"}, ["conference"]) is True
+    assert passes_vita_type({"vitatyp": "F"}, ["report"]) is True

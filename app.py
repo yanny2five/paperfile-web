@@ -297,6 +297,16 @@ def _expand_vita_aliases(code, label):
 
 
 def _resolve_vita_filter_codes(selected_values):
+    group_aliases = {
+        "journal": {"J", "JR", "JD"},
+        "journals": {"J", "JR", "JD"},
+        "book": {"B", "BC", "BR"},
+        "books": {"B", "BC", "BR"},
+        "conference": {"P", "U", "IP", "SP", "PS", "SM", "PA"},
+        "conferences": {"P", "U", "IP", "SP", "PS", "SM", "PA"},
+        "report": {"SB", "F", "DP", "CP", "EC", "PR"},
+        "reports": {"SB", "F", "DP", "CP", "EC", "PR"},
+    }
     selected_norm = {normalize(v) for v in selected_values if str(v or "").strip()}
     if not selected_norm:
         return set(), set()
@@ -310,6 +320,9 @@ def _resolve_vita_filter_codes(selected_values):
     resolved_codes = set()
     unresolved_norm = set()
     for val in selected_norm:
+        if val in group_aliases:
+            resolved_codes.update(group_aliases[val])
+            continue
         hit = alias_to_codes.get(val)
         if hit:
             resolved_codes.update(hit)
