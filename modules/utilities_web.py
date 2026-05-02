@@ -64,6 +64,79 @@ def backup_cnt_only(db_path: str) -> str:
     return dst
 
 
+def backup_full_bundle(db_path: str | None = None) -> dict:
+    """
+    Mirror of desktop ``modules.backup.backup_file``: copy .cnt + .cng + .cnj
+    into one timestamped folder beside the .cnt. The .cng is renamed to
+    ``faculty.cng`` and the .cnj to ``journal.cnj`` inside the backup folder
+    (matching desktop's stable naming so restore scripts can find them).
+
+    The returned dict reports each copy and any sidecar that was missing
+    in config.json. ``db_path`` overrides ``database_path`` from config,
+    same as desktop.
+
+    Raises ``FileNotFoundError`` if the .cnt cannot be located. Missing
+    .cng / .cnj are reported in ``missing`` rather than raising, so a
+    half-configured deployment can still get a .cnt-only backup with a
+    clear warning instead of failing outright.
+    """
+    cfg_path = get_config_path()
+    cfg = {}
+    if cfg_path:
+        try:
+            cfg = read_json_with_guess(cfg_path) or {}
+        except Exception:
+            cfg = {}
+
+    cnt_in = (db_path or cfg.get("database_path") or "").strip()
+    fac_in = (cfg.get("faculty_file") or "").strip()
+    jou_in = (cfg.get("journal_definition_file") or "").strip()
+
+    def _abs(p: str) -> str:
+        return os.path.normpath(os.path.abspath(p)) if p else ""
+
+    cnt_path = _abs(cnt_in)
+    fac_path = _abs(fac_in)
+    jou_path = _abs(jou_in)
+
+    if not cnt_path or not os.path.isfile(cnt_path):
+        raise FileNotFoundError(cnt_in or "(no database_path configured)")
+
+    db_dir = os.path.dirname(cnt_path)
+    stem = os.path.splitext(os.path.basename(cnt_path))[0]
+    ts = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    backup_dir = os.path.join(db_dir, f"{stem}_backup_{ts}")
+    os.makedirs(backup_dir, exist_ok=False)
+
+    copied = []
+    missing = []
+
+    dst_cnt = os.path.join(backup_dir, f"{stem}.cnt")
+    shutil.copy2(cnt_path, dst_cnt)
+    copied.append(dst_cnt)
+
+    if fac_path and os.path.isfile(fac_path):
+        dst_cng = os.path.join(backup_dir, "faculty.cng")
+        shutil.copy2(fac_path, dst_cng)
+        copied.append(dst_cng)
+    else:
+        missing.append(f"faculty_file (.cng): {fac_in or '[empty]'}")
+
+    if jou_path and os.path.isfile(jou_path):
+        dst_cnj = os.path.join(backup_dir, "journal.cnj")
+        shutil.copy2(jou_path, dst_cnj)
+        copied.append(dst_cnj)
+    else:
+        missing.append(f"journal_definition_file (.cnj): {jou_in or '[empty]'}")
+
+    return {
+        "backup_dir": backup_dir,
+        "copied": copied,
+        "missing": missing,
+        "config": cfg_path or "",
+    }
+
+
 def write_cnt_new_file(
     dest_path: str,
     data_list: List[dict],

@@ -37,6 +37,14 @@
 
         {% if ui_mode == 'retrieve' %}
         <p class="results-count">Showing {{ formatted_results|length if formatted_results else 0 }} results.</p>
+        {% if search_meta and search_meta.get('matched_author_names') %}
+            {% set matched = search_meta.get('matched_author_names') %}
+            <div class="author-match-summary"
+                 style="margin-bottom:10px; padding:8px 10px; border:1px solid #6b8db5; border-radius:6px; background:#a6caf0;">
+                <span>{{ matched|length }} name(s) found:</span>
+                <strong style="margin-left:6px;">{{ matched|join(', ') }}</strong>
+            </div>
+        {% endif %}
         {% if search_meta and search_meta.get('vita_debug') and search_meta.get('vita_types') %}
             {% set vd = search_meta.get('vita_debug') %}
             <div class="muted" style="margin-bottom:10px; padding:8px 10px; border:1px solid #ccc; border-radius:6px;">

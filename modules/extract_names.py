@@ -25,7 +25,13 @@ def process_authors(raw_authors: str) -> Tuple[List[str], List[str]]:
             last = raw_authors[:first_comma_idx].strip()
             rest = raw_authors[first_comma_idx + 1 :].lstrip()
 
-            match = re.match(r"(.+?)(?:, |, and )", rest)
+            # Match either ", " (next author after comma) OR " and " (last author).
+            # Previously the alternation was ", " | ", and " — but ", and " is a
+            # subset of ", " and a literal " and " (no leading comma) was never
+            # honored, so inputs like "X, A.B. and Y, C.D." were mis-parsed
+            # (the engine consumed through "and Y" and merged it into the
+            # first-author given-name field). See PARITY_REPORT.md §3.3 #3.
+            match = re.match(r"(.+?)(?:, | and )", rest)
             if match:
                 first = match.group(1).strip()
                 remaining = rest[match.end() :]

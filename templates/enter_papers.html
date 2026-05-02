@@ -227,17 +227,43 @@
             {% endif %}
         {% endwith %}
 
+        {# ChatGPT-assisted citation parsing (parity with desktop "Paste in copied item") #}
+        <div class="card" style="margin-bottom:18px; background:#f8fafc;">
+            <p class="section-title" style="margin-top:0;">Paste &amp; parse with ChatGPT (optional)</p>
+            <p class="hint">Paste one or more citations exactly as copied (CV, journal page, etc.).
+                ChatGPT segments and parses them into a queue, then this page steps you through
+                the entries one at a time. Requires an OpenAI key in <code>config.json</code>
+                (<code>openai_api_key</code>) or the <code>OPENAI_API_KEY</code> environment variable.
+                {% if queue_size %}
+                <strong>Queue: showing #{{ queue_pos }} of {{ queue_size }}.</strong>
+                {% endif %}
+            </p>
+            <form method="post" action="{{ url_for('enter_papers') }}" autocomplete="off">
+                <input type="hidden" name="action" value="parse_clipboard">
+                <textarea name="clipboard_text" rows="4" placeholder="Paste citation text here, then click Parse..."></textarea>
+                <div class="actions">
+                    <button type="submit" {% if read_only %}disabled{% endif %} style="background:#0f766e;">Parse with ChatGPT</button>
+                    {% if queue_size %}
+                    <button type="submit" name="action" value="queue_clear"
+                            formnovalidate
+                            style="background:#dc2626;">Clear parsed queue</button>
+                    {% endif %}
+                    <span class="secondary-link">{% if queue_size %}Queue persists across saves — use Save and next to advance.{% else %}Or skip this and fill in the form manually below.{% endif %}</span>
+                </div>
+            </form>
+        </div>
+
         <div class="card">
             <form method="post" action="{{ url_for('enter_papers') }}" autocomplete="off">
                 <p class="section-title">Core citation</p>
                 <div class="grid2">
                     <div>
                         <label for="authors">Authors</label>
-                        <textarea id="authors" name="authors" rows="3" placeholder="e.g. Smith, J. and Doe, A."></textarea>
+                        <textarea id="authors" name="authors" rows="3" placeholder="e.g. Smith, J. and Doe, A.">{{ prefill.authors|default('') }}</textarea>
                     </div>
                     <div>
                         <label for="title">Title</label>
-                        <textarea id="title" name="title" rows="3" placeholder="Paper or chapter title"></textarea>
+                        <textarea id="title" name="title" rows="3" placeholder="Paper or chapter title">{{ prefill.title|default('') }}</textarea>
                     </div>
                 </div>
                 <p class="hint">At least one of authors or title is required.</p>
@@ -245,27 +271,27 @@
                 <div class="grid2" style="margin-top: 16px;">
                     <div>
                         <label for="bookjour">Journal / book</label>
-                        <input type="text" id="bookjour" name="bookjour" placeholder="Journal or book name">
+                        <input type="text" id="bookjour" name="bookjour" placeholder="Journal or book name" value="{{ prefill.bookjour|default('') }}">
                     </div>
                     <div>
                         <label for="location">Location</label>
-                        <input type="text" id="location" name="location" placeholder="Publisher, DOI note, etc.">
+                        <input type="text" id="location" name="location" placeholder="Publisher, DOI note, etc." value="{{ prefill.location|default('') }}">
                     </div>
                 </div>
                 <div class="grid2" style="margin-top: 16px;">
                     <div>
                         <label for="volume">Volume</label>
-                        <input type="text" id="volume" name="volume">
+                        <input type="text" id="volume" name="volume" value="{{ prefill.volume|default('') }}">
                     </div>
                     <div>
                         <label for="pages">Pages</label>
-                        <input type="text" id="pages" name="pages">
+                        <input type="text" id="pages" name="pages" value="{{ prefill.pages|default('') }}">
                     </div>
                 </div>
                 <div class="grid2" style="margin-top: 16px;">
                     <div>
                         <label for="year">Year</label>
-                        <input type="text" id="year" name="year" placeholder="e.g. 2026">
+                        <input type="text" id="year" name="year" placeholder="e.g. 2026" value="{{ prefill.year|default('') }}">
                     </div>
                     <div>
                         <label for="vitatyp">Vita type</label>
@@ -281,21 +307,21 @@
                 <div class="grid2">
                     <div>
                         <label for="funding_year">Funding year</label>
-                        <input type="text" id="funding_year" name="funding_year">
+                        <input type="text" id="funding_year" name="funding_year" value="{{ prefill.funding_year|default('') }}">
                     </div>
                     <div>
                         <label for="total_amount">Total amount</label>
-                        <input type="text" id="total_amount" name="total_amount">
+                        <input type="text" id="total_amount" name="total_amount" value="{{ prefill.total_amount|default('') }}">
                     </div>
                 </div>
                 <div class="grid2" style="margin-top: 16px;">
                     <div>
                         <label for="usable_amount">Usable amount</label>
-                        <input type="text" id="usable_amount" name="usable_amount">
+                        <input type="text" id="usable_amount" name="usable_amount" value="{{ prefill.usable_amount|default('') }}">
                     </div>
                     <div>
                         <label for="decision">Decision</label>
-                        <input type="text" id="decision" name="decision">
+                        <input type="text" id="decision" name="decision" value="{{ prefill.decision|default('') }}">
                     </div>
                 </div>
 
@@ -303,11 +329,11 @@
                 <div class="grid2">
                     <div>
                         <label for="subject1">Subject 1</label>
-                        <input type="text" id="subject1" name="subject1">
+                        <input type="text" id="subject1" name="subject1" value="{{ prefill.subject1|default('') }}">
                     </div>
                     <div>
                         <label for="subject2">Subject 2</label>
-                        <input type="text" id="subject2" name="subject2">
+                        <input type="text" id="subject2" name="subject2" value="{{ prefill.subject2|default('') }}">
                     </div>
                 </div>
                 <div class="grid2" style="margin-top: 16px;">
@@ -321,7 +347,7 @@
                     </div>
                 </div>
                 <label for="pdfpath" style="margin-top: 16px;">PDF path</label>
-                <input type="text" id="pdfpath" name="pdfpath" placeholder="Optional file path or URL">
+                <input type="text" id="pdfpath" name="pdfpath" placeholder="Optional file path or URL" value="{{ prefill.pdfpath|default('') }}">
 
                 <div class="backup-row">
                     <input type="checkbox" id="backup" name="backup" value="1">
@@ -329,7 +355,10 @@
                 </div>
 
                 <div class="actions">
-                    <button type="submit" {% if read_only %}disabled{% endif %}>Save new record</button>
+                    <button type="submit" name="action" value="save" {% if read_only %}disabled{% endif %}>Save new record</button>
+                    {% if queue_size %}
+                    <button type="submit" name="action" value="save_and_next" {% if read_only %}disabled{% endif %} style="background:#0f766e;">Save and next ({{ queue_pos }}/{{ queue_size }})</button>
+                    {% endif %}
                     <span class="secondary-link">Clears after save — add another entry anytime.</span>
                 </div>
             </form>

@@ -35,7 +35,8 @@
         <p>
             <label><input type="radio" name="view" value="compare" {% if view == 'compare' %}checked{% endif %}> Compare output</label><br>
             <label><input type="radio" name="view" value="rank" {% if view == 'rank' %}checked{% endif %}> With rankings</label><br>
-            <label><input type="radio" name="view" value="power" {% if view == 'power' %}checked{% endif %}> Journal power (mean AGECO rank, J only)</label>
+            <label><input type="radio" name="view" value="power" {% if view == 'power' %}checked{% endif %}> Journal power (mean AGECO rank, J only)</label><br>
+            <label><input type="radio" name="view" value="full" {% if view == 'full' %}checked{% endif %}> Full per-vita-type breakdown (parity with desktop)</label>
         </p>
         <p>
             <label>First year <input type="number" name="y0" value="{{ y0 }}" style="width:100px;"></label>

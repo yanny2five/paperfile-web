@@ -113,6 +113,8 @@
     {% if journal_path %}
     <p>
         <a class="btnlink" href="{{ url_for('journals_and_people_download', kind='journal') }}">Download current journal file</a>
+        &nbsp;
+        <a class="btnlink" href="{{ url_for('edit_journals_cnj') }}" style="background:#cfe1ff;">Edit class definitions &amp; journal entries in place</a>
         &nbsp;— {{ journal_count }} parsed journal line(s).
     </p>
     {% if journal_class_rows %}

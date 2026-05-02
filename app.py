@@ -50,9 +50,33 @@ from modules.publication_type_report import (
     resolve_selection_to_pairs,
 )
 from modules.readdata import CNTReader
+from modules.author_match import matched_names_for_search
 from modules.search_service import get_number, normalize, search_papers, sort_results
 from modules.bibtex_import import parse_bibtex_file_to_records
+from modules.bulk_delete_service import (
+    apply_deletion,
+    build_delete_plan_summary,
+    compute_delete_indices,
+    database_number_range,
+    parse_int_loose,
+    renumber_in_place,
+)
+from modules.journal_editor_service import (
+    attach_form_ids as cnj_attach_form_ids,
+    classes_from_form as cnj_classes_from_form,
+    journals_from_form as cnj_journals_from_form,
+    parse_cnj_file,
+    save_cnj,
+)
+from modules.standardize_names_service import (
+    actionable_rows as standardize_actionable_rows,
+    apply_replacement_to_records,
+    collect_distinct_names,
+    is_correct_format,
+    normalize_for_replacement_lookup,
+)
 from modules.check_numbers_service import compute_number_stats, parse_paper_int, renumber_in_range
+from modules.citation_parser_service import format_clipboard_text
 from modules.clean_database import clean_database
 from modules.correct_papers_service import record_from_correct_form, record_from_enter_form
 from modules.journals_people_service import (
@@ -79,6 +103,7 @@ from modules.edit_fix_service import (
 from modules.utilities_web import (
     assign_sequential_numbers,
     backup_cnt_only,
+    backup_full_bundle,
     max_record_number,
     read_config_value,
     set_config_database_path,
@@ -205,6 +230,7 @@ def _run_retrieve_form_search(papers, form):
         )
         for paper in results
     ]
+    matched_author_names = matched_names_for_search(search_type, query, results)
     log_info = {
         "search_type": search_type,
         "query": query,
@@ -215,6 +241,7 @@ def _run_retrieve_form_search(papers, form):
         "vita_debug": vita_debug,
         "sort_by": sort_by,
         "n": len(results),
+        "matched_author_names": matched_author_names,
     }
     return results, formatted_results, display_opts, log_info
 
@@ -572,12 +599,100 @@ def retrieve_numbers():
     return redirect(url_for("retrieve"))
 
 
+_CITATION_QUEUE_SESSION_KEY = "enter_papers_citation_queue"
+_CITATION_INDEX_SESSION_KEY = "enter_papers_citation_index"
+
+
+def _read_citation_queue():
+    queue = session.get(_CITATION_QUEUE_SESSION_KEY) or []
+    if not isinstance(queue, list):
+        queue = []
+    idx = session.get(_CITATION_INDEX_SESSION_KEY) or 0
+    try:
+        idx = int(idx)
+    except (TypeError, ValueError):
+        idx = 0
+    if idx < 0:
+        idx = 0
+    if idx >= len(queue):
+        idx = len(queue)
+    return queue, idx
+
+
+def _write_citation_queue(queue, idx):
+    session[_CITATION_QUEUE_SESSION_KEY] = list(queue or [])
+    session[_CITATION_INDEX_SESSION_KEY] = int(idx)
+    session.modified = True
+
+
+def _clear_citation_queue():
+    session.pop(_CITATION_QUEUE_SESSION_KEY, None)
+    session.pop(_CITATION_INDEX_SESSION_KEY, None)
+    session.modified = True
+
+
+def _load_default_author_name():
+    """Return the ``default_name`` from config.json, formatted as ``Last, Initials``."""
+    try:
+        raw = (read_config_value("default_name") or "").strip()
+    except Exception:
+        raw = ""
+    if not raw:
+        return ""
+    s = raw.strip().strip(",")
+    if "," in s:
+        return s
+    parts = s.split()
+    if len(parts) < 2:
+        return s
+    last = parts[-1]
+    initials = " ".join(parts[:-1])
+    import re as _re
+
+    if _re.fullmatch(r"[A-Za-z. ]+", initials) and _re.fullmatch(r"[A-Za-z\-']+", last):
+        return f"{last}, {initials}".strip()
+    return s
+
+
 @app.route("/enter-papers", methods=["GET", "POST"])
 def enter_papers():
     read_only = _paperfile_read_only()
     db_path = getattr(reader, "file_path", None) or ""
 
     if request.method == "POST":
+        action = (request.form.get("action") or "").strip()
+
+        # ---- Parse a clipboard paste with ChatGPT ----
+        if action == "parse_clipboard":
+            raw = request.form.get("clipboard_text") or ""
+            if not raw.strip():
+                flash("Paste citation text first.", "error")
+                return redirect(url_for("enter_papers"))
+            try:
+                queue = format_clipboard_text(raw)
+            except (ValueError, RuntimeError) as e:
+                flash(str(e), "error")
+                return redirect(url_for("enter_papers"))
+            except Exception as e:
+                flash(f"ChatGPT formatting failed: {e}", "error")
+                return redirect(url_for("enter_papers"))
+            if not queue:
+                flash("ChatGPT returned no parseable entries.", "error")
+                return redirect(url_for("enter_papers"))
+            _write_citation_queue(queue, 0)
+            flash(
+                f"Parsed {len(queue)} citation(s). Showing #1 — review and Save, "
+                "then click Next to step through the rest.",
+                "success",
+            )
+            return redirect(url_for("enter_papers"))
+
+        if action == "queue_clear":
+            _clear_citation_queue()
+            flash("Cleared the parsed-citation queue.", "success")
+            return redirect(url_for("enter_papers"))
+
+        # ---- Save the current entry ----
         if read_only:
             flash("Read-only mode: saves are disabled (PAPERFILE_READ_ONLY).", "error")
             return redirect(url_for("enter_papers"))
@@ -588,9 +703,29 @@ def enter_papers():
             merged = record_from_enter_form(request.form)
             authors = (merged.get("authors") or "").strip()
             title = (merged.get("title") or "").strip()
+
+            advance_after_save = action == "save_and_next"
+            queue, idx = _read_citation_queue()
+            queue_active = bool(queue) and idx < len(queue)
+
             if not authors and not title:
+                # If we are mid-queue and the user hits "Save and next" on an
+                # empty/skip entry, just advance like desktop's button_next1_click.
+                if advance_after_save and queue_active:
+                    new_idx = idx + 1
+                    if new_idx >= len(queue):
+                        _clear_citation_queue()
+                        flash("Skipped empty entry — queue finished.", "success")
+                    else:
+                        _write_citation_queue(queue, new_idx)
+                        flash(
+                            f"Skipped empty entry — showing #{new_idx + 1} of {len(queue)}.",
+                            "success",
+                        )
+                    return redirect(url_for("enter_papers"))
                 flash("Enter at least an author or a title before saving.", "error")
                 return redirect(url_for("enter_papers"))
+
             reader.reload_data()
             papers = reader.get_data() or []
             next_num = max_record_number(papers) + 1
@@ -605,10 +740,35 @@ def enter_papers():
                     return redirect(url_for("enter_papers"))
             append_records_to_cnt(db_path, [merged], gui_messages=False)
             _sync_papers_from_reader()
-            flash(
-                f"Added record #{next_num} to the database (appended to your .cnt).{backup_msg}",
-                "success",
-            )
+
+            if advance_after_save and queue_active:
+                new_idx = idx + 1
+                if new_idx >= len(queue):
+                    _clear_citation_queue()
+                    flash(
+                        f"Saved record #{next_num}. Queue finished — back to a blank form.{backup_msg}",
+                        "success",
+                    )
+                else:
+                    _write_citation_queue(queue, new_idx)
+                    flash(
+                        f"Saved record #{next_num}. Showing parsed citation "
+                        f"#{new_idx + 1} of {len(queue)}.{backup_msg}",
+                        "success",
+                    )
+            else:
+                if queue_active and not advance_after_save:
+                    # User saved but didn't ask to advance; keep current entry visible.
+                    flash(
+                        f"Saved record #{next_num}. (Queue position kept at #{idx + 1} of {len(queue)}.)"
+                        f"{backup_msg}",
+                        "success",
+                    )
+                else:
+                    flash(
+                        f"Added record #{next_num} to the database (appended to your .cnt).{backup_msg}",
+                        "success",
+                    )
             return redirect(url_for("enter_papers"))
         except Exception as e:
             flash(str(e), "error")
@@ -618,12 +778,29 @@ def enter_papers():
     papers = reader.get_data() or []
     next_num = max_record_number(papers) + 1 if (papers or (db_path and os.path.isfile(db_path))) else 1
     base_vita_pairs = _vita_type_dropdown_pairs()
+
+    queue, idx = _read_citation_queue()
+    prefill = {}
+    queue_size = len(queue)
+    queue_pos = 0
+    if queue and idx < queue_size:
+        prefill = dict(queue[idx] or {})
+        queue_pos = idx + 1
+
+    if not prefill.get("authors"):
+        default_authors = _load_default_author_name()
+        if default_authors:
+            prefill["authors"] = default_authors
+
     return render_template(
         "enter_papers.html",
         db_path=db_path,
         next_number=next_num,
         vita_pairs=base_vita_pairs,
         read_only=read_only,
+        prefill=prefill,
+        queue_size=queue_size,
+        queue_pos=queue_pos,
     )
 
 
@@ -909,6 +1086,19 @@ def edit_and_fix_entries():
                     return redirect(url_for("edit_and_fix_entries"))
                 bpath = backup_cnt_only(db_path)
                 flash(f"Backup written: {bpath}", "success")
+            elif action == "backup_full":
+                if not db_path or not os.path.isfile(db_path):
+                    flash("No database file.", "error")
+                    return redirect(url_for("edit_and_fix_entries"))
+                try:
+                    info = backup_full_bundle(db_path)
+                except Exception as e:
+                    flash(f"Backup failed: {e}", "error")
+                    return redirect(url_for("edit_and_fix_entries"))
+                msg = f"Backup folder created: {info['backup_dir']} ({len(info['copied'])} file(s))."
+                if info["missing"]:
+                    msg += " Note: " + "; ".join(info["missing"])
+                flash(msg, "success" if not info["missing"] else "warning")
             else:
                 flash("Unknown action.", "error")
         except Exception as e:
@@ -1006,6 +1196,357 @@ def edit_and_fix_export(kind):
             headers={"Content-Disposition": 'attachment; filename="title_duplicates_exact.tsv"'},
         )
     abort(404)
+
+
+# -----------------------------------------------------------------------------
+# Bulk delete papers (parity with desktop pages/delete_selected_papers.py)
+# -----------------------------------------------------------------------------
+
+_BULK_DELETE_PLAN_KEY = "bulk_delete_plan"
+
+
+def _store_delete_plan(plan: dict) -> None:
+    """Stash the computed deletion plan in session for confirm-then-commit."""
+    session[_BULK_DELETE_PLAN_KEY] = plan
+    session.modified = True
+
+
+def _read_delete_plan() -> dict | None:
+    plan = session.get(_BULK_DELETE_PLAN_KEY)
+    return plan if isinstance(plan, dict) else None
+
+
+def _clear_delete_plan() -> None:
+    session.pop(_BULK_DELETE_PLAN_KEY, None)
+    session.modified = True
+
+
+@app.route("/delete-selected-papers", methods=["GET", "POST"])
+def delete_selected_papers():
+    """Bulk-delete records by number range and/or author membership.
+
+    Mirrors the desktop's ``DeleteSelectedPapersPage``: the user supplies up
+    to three rules (range, with-author, without-author) which are UNION-ed
+    to produce the deletion set. Preview-then-commit two-step flow uses the
+    Flask session so the user can verify the count before destruction.
+    """
+    read_only = _paperfile_read_only()
+    reader.reload_data()
+    papers = reader.get_data() or []
+    db_path = getattr(reader, "file_path", None) or ""
+
+    if request.method == "POST":
+        action = (request.form.get("action") or "").strip()
+
+        if action == "preview":
+            from_n = parse_int_loose(request.form.get("from_n"))
+            to_n = parse_int_loose(request.form.get("to_n"))
+            with_author = (request.form.get("with_author") or "").strip()
+            without_author = (request.form.get("without_author") or "").strip()
+            try:
+                indices = compute_delete_indices(
+                    papers,
+                    from_n=from_n,
+                    to_n=to_n,
+                    with_author=with_author,
+                    without_author=without_author,
+                )
+            except ValueError as e:
+                _clear_delete_plan()
+                flash(str(e), "error")
+                return redirect(url_for("delete_selected_papers"))
+            if not indices:
+                _clear_delete_plan()
+                flash("No records matched the delete rules.", "warning")
+                return redirect(url_for("delete_selected_papers"))
+            plan = {
+                "from_n": from_n,
+                "to_n": to_n,
+                "with_author": with_author,
+                "without_author": without_author,
+                "indices": indices,
+                "summary": build_delete_plan_summary(
+                    from_n, to_n, with_author, without_author
+                ),
+            }
+            _store_delete_plan(plan)
+            flash(
+                f"Plan ready: {len(indices)} record(s) will be deleted. "
+                "Review below and confirm to proceed.",
+                "success",
+            )
+            return redirect(url_for("delete_selected_papers"))
+
+        if action == "cancel":
+            _clear_delete_plan()
+            flash("Cleared the pending delete plan.", "success")
+            return redirect(url_for("delete_selected_papers"))
+
+        if action == "commit":
+            if read_only:
+                flash("Read-only mode: deletion is disabled (PAPERFILE_READ_ONLY).", "error")
+                return redirect(url_for("delete_selected_papers"))
+            plan = _read_delete_plan()
+            if not plan:
+                flash("No delete plan to commit. Run Preview first.", "error")
+                return redirect(url_for("delete_selected_papers"))
+            if request.form.get("confirm") != "1":
+                flash("Tick the confirmation box before committing the delete.", "error")
+                return redirect(url_for("delete_selected_papers"))
+            if not db_path or not os.path.isfile(db_path):
+                flash("No active database file. Check config.json database_path.", "error")
+                return redirect(url_for("delete_selected_papers"))
+
+            backup_msg = ""
+            if request.form.get("backup_before") == "1":
+                try:
+                    info = backup_full_bundle(db_path)
+                    backup_msg = (
+                        f" Backup folder: {info['backup_dir']} "
+                        f"({len(info['copied'])} file(s))."
+                    )
+                except Exception as e:
+                    flash(f"Backup failed before delete: {e}", "error")
+                    return redirect(url_for("delete_selected_papers"))
+
+            indices = list(plan.get("indices") or [])
+            try:
+                new_data = apply_deletion(papers, indices)
+                if request.form.get("renumber") == "1":
+                    renumber_in_place(new_data, start_at=1)
+                overwrite_all_records_in_cnt(db_path, new_data, gui_messages=False)
+            except Exception as e:
+                flash(f"Delete failed: {e}", "error")
+                return redirect(url_for("delete_selected_papers"))
+
+            _sync_papers_from_reader()
+            _clear_delete_plan()
+            flash(
+                f"Deleted {len(indices)} record(s). Remaining: {len(new_data)}.{backup_msg}",
+                "success",
+            )
+            return redirect(url_for("delete_selected_papers"))
+
+        flash("Unknown action.", "error")
+        return redirect(url_for("delete_selected_papers"))
+
+    db_min, db_max = database_number_range(papers)
+    plan = _read_delete_plan()
+    preview_records = []
+    if plan and plan.get("indices"):
+        for i in plan["indices"][:200]:
+            if 0 <= i < len(papers):
+                rec = papers[i]
+                preview_records.append(
+                    {
+                        "number": rec.get("number", ""),
+                        "authors": rec.get("authors", ""),
+                        "title": rec.get("title", ""),
+                        "year": rec.get("year", ""),
+                    }
+                )
+    return render_template(
+        "delete_selected_papers.html",
+        db_path=db_path,
+        entry_count=len(papers),
+        db_min=db_min,
+        db_max=db_max,
+        all_authors=get_all_formatted_names(papers) if papers else [],
+        plan=plan,
+        preview_records=preview_records,
+        preview_truncated=bool(plan and len(plan.get("indices") or []) > 200),
+        read_only=read_only,
+    )
+
+
+# -----------------------------------------------------------------------------
+# Standardize person names (parity with desktop pages/standardizename.py +
+# pages/collapsenameform.py)
+# -----------------------------------------------------------------------------
+
+
+@app.route("/standardize-names", methods=["GET", "POST"])
+def standardize_names():
+    """List badly-formatted/suspect author names and let the user
+    accept faculty-file suggestions or manually rewrite them.
+
+    Mirrors the desktop's *Standardize Names* + *Collapse Names* pages.
+    """
+    read_only = _paperfile_read_only()
+    reader.reload_data()
+    papers = reader.get_data() or []
+    db_path = getattr(reader, "file_path", None) or ""
+    _cfg, faculty_path, _journal = resolve_faculty_and_journal_paths()
+    faculty_rows = load_faculty_rows(faculty_path)
+    faculty_names = [r.get("name", "").strip() for r in faculty_rows if r.get("name")]
+    distinct_names, name_to_numbers = collect_distinct_names(papers)
+
+    if request.method == "POST":
+        action = (request.form.get("action") or "").strip()
+
+        if action == "accept_suggestion":
+            if read_only:
+                flash("Read-only mode: rewrites are disabled (PAPERFILE_READ_ONLY).", "error")
+                return redirect(url_for("standardize_names"))
+            if not db_path or not os.path.isfile(db_path):
+                flash("No active database file.", "error")
+                return redirect(url_for("standardize_names"))
+            entered = (request.form.get("name_entered") or "").strip()
+            replacement = (request.form.get("replacement") or "").strip()
+            if not entered or not replacement:
+                flash("Both the original name and the replacement are required.", "error")
+                return redirect(url_for("standardize_names"))
+            normalized = normalize_for_replacement_lookup(entered)
+            target_numbers = name_to_numbers.get(normalized) or name_to_numbers.get(entered) or []
+            if not target_numbers:
+                flash(f"No record numbers found for '{entered}'.", "error")
+                return redirect(url_for("standardize_names"))
+            modified, count = apply_replacement_to_records(
+                papers, entered, replacement, target_numbers=target_numbers
+            )
+            if not modified:
+                flash(
+                    f"'{entered}' not found in any record's authors field; nothing changed.",
+                    "warning",
+                )
+                return redirect(url_for("standardize_names"))
+            try:
+                for rec in modified:
+                    overwrite_record_in_cnt(db_path, rec, gui_messages=False)
+            except Exception as e:
+                flash(f"Failed during rewrite: {e}", "error")
+                return redirect(url_for("standardize_names"))
+            _sync_papers_from_reader()
+            flash(
+                f"Replaced '{entered}' with '{replacement}' in {count} record(s).",
+                "success",
+            )
+            return redirect(url_for("standardize_names"))
+
+        flash("Unknown action.", "error")
+        return redirect(url_for("standardize_names"))
+
+    rows = standardize_actionable_rows(distinct_names, faculty_names)
+    name_status = []
+    q = (request.args.get("q") or "").strip().lower()
+    for n in distinct_names:
+        if q and q not in n.lower():
+            continue
+        name_status.append(
+            {
+                "name": n,
+                "ok": is_correct_format(n),
+                "numbers": name_to_numbers.get(normalize_for_replacement_lookup(n), [])[:25],
+                "count": len(name_to_numbers.get(normalize_for_replacement_lookup(n), [])),
+            }
+        )
+    return render_template(
+        "standardize_names.html",
+        db_path=db_path,
+        faculty_path=faculty_path or "(not configured)",
+        rows=rows,
+        row_count=len(rows),
+        all_count=len(distinct_names),
+        name_status=name_status[:1500],
+        name_status_truncated=len(name_status) > 1500,
+        q=q,
+        read_only=read_only,
+        faculty_names=faculty_names,
+    )
+
+
+# -----------------------------------------------------------------------------
+# In-place .cnj editing (parity with desktop pages/classifyjournals.py +
+# pages/journalclasses.py + pages/rankrangeeditor.py)
+# -----------------------------------------------------------------------------
+
+
+@app.route("/journals/edit", methods=["GET", "POST"])
+def edit_journals_cnj():
+    """Edit the .cnj journal definition file in place.
+
+    The page exposes the two on-disk blocks separately:
+    - **Classes** (CLASSCOUNT block): ``major name | sort_order | norm``
+    - **Journals** (after STARTJOURNALS): ``major | minor | name | rank |
+      PCT | Q | ABDC``
+
+    Saving rewrites the file via :func:`journal_editor_service.save_cnj`,
+    which preserves the file header (any lines above CLASSCOUNT) and the
+    detected encoding/EOL. A timestamped backup is written first.
+    """
+    read_only = _paperfile_read_only()
+    _cfg, _faculty, journal_path = resolve_faculty_and_journal_paths()
+    if not journal_path or not os.path.isfile(journal_path):
+        flash("No journal_definition_file configured (or file missing).", "error")
+        return redirect(url_for("journals_and_people"))
+
+    if request.method == "POST":
+        action = (request.form.get("action") or "").strip()
+        if read_only:
+            flash("Read-only mode: edits are disabled (PAPERFILE_READ_ONLY).", "error")
+            return redirect(url_for("edit_journals_cnj"))
+        try:
+            parsed = parse_cnj_file(journal_path)
+        except Exception as e:
+            flash(f"Could not re-parse the .cnj for save: {e}", "error")
+            return redirect(url_for("edit_journals_cnj"))
+
+        if action == "save_classes":
+            try:
+                new_classes = cnj_classes_from_form(request.form)
+            except Exception as e:
+                flash(f"Bad form data: {e}", "error")
+                return redirect(url_for("edit_journals_cnj"))
+            parsed["classes"] = new_classes
+            try:
+                bak = save_cnj(journal_path, parsed, do_backup=True)
+            except Exception as e:
+                flash(f"Save failed: {e}", "error")
+                return redirect(url_for("edit_journals_cnj"))
+            msg = f"Saved {len(new_classes)} class definition(s)."
+            if bak:
+                msg += f" Backup: {bak}"
+            flash(msg, "success")
+            return redirect(url_for("edit_journals_cnj") + "#classes")
+
+        if action == "save_journals":
+            try:
+                new_journals = cnj_journals_from_form(request.form)
+            except Exception as e:
+                flash(f"Bad form data: {e}", "error")
+                return redirect(url_for("edit_journals_cnj"))
+            parsed["journals"] = new_journals
+            try:
+                bak = save_cnj(journal_path, parsed, do_backup=True)
+            except Exception as e:
+                flash(f"Save failed: {e}", "error")
+                return redirect(url_for("edit_journals_cnj"))
+            msg = f"Saved {len(new_journals)} journal entry(ies)."
+            if bak:
+                msg += f" Backup: {bak}"
+            flash(msg, "success")
+            return redirect(url_for("edit_journals_cnj") + "#journals")
+
+        flash("Unknown action.", "error")
+        return redirect(url_for("edit_journals_cnj"))
+
+    try:
+        parsed = parse_cnj_file(journal_path)
+        cnj_attach_form_ids(parsed)
+        parse_error = None
+    except Exception as e:
+        parsed = None
+        parse_error = str(e)
+
+    return render_template(
+        "edit_journals_cnj.html",
+        journal_path=journal_path,
+        parsed=parsed,
+        parse_error=parse_error,
+        read_only=read_only,
+        next_class_id=len(parsed["classes"]) if parsed else 0,
+        next_journal_id=len(parsed["journals"]) if parsed else 0,
+    )
 
 
 @app.route("/check-numbers", methods=["GET", "POST"])
@@ -1623,6 +2164,8 @@ def reports_composite_summary():
         mode = "with_rank"
     elif view == "power":
         mode = "journal_power"
+    elif view == "full":
+        mode = "full_breakdown"
     else:
         mode = "compare_output"
 
@@ -1795,6 +2338,8 @@ def use_utilities():
                 write_config_value("openai_api_key", request.form.get("openai_api_key", ""))
                 raw_lines = (request.form.get("vita_codes") or "").replace(",", "\n").splitlines()
                 codes = [x.strip().upper() for x in raw_lines if x.strip()]
+                merge_lines = (request.form.get("merge_vita_codes") or "").replace(",", "\n").splitlines()
+                merge_codes = [x.strip().upper() for x in merge_lines if x.strip()]
                 if not cfg_path:
                     flash("config.json not found.", "error")
                     return redirect(url_for("use_utilities"))
@@ -1803,6 +2348,15 @@ def use_utilities():
                 except Exception:
                     cfg = {}
                 cfg["vitatype_preference"] = codes
+                # Only overwrite merge_vitatype_preference if the user actually
+                # supplied something — leaving the box empty preserves the
+                # existing config value (matches desktop behavior of "do
+                # nothing on empty save"). Pass a single space to wipe it.
+                if request.form.get("merge_vita_codes") is not None and merge_codes:
+                    cfg["merge_vitatype_preference"] = merge_codes
+                elif (request.form.get("merge_vita_codes") or "").strip() == "" and "merge_vita_codes" in request.form:
+                    # Form field present but explicitly empty → keep current value.
+                    pass
                 with open(cfg_path, "w", encoding="utf-8") as f:
                     json.dump(cfg, f, indent=2, ensure_ascii=False)
                 flash("Preferences saved.", "success")
@@ -1817,12 +2371,16 @@ def use_utilities():
     db_path = getattr(reader, "file_path", None) or ""
 
     vita_codes_text = ""
+    merge_vita_codes_text = ""
     if cfg_path:
         try:
             cfg = read_json_with_guess(cfg_path)
             vp = cfg.get("vitatype_preference")
             if isinstance(vp, list):
                 vita_codes_text = "\n".join(str(x) for x in vp)
+            mp = cfg.get("merge_vitatype_preference")
+            if isinstance(mp, list):
+                merge_vita_codes_text = "\n".join(str(x) for x in mp)
         except Exception:
             pass
 
@@ -1834,6 +2392,7 @@ def use_utilities():
         default_name=read_config_value("default_name"),
         openai_api_key=read_config_value("openai_api_key"),
         vita_codes_text=vita_codes_text,
+        merge_vita_codes_text=merge_vita_codes_text,
     )
 
 

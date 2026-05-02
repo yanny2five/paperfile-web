@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" class="pf-ui-{{ ui_theme }}">
+<head>
+    <meta charset="utf-8">
+    {% include '_ui_head.html' %}
+    <title>Edit Journals (.cnj) - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 24px 32px; }
+        h1 { margin-top: 0; }
+        h2 { font-size: 19px; margin-top: 26px; }
+        .nav { margin-bottom: 18px; font-size: 16px; }
+        .meta { background: rgba(255,255,255,0.45); padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; max-width: 1300px; }
+        .flash { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; max-width: 1300px; font-size: 14px; }
+        .flash.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .flash.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .flash.warning { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        .ro { background: #fff3cd; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; max-width: 1300px; font-size: 14px; }
+        .filter-row { display:flex; gap: 10px; align-items: center; margin: 8px 0; }
+        .filter-row input[type="text"] { font-size: 14px; padding: 6px 10px; width: 380px; }
+        table.data { border-collapse: collapse; width: 100%; max-width: 1300px; background: rgba(255,255,255,0.55); font-size: 13px; }
+        table.data th, table.data td { border: 1px solid #999; padding: 4px 6px; vertical-align: top; }
+        table.data th { background: rgba(0,0,0,0.06); text-align: left; }
+        table.data input[type="text"] { width: 100%; box-sizing: border-box; font-size: 13px; padding: 3px 5px; }
+        .scroll { max-height: 540px; overflow: auto; border: 1px solid #888; border-radius: 6px; }
+        .btnrow { margin: 10px 0 22px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+        button { font-size: 14px; padding: 7px 14px; cursor: pointer; }
+        .danger { color: #b00; }
+        .small { font-size: 12px; color: #555; }
+        details summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+        pre.header { background: #fff; border: 1px solid #ccc; padding: 8px 10px; max-height: 200px; overflow:auto; font-size: 12px; white-space: pre-wrap; max-width: 1300px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">&larr; Main menu</a> &nbsp;|&nbsp;
+        <a href="{{ url_for('journals_and_people') }}">Journals &amp; People (browser)</a>
+    </div>
+    <h1>Edit journals (.cnj)</h1>
+
+    <div class="meta">
+        File: <code>{{ journal_path }}</code>
+        {% if parsed %}
+        &nbsp;|&nbsp; Encoding: <code>{{ parsed.encoding }}</code>
+        &nbsp;|&nbsp; Classes: <strong>{{ parsed.classes|length }}</strong>
+        &nbsp;|&nbsp; Journals: <strong>{{ parsed.journals|length }}</strong>
+        {% endif %}
+    </div>
+
+    {% if read_only %}
+    <div class="ro"><strong>Read-only mode</strong> &mdash; saves are disabled (set <code>PAPERFILE_READ_ONLY=0</code> to enable).</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if parse_error %}
+    <div class="flash error">.cnj parse error: {{ parse_error }}</div>
+    {% elif parsed %}
+
+    {% if parsed.header %}
+    <details>
+        <summary>File header (preserved on save, {{ parsed.header|length }} line(s))</summary>
+        <pre class="header">{% for ln in parsed.header %}{{ ln }}
+{% endfor %}</pre>
+    </details>
+    {% endif %}
+
+    <h2 id="classes">Class definitions ({{ parsed.classes|length }})</h2>
+    <p class="small">Each class line in the CLASSCOUNT block. <code>sort_order</code> controls the
+        display order in reports; <code>norm</code> is the normalization weight (preserved including
+        any <code>zz</code> suffix on the original line).</p>
+    <form method="post" action="{{ url_for('edit_journals_cnj') }}">
+        <input type="hidden" name="action" value="save_classes">
+        <div class="scroll">
+            <table class="data">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th>Major class name</th>
+                        <th style="width:90px;">sort_order</th>
+                        <th style="width:120px;">norm (raw)</th>
+                        <th style="width:60px;">delete</th>
+                    </tr>
+                </thead>
+                <tbody id="classes_tbody">
+                    {% for c in parsed.classes %}
+                    {% set i = c.form_id %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td><input type="text" name="c_name_{{ i }}" value="{{ c.major }}"></td>
+                        <td><input type="text" name="c_order_{{ i }}" value="{{ c.sort_order }}"></td>
+                        <td><input type="text" name="c_normraw_{{ i }}" value="{{ c.norm_raw }}"></td>
+                        <td style="text-align:center;"><label><input type="checkbox" name="c_del_{{ i }}" value="1"></label></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="btnrow">
+            <button type="button" id="add_class_btn" {% if read_only %}disabled{% endif %}>Add class</button>
+            <button type="submit" {% if read_only %}disabled{% endif %}>Save class block (with backup)</button>
+            <span class="small">Sort order is rewritten on save; output is sorted by major class then journal name.</span>
+        </div>
+    </form>
+
+    <h2 id="journals">Journal entries ({{ parsed.journals|length }})</h2>
+    <form method="post" action="{{ url_for('edit_journals_cnj') }}">
+        <input type="hidden" name="action" value="save_journals">
+
+        <div class="filter-row">
+            <label class="small">Filter:</label>
+            <input type="text" id="journalFilter" placeholder="substring of name, class, rank, ABDC...">
+            <span class="small">Filter is client-side; all rows are still submitted on save.</span>
+        </div>
+
+        <div class="scroll">
+            <table class="data" id="journal_table">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th style="width:140px;">major</th>
+                        <th style="width:140px;">minor</th>
+                        <th>Journal name</th>
+                        <th style="width:60px;">rank</th>
+                        <th style="width:80px;">PCT</th>
+                        <th style="width:50px;">Q</th>
+                        <th style="width:80px;">ABDC</th>
+                        <th style="width:50px;">del</th>
+                    </tr>
+                </thead>
+                <tbody id="journals_tbody">
+                    {% for j in parsed.journals %}
+                    {% set i = j.form_id %}
+                    <tr data-search="{{ (j.name ~ ' ' ~ j.major ~ ' ' ~ j.minor ~ ' ' ~ j.rank ~ ' ' ~ j.pct ~ ' ' ~ j.quartile ~ ' ' ~ j.abdc)|lower }}">
+                        <td>{{ loop.index }}</td>
+                        <td><input type="text" name="j_major_{{ i }}" value="{{ j.major }}"></td>
+                        <td><input type="text" name="j_minor_{{ i }}" value="{{ j.minor }}"></td>
+                        <td><input type="text" name="j_name_{{ i }}" value="{{ j.name }}"></td>
+                        <td><input type="text" name="j_rank_{{ i }}" value="{{ j.rank }}"></td>
+                        <td><input type="text" name="j_pct_{{ i }}" value="{{ j.pct }}"></td>
+                        <td><input type="text" name="j_q_{{ i }}" value="{{ j.quartile }}"></td>
+                        <td><input type="text" name="j_abdc_{{ i }}" value="{{ j.abdc }}"></td>
+                        <td style="text-align:center;"><input type="checkbox" name="j_del_{{ i }}" value="1"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="btnrow">
+            <button type="button" id="add_journal_btn" {% if read_only %}disabled{% endif %}>Add journal</button>
+            <button type="submit" {% if read_only %}disabled{% endif %}>Save journal block (with backup)</button>
+        </div>
+    </form>
+
+    <script>
+        let nextClassId = {{ next_class_id }};
+        let nextJournalId = {{ next_journal_id }};
+
+        function addClassRow() {
+            const tbody = document.getElementById('classes_tbody');
+            if (!tbody) return;
+            const id = nextClassId++;
+            const tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td>new</td>' +
+                '<td><input type="text" name="c_name_' + id + '"></td>' +
+                '<td><input type="text" name="c_order_' + id + '" value="0"></td>' +
+                '<td><input type="text" name="c_normraw_' + id + '" value="0"></td>' +
+                '<td style="text-align:center;"><input type="checkbox" name="c_del_' + id + '" value="1"></td>';
+            tbody.appendChild(tr);
+        }
+        function addJournalRow() {
+            const tbody = document.getElementById('journals_tbody');
+            if (!tbody) return;
+            const id = nextJournalId++;
+            const tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td>new</td>' +
+                '<td><input type="text" name="j_major_' + id + '"></td>' +
+                '<td><input type="text" name="j_minor_' + id + '"></td>' +
+                '<td><input type="text" name="j_name_' + id + '"></td>' +
+                '<td><input type="text" name="j_rank_' + id + '" value="10"></td>' +
+                '<td><input type="text" name="j_pct_' + id + '"></td>' +
+                '<td><input type="text" name="j_q_' + id + '"></td>' +
+                '<td><input type="text" name="j_abdc_' + id + '"></td>' +
+                '<td style="text-align:center;"><input type="checkbox" name="j_del_' + id + '" value="1"></td>';
+            tbody.appendChild(tr);
+        }
+        document.getElementById('add_class_btn').addEventListener('click', addClassRow);
+        document.getElementById('add_journal_btn').addEventListener('click', addJournalRow);
+
+        const jf = document.getElementById('journalFilter');
+        if (jf) {
+            jf.addEventListener('input', function() {
+                const q = this.value.trim().toLowerCase();
+                document.querySelectorAll('#journal_table tbody tr').forEach(function(tr) {
+                    const hay = (tr.getAttribute('data-search') || '');
+                    tr.style.display = (!q || hay.indexOf(q) !== -1) ? '' : 'none';
+                });
+            });
+        }
+    </script>
+
+    {% endif %}
+
+</body>
+</html>

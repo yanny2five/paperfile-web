@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" class="pf-ui-{{ ui_theme }}">
+<head>
+    <meta charset="utf-8">
+    {% include '_ui_head.html' %}
+    <title>Standardize Person Names - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 28px 36px; }
+        h1 { margin-top: 0; }
+        h2 { font-size: 18px; margin-top: 0; }
+        .nav { margin-bottom: 18px; font-size: 17px; }
+        .file-line { text-align: center; font-size: 14px; margin-bottom: 18px; padding: 10px; background: rgba(255,255,255,0.45); border-radius: 8px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+        section { background: rgba(255,255,255,0.45); padding: 18px 22px; border-radius: 8px; max-width: 1100px; margin-bottom: 18px; }
+        .flash { padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; max-width: 1100px; font-size: 14px; }
+        .flash.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .flash.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .flash.warning { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        .ro { background: #fff3cd; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; max-width: 1100px; font-size: 14px; }
+        table.data { border-collapse: collapse; width: 100%; max-width: 1100px; background: rgba(255,255,255,0.55); font-size: 14px; }
+        table.data th, table.data td { border: 1px solid #999; padding: 6px 10px; vertical-align: top; }
+        table.data th { background: rgba(0,0,0,0.06); text-align: left; }
+        table.data input[type="text"] { width: 100%; box-sizing: border-box; font-size: 14px; padding: 4px 6px; }
+        .scroll { max-height: 520px; overflow: auto; border: 1px solid #888; border-radius: 6px; }
+        .small { font-size: 13px; color: #333; }
+        .badge-bad { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #f8d7da; color: #721c24; font-size: 12px; }
+        .badge-ok  { display: inline-block; padding: 1px 8px; border-radius: 999px; background: #d4edda; color: #155724; font-size: 12px; }
+        .filter-row { display:flex; gap: 10px; align-items: center; margin: 10px 0; }
+        .filter-row input[type="text"] { font-size: 14px; padding: 6px 10px; width: 320px; }
+        button { font-size: 14px; padding: 6px 12px; cursor: pointer; }
+        .replace-form { display:flex; gap: 8px; align-items: center; }
+        .replace-form input[type="text"] { width: 220px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">&larr; Main menu</a> &nbsp;|&nbsp;
+        <a href="{{ url_for('edit_and_fix_entries') }}">Edit and Fix Entries</a> &nbsp;|&nbsp;
+        <a href="{{ url_for('journals_and_people') }}#people">Journals &amp; People</a>
+    </div>
+    <h1>Standardize Person Names</h1>
+
+    <div class="file-line">
+        Database: <strong>{{ db_path or "(none)" }}</strong>
+        &nbsp;|&nbsp; Faculty file: <strong>{{ faculty_path }}</strong>
+        &nbsp;|&nbsp; Distinct authors: <strong>{{ all_count }}</strong>
+        &nbsp;|&nbsp; Actionable rows: <strong>{{ row_count }}</strong>
+    </div>
+
+    {% if read_only %}
+    <div class="ro"><strong>Read-only mode</strong> &mdash; review is allowed; rewrites are disabled.</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section>
+        <h2>Suggested fixes</h2>
+        <p class="small">Names below are either <strong>incorrectly formatted</strong> (don't match the
+            <code>"Last, I.N."</code> spec) or are <strong>look-alikes</strong> of a faculty entry. Suggestions
+            are only proposed when a faculty member shares the same base last name &mdash; the same rule the
+            desktop's <em>Collapse Names</em> form follows. Editing the suggestion lets you rewrite to a
+            non-faculty name as well.</p>
+        {% if not rows %}
+        <p class="small"><em>No incorrect-format or suspect names detected.</em></p>
+        {% else %}
+        <table class="data">
+            <thead>
+                <tr>
+                    <th style="width:40px;">#</th>
+                    <th style="width:300px;">Name as entered</th>
+                    <th>Suggested replacement (editable)</th>
+                    <th style="width:90px;">Type</th>
+                    <th style="width:200px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><code>{{ r.name }}</code></td>
+                    <td>
+                        <form class="replace-form" method="post" action="{{ url_for('standardize_names') }}">
+                            <input type="hidden" name="action" value="accept_suggestion">
+                            <input type="hidden" name="name_entered" value="{{ r.name }}">
+                            <input type="text" name="replacement"
+                                   value="{{ r.suggestion }}"
+                                   list="faculty_list"
+                                   placeholder="Last, I.N.">
+                            <button type="submit"
+                                    {% if read_only %}disabled{% endif %}>Apply to all matching records</button>
+                        </form>
+                    </td>
+                    <td>
+                        {% if r.kind == 'incorrect' %}
+                        <span class="badge-bad">incorrect</span>
+                        {% else %}
+                        <span class="badge-bad" style="background:#fde7c4;color:#7a4a00;">suspect</span>
+                        {% endif %}
+                    </td>
+                    <td class="small">Token-bounded; replaces both <code>Last, F.</code> and <code>F. Last</code> forms.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>All distinct authors ({{ all_count }})</h2>
+        <form method="get" action="{{ url_for('standardize_names') }}" class="filter-row">
+            <label class="small">Filter:</label>
+            <input type="text" name="q" value="{{ q }}" placeholder="substring of name">
+            <button type="submit">Filter</button>
+            {% if q %}<a href="{{ url_for('standardize_names') }}" class="small">clear</a>{% endif %}
+        </form>
+        {% if name_status_truncated %}
+        <p class="small"><em>Showing the first 1500 names; refine the filter to see fewer.</em></p>
+        {% endif %}
+        <div class="scroll">
+            <table class="data">
+                <thead>
+                    <tr>
+                        <th style="width:40px;">#</th>
+                        <th style="width:80px;">Format</th>
+                        <th style="width:60px;">Count</th>
+                        <th>Name</th>
+                        <th style="width:280px;">First numbers</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for n in name_status %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{% if n.ok %}<span class="badge-ok">ok</span>{% else %}<span class="badge-bad">bad</span>{% endif %}</td>
+                        <td>{{ n.count }}</td>
+                        <td><code>{{ n.name }}</code></td>
+                        <td class="small">{{ n.numbers|join(', ') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <datalist id="faculty_list">
+        {% for n in faculty_names %}<option value="{{ n }}">{% endfor %}
+    </datalist>
+
+</body>
+</html>

@@ -1,3 +1,31 @@
+import re
+
+# Sentinel used so empty values sort last in any ordering, no matter the type
+# of the other keys. The first slot of the tuple is the "is missing" flag
+# (False sorts before True), the second slot is a comparable typed value.
+_MISSING_TUPLE_INT = (True, 0)
+_MISSING_TUPLE_STR = (True, "")
+
+
+def _parse_int_loose(value):
+    """Best-effort int from a possibly messy string ('1,234' / 'September/October 2016')."""
+    if value is None:
+        return None
+    s = str(value).strip().replace(",", "")
+    if not s:
+        return None
+    try:
+        return int(s)
+    except (TypeError, ValueError):
+        m = re.search(r"-?\d+", s)
+        if m:
+            try:
+                return int(m.group(0))
+            except (TypeError, ValueError):
+                return None
+        return None
+
+
 class SortData:
     def __init__(self, data):
         """
@@ -30,47 +58,52 @@ class SortData:
         :param sort_config: A dictionary defining the sorting priority and order for each field
         :param vita_order_key: The key for the vita type order list (e.g., "vitord1", "vitord2", "vitordg")
         :return: A sorted list of records
+
+        Each sort key is a 2-tuple ``(missing_flag, value)`` so empty / non-parseable
+        values always sort last regardless of the other keys' type. This fixes the
+        previous TypeError when ``order=backward`` and any record had an empty year
+        or a messy year string like "September/October 2016".
         """
 
         def get_sort_key(record):
-            # Initialize a list to store sorting keys based on priority
             sort_keys = []
 
-            # Iterate through the sorting configuration
             for field, config in sorted(sort_config.items(), key=lambda x: x[1]["priority"]):
                 value = record.get(field, "")
+                order = config.get("order")
 
-                # Handle empty values
-                if value is None or value == "":
-                    # Assign a special string to ensure empty values are sorted last
-                    sort_keys.append("zzzzzzzz")  # A large string to ensure it sorts last
+                if value is None or (isinstance(value, str) and not value.strip()):
+                    if order == "backward" and field in ("number", "year"):
+                        sort_keys.append(_MISSING_TUPLE_INT)
+                    elif order == "vitord":
+                        sort_keys.append((True, len(self.vita_orders.get(vita_order_key, []))))
+                    else:
+                        sort_keys.append(_MISSING_TUPLE_STR)
                     continue
 
-                # Handle each field based on its sorting order
-                if config["order"] == "backward":
-                    # For backward order, use negative value for descending sort
-                    if field in ["number", "year"]:
-                        sort_keys.append(-int(value))
+                if order == "backward":
+                    if field in ("number", "year"):
+                        n = _parse_int_loose(value)
+                        if n is None:
+                            sort_keys.append(_MISSING_TUPLE_INT)
+                        else:
+                            sort_keys.append((False, -n))
                     else:
-                        sort_keys.append(value)  # Default to forwards for non-numeric fields
-                elif config["order"] == "forwards":
-                    # For forwards order, use the value as is
+                        sort_keys.append((False, str(value).lower()))
+                elif order == "forwards":
                     if isinstance(value, str):
-                        sort_keys.append(value.lower())
+                        sort_keys.append((False, value.lower()))
                     else:
-                        sort_keys.append(str(value))  # Convert non-string values to strings
-                elif config["order"] == "vitord":
-                    # For vitord order, use the index in the specified vita_order list
+                        sort_keys.append((False, str(value)))
+                elif order == "vitord":
                     vita_order = self.vita_orders.get(vita_order_key, [])
                     if value in vita_order:
-                        sort_keys.append(vita_order.index(value))
+                        sort_keys.append((False, vita_order.index(value)))
                     else:
-                        # If value is not in the list, assign a high index to sort it last
-                        sort_keys.append(len(vita_order))
+                        sort_keys.append((True, len(vita_order)))
+                else:
+                    sort_keys.append((False, str(value).lower() if isinstance(value, str) else str(value)))
 
             return tuple(sort_keys)
 
-        # Sort the data using the generated sort keys
-        sorted_data = sorted(self.data, key=get_sort_key)
-
-        return sorted_data
+        return sorted(self.data, key=get_sort_key)

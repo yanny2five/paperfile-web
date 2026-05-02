@@ -7,14 +7,53 @@ def format_citations_with_chatgpt(text: str) -> str:
 
     Returns:
         str: A single-line formatted citation or None if failed.
+
+    Reads the OpenAI API key from:
+      1) the ``OPENAI_API_KEY`` environment variable, or
+      2) the ``openai_api_key`` value stored in ``config.json``.
     """
+    import json
     import os
+    import sys
 
     import openai
 
-    api_key = (os.environ.get("OPENAI_API_KEY") or "").strip()
+    def _config_paths():
+        candidates = []
+        if getattr(sys, "frozen", False):
+            candidates.append(os.path.join(os.path.dirname(sys.executable), "config.json"))
+        here = os.path.dirname(os.path.abspath(__file__))
+        candidates.append(os.path.join(os.path.dirname(here), "config.json"))
+        candidates.append(os.path.join(os.path.abspath(os.getcwd()), "config.json"))
+        out = []
+        seen = set()
+        for p in candidates:
+            n = os.path.normpath(p)
+            if n not in seen and os.path.isfile(n):
+                seen.add(n)
+                out.append(n)
+        return out
+
+    def _key_from_config():
+        for p in _config_paths():
+            for enc in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
+                try:
+                    with open(p, "r", encoding=enc) as f:
+                        cfg = json.load(f)
+                    val = (cfg.get("openai_api_key") or "").strip() if isinstance(cfg, dict) else ""
+                    if val:
+                        return val
+                    break
+                except Exception:
+                    continue
+        return ""
+
+    api_key = (os.environ.get("OPENAI_API_KEY") or "").strip() or _key_from_config()
     if not api_key:
-        print("[OpenAI] Set OPENAI_API_KEY in the environment to use citation formatting.")
+        print(
+            "[OpenAI] No API key. Set the OPENAI_API_KEY environment variable "
+            "or add openai_api_key to config.json."
+        )
         return None
 
     try:

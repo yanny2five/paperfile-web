@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="pf-ui-{{ ui_theme }}">
+<head>
+    <meta charset="utf-8">
+    {% include '_ui_head.html' %}
+    <title>Delete Selected Papers - Paperfile</title>
+    <style>
+        body { font-family: "Segoe UI", Arial, sans-serif; background: #a6caf0; margin: 0; padding: 28px 36px; }
+        h1 { margin-top: 0; }
+        h2 { font-size: 18px; margin-top: 0; }
+        .nav { margin-bottom: 18px; font-size: 17px; }
+        .file-line { text-align: center; font-size: 15px; margin-bottom: 22px; padding: 10px; background: rgba(255,255,255,0.45); border-radius: 8px; max-width: 980px; margin-left: auto; margin-right: auto; }
+        section { background: rgba(255,255,255,0.4); padding: 18px 22px; border-radius: 8px; max-width: 980px; margin-bottom: 18px; }
+        section p { font-size: 14px; line-height: 1.45; margin: 8px 0; }
+        label { font-weight: 600; font-size: 14px; }
+        input[type="text"], input[type="number"] { font-size: 15px; padding: 8px; margin-top: 6px; box-sizing: border-box; }
+        input[type="text"][list]:focus { outline: 2px solid #5a8dd6; }
+        button { font-size: 15px; padding: 10px 18px; cursor: pointer; }
+        .row { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+        .row .narrow { width: 160px; }
+        .row .wide { width: 320px; }
+        .flash { padding: 12px 16px; border-radius: 6px; margin-bottom: 14px; max-width: 980px; font-size: 15px; }
+        .flash.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .flash.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .flash.warning { background: #fff3cd; border: 1px solid #ffeeba; color: #856404; }
+        .ro { background: #fff3cd; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; max-width: 980px; font-size: 14px; }
+        .danger { background: #fde8e8; border: 1px solid #f5b7b1; padding: 14px 18px; border-radius: 6px; }
+        .danger button { background: #c0392b; color: white; border: 1px solid #922b21; }
+        .danger button:disabled { background: #aaa; }
+        .planbox pre { background: #fff; border: 1px solid #ccc; padding: 10px; white-space: pre-wrap; font-size: 14px; max-width: 100%; overflow:auto; }
+        table.preview { border-collapse: collapse; width: 100%; max-width: 980px; background: rgba(255,255,255,0.6); font-size: 13px; margin-top: 12px; }
+        table.preview th, table.preview td { border: 1px solid #999; padding: 5px 8px; vertical-align: top; }
+        table.preview th { background: rgba(0,0,0,0.07); text-align: left; }
+        .small { font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav">
+        <a href="{{ url_for('dashboard') }}">&larr; Main menu</a> &nbsp;|&nbsp;
+        <a href="{{ url_for('edit_and_fix_entries') }}">Edit and Fix Entries</a> &nbsp;|&nbsp;
+        <a href="{{ url_for('use_utilities') }}">Utilities</a>
+    </div>
+    <h1>Delete Selected Papers</h1>
+
+    <div class="file-line">
+        Database: <strong>{{ db_path or "(none)" }}</strong>
+        &nbsp;|&nbsp; Records: <strong>{{ entry_count }}</strong>
+        {% if db_min is not none and db_max is not none %}
+        &nbsp;|&nbsp; Number range: <strong>{{ db_min }}</strong> – <strong>{{ db_max }}</strong>
+        {% endif %}
+    </div>
+
+    {% if read_only %}
+    <div class="ro"><strong>Read-only mode</strong> — preview is allowed, but committing a delete is disabled.</div>
+    {% endif %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <section>
+        <h2>Step 1 &mdash; Build a deletion plan</h2>
+        <p>Provide one or more rules. They are <strong>UNION-ed</strong>: a record is targeted if it
+            matches <em>any</em> rule. Author matches are <strong>token-bounded</strong>, so
+            <code>"Doe, J."</code> will not match <code>"Doerr, J."</code>; both
+            <code>"Last, First"</code> and <code>"First Last"</code> forms of the input are tried.</p>
+        <form method="post" action="{{ url_for('delete_selected_papers') }}" autocomplete="off">
+            <input type="hidden" name="action" value="preview">
+
+            <div class="row">
+                <div>
+                    <label for="from_n">Number range &mdash; From</label><br>
+                    <input class="narrow" type="text" id="from_n" name="from_n"
+                           value="{{ plan.from_n if plan and plan.from_n is not none else '' }}"
+                           placeholder="(min)">
+                </div>
+                <div>
+                    <label for="to_n">To</label><br>
+                    <input class="narrow" type="text" id="to_n" name="to_n"
+                           value="{{ plan.to_n if plan and plan.to_n is not none else '' }}"
+                           placeholder="(max)">
+                </div>
+                <div class="small" style="align-self:flex-end;">Leave both blank to skip the range rule.</div>
+            </div>
+
+            <datalist id="author_list">
+                {% for n in all_authors %}<option value="{{ n }}">{% endfor %}
+            </datalist>
+
+            <div class="row">
+                <div>
+                    <label for="with_author">Delete papers <em>with</em> author</label><br>
+                    <input class="wide" list="author_list" type="text" id="with_author"
+                           name="with_author"
+                           value="{{ plan.with_author if plan else '' }}"
+                           placeholder="e.g. Smith, J.">
+                </div>
+                <div>
+                    <label for="without_author">Delete papers <em>without</em> author</label><br>
+                    <input class="wide" list="author_list" type="text" id="without_author"
+                           name="without_author"
+                           value="{{ plan.without_author if plan else '' }}"
+                           placeholder="e.g. McCarl, B.A.">
+                </div>
+            </div>
+
+            <div class="row">
+                <button type="submit">Preview deletion</button>
+                {% if plan %}
+                <button type="submit" name="action" value="cancel" formnovalidate>Cancel pending plan</button>
+                {% endif %}
+            </div>
+        </form>
+    </section>
+
+    {% if plan %}
+    <section class="planbox">
+        <h2>Step 2 &mdash; Review and confirm</h2>
+        <pre>{{ plan.summary }}
+
+Total records to be deleted: {{ plan.indices|length }}</pre>
+
+        <h3 style="margin-top:18px; font-size:16px;">First {{ preview_records|length }} target record(s){% if preview_truncated %} (showing 200 of {{ plan.indices|length }}){% endif %}</h3>
+        <table class="preview">
+            <thead>
+                <tr>
+                    <th style="width:80px;">number</th>
+                    <th style="width:240px;">authors</th>
+                    <th>title</th>
+                    <th style="width:70px;">year</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in preview_records %}
+                <tr>
+                    <td>{{ r.number }}</td>
+                    <td>{{ r.authors }}</td>
+                    <td>{{ r.title }}</td>
+                    <td>{{ r.year }}</td>
+                </tr>
+                {% endfor %}
+                {% if not preview_records %}
+                <tr><td colspan="4"><em>(plan resolves to 0 visible records)</em></td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <form method="post" action="{{ url_for('delete_selected_papers') }}" autocomplete="off"
+              style="margin-top:16px;" class="danger">
+            <input type="hidden" name="action" value="commit">
+            <p><label><input type="checkbox" name="backup_before" value="1" checked>
+                Backup full bundle (.cnt + .cng + .cnj) into a timestamped folder first</label></p>
+            <p><label><input type="checkbox" name="renumber" value="1">
+                Renumber remaining records sequentially from 1 after delete</label></p>
+            <p><label><input type="checkbox" name="confirm" value="1">
+                <strong>I confirm:</strong> permanently delete {{ plan.indices|length }} record(s) from
+                <code>{{ db_path }}</code>.</label></p>
+            <button type="submit" {% if read_only %}disabled{% endif %}>Commit delete</button>
+            <button type="submit" name="action" value="cancel" formnovalidate
+                    style="background:#666; color:white; border:1px solid #444;">Cancel</button>
+        </form>
+    </section>
+    {% endif %}
+
+</body>
+</html>

@@ -88,6 +88,13 @@
     </section>
 
     <section>
+        <h2>Delete papers in bulk</h2>
+        <p>Remove records by number range and/or author membership (with confirmation, backup, and optional renumber).
+            Mirrors the desktop's <em>Delete Selected Papers</em> page.</p>
+        <p><a class="exports" href="{{ url_for('delete_selected_papers') }}" style="font-weight:600;">Open bulk-delete page &rarr;</a></p>
+    </section>
+
+    <section>
         <h2>Save current as new paper file</h2>
         <p>Writes all in-memory records to a new path, reusing the header from the active file when possible (otherwise a default header).</p>
         <form method="POST" action="{{ url_for('use_utilities') }}">
@@ -145,8 +152,21 @@
                 <input type="text" id="openai_api_key" name="openai_api_key" value="{{ openai_api_key }}" placeholder="sk-..." autocomplete="off">
             </div>
             <div class="row">
-                <label for="vita_codes">Default vita types (one code per line)</label><br>
+                <label for="vita_codes">Default vita types for grouped output (one code per line)</label><br>
                 <textarea id="vita_codes" name="vita_codes" rows="8" cols="40">{{ vita_codes_text }}</textarea>
+                <div style="font-size: 0.85em; color: #555;">
+                    Used by the Group Out Form report to determine which vita types are pre-checked.
+                    Matches the desktop <code>vitatype_preference</code> config key.
+                </div>
+            </div>
+            <div class="row">
+                <label for="merge_vita_codes">Default vita types for merge / detailed reports (one code per line)</label><br>
+                <textarea id="merge_vita_codes" name="merge_vita_codes" rows="8" cols="40">{{ merge_vita_codes_text }}</textarea>
+                <div style="font-size: 0.85em; color: #555;">
+                    Used by Merge Database and the desktop "Default Vita Types" page.
+                    Matches the desktop <code>merge_vitatype_preference</code> config key.
+                    Leave blank to keep the existing value.
+                </div>
             </div>
             <button type="submit">Save preferences</button>
         </form>

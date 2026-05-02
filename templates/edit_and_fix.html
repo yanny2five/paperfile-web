@@ -88,11 +88,33 @@
         </form>
     </section>
 
+    <section id="standardize-names">
+        <h2>Standardize person names</h2>
+        <p>Find author names that don't match the <code>"Last, I.N."</code> format and accept faculty-file
+            suggestions for look-alikes (mirrors the desktop's <em>Standardize Names</em> + <em>Collapse Names</em>
+            workflow).</p>
+        <p><a class="btnlink" href="{{ url_for('standardize_names') }}">Open standardize-names page</a></p>
+    </section>
+
+    <section id="bulk-delete">
+        <h2>Delete papers in bulk</h2>
+        <p>Open the bulk-delete tool to remove records by <strong>number range</strong>,
+            <strong>with author</strong>, or <strong>without author</strong>. Mirrors the desktop's
+            <em>Delete Selected Papers</em> page (preview &rarr; confirm &rarr; optional backup &rarr; optional renumber).</p>
+        <p><a class="btnlink" href="{{ url_for('delete_selected_papers') }}">Open bulk-delete page</a></p>
+    </section>
+
     <section id="backup">
         <h2>Backup the file</h2>
+        <p><strong>Backup .cnt only</strong> copies just the active database file. Useful for fast snapshots before a single-step edit.</p>
         <form method="POST" action="{{ url_for('edit_and_fix_entries') }}">
             <input type="hidden" name="action" value="backup_cnt">
             <button type="submit" {% if read_only %}disabled{% endif %}>Create .cnt backup folder</button>
+        </form>
+        <p style="margin-top:14px;"><strong>Backup full bundle</strong> copies <code>.cnt</code> + <code>.cng</code> (faculty) + <code>.cnj</code> (journals) into a single timestamped folder, matching the desktop's <code>backup_file</code> behavior. Recommended before destructive operations.</p>
+        <form method="POST" action="{{ url_for('edit_and_fix_entries') }}">
+            <input type="hidden" name="action" value="backup_full">
+            <button type="submit" {% if read_only %}disabled{% endif %}>Create full backup (.cnt + .cng + .cnj)</button>
         </form>
     </section>
 
