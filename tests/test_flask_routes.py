@@ -28,7 +28,10 @@ class TestFlaskAppIsolated:
         cls._cnt = f"{root}/db.cnt"
         cls._cfg = f"{root}/config.json"
         recs = [
-            sample_record("10", "Alpha, A.", "First", vitatyp="Journal Articles"),
+            # vitatyp stored as a desktop-style uppercase code (the form
+            # checkboxes also submit codes via value="{{ code }}"). Strict-
+            # parity vita filtering requires exact equality.
+            sample_record("10", "Alpha, A.", "First", vitatyp="J"),
             sample_record("20", "Beta, B.", "Second"),
         ]
         write_cnt_new_file(cls._cnt, recs, None)
@@ -106,18 +109,43 @@ class TestFlaskAppIsolated:
         after.read_file()
         assert len(after.get_data() or []) == n0 + 1
 
-    def test_retrieve_author_with_journal_articles_label_filter(self):
-        # Web filter can arrive as a human label (not only code); it should map to J.
+    def test_retrieve_author_with_strict_vita_code_filter(self):
+        # Vita filter is now strict desktop equality on the uppercase code.
+        # The form already submits codes (the checkbox value=`{{ code }}`),
+        # so this is the production path. Year boxes are filled because empty
+        # means "year-empty records only" under strict desktop semantics.
         r = self.client.post(
             "/retrieve",
             data={
                 "search_type": "author_title",
                 "author_query": "Alpha",
                 "title_query": "",
+                "year_min": "1900",
+                "year_max": "2100",
+                "restrict_vita_types": "1",
+                "vita_types": "J",
+            },
+            follow_redirects=True,
+        )
+        assert r.status_code == 200
+        assert b"Showing 1 results." in r.data
+
+    def test_retrieve_author_with_label_value_does_not_match(self):
+        # Strict-parity regression: legacy "label" values like
+        # "Journal Articles" must NOT match the strict uppercase code "J"
+        # (this is the desktop's filter_by_vita_type behavior).
+        r = self.client.post(
+            "/retrieve",
+            data={
+                "search_type": "author_title",
+                "author_query": "Alpha",
+                "title_query": "",
+                "year_min": "1900",
+                "year_max": "2100",
                 "restrict_vita_types": "1",
                 "vita_types": "Journal Articles",
             },
             follow_redirects=True,
         )
         assert r.status_code == 200
-        assert b"Showing 1 results." in r.data
+        assert b"Showing 0 results." in r.data

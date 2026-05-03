@@ -280,10 +280,21 @@ def test_flask_export_mode_keeps_last_retrieve_results():
         importlib.reload(app_module)
         client = app_module.app.test_client()
 
-        # First run a retrieve search to seed session-backed results.
+        # First run a retrieve search to seed session-backed results. The web
+        # form now mirrors desktop: there are explicit author/title boxes (the
+        # old combined "Text to find (author or title)" box was removed for
+        # parity), and year boxes are interpreted strictly (both empty =
+        # year-empty records only). We fill year boxes with the test corpus's
+        # range so we get hits.
         r1 = client.post(
             "/retrieve",
-            data={"search_type": "author_title", "query_author_title": "corn", "sort_by": "title"},
+            data={
+                "search_type": "author_title",
+                "title_query": "corn",
+                "year_min": "2000",
+                "year_max": "2030",
+                "sort_by": "title",
+            },
             follow_redirects=True,
         )
         assert r1.status_code == 200

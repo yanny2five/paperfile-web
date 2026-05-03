@@ -86,11 +86,6 @@
             <section class="form-section">
                 <h3>Filters</h3>
                 <div class="field-panel">
-                    <div class="field-row mode-author_title mode-any_field active-field-target">
-                        <label for="query">Text to find (author or title)</label>
-                        <input type="text" id="query" name="query_author_title" value="{{ request.form.get('query_author_title', '') }}" placeholder="Author OR title; or leave blank and use the two fields below (AND)">
-                    </div>
-
                     <div class="field-row mode-vita_type active-field-target">
                         <label for="vita_query">Text to find in Vita Type</label>
                         <input type="text" id="vita_query" name="query_vita_type" value="{{ request.form.get('query_vita_type', '') }}">
@@ -111,14 +106,29 @@
                         <input type="text" id="journal_query" name="query_journal_book" value="{{ request.form.get('query_journal_book', '') }}">
                     </div>
 
+                    <div class="field-row mode-any_field active-field-target">
+                        <label for="anyfield_query">Text to find (any field)</label>
+                        <input type="text" id="anyfield_query" name="query_any_field" value="{{ request.form.get('query_any_field', request.form.get('query_author_title', '')) }}">
+                    </div>
+
                     <div class="field-row mode-author_title active-field-target">
                         <label for="author_query">Text to find in Author field</label>
-                        <input type="text" id="author_query" name="author_query" value="{{ request.form.get('author_query', request.form.get('query', '')) }}">
+                        <input type="text" id="author_query" name="author_query" value="{{ request.form.get('author_query', '') }}">
+                    </div>
+
+                    <div class="field-row mode-author_title active-field-target">
+                        <label for="optional_author_query">Optional more text in Author field</label>
+                        <input type="text" id="optional_author_query" name="optional_author_query" value="{{ request.form.get('optional_author_query', '') }}">
                     </div>
 
                     <div class="field-row mode-author_title active-field-target">
                         <label for="title_query">Text to find in Title field</label>
                         <input type="text" id="title_query" name="title_query" value="{{ request.form.get('title_query', '') }}">
+                    </div>
+
+                    <div class="field-row mode-author_title active-field-target">
+                        <label for="optional_title_query">Optional more text in Title field</label>
+                        <input type="text" id="optional_title_query" name="optional_title_query" value="{{ request.form.get('optional_title_query', '') }}">
                     </div>
 
                     <div class="field-row mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">

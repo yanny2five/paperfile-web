@@ -1,12 +1,15 @@
-"""
-Parity test: ``search_service.search_papers`` (web) vs ``SearchData.fuzzy_*``
+"""Parity test: ``search_service.search_papers`` (web) vs ``SearchData.fuzzy_*``
 chain (desktop) for the same query.
 
-The web search_service is a re-implementation, not a port. It does Unicode
-normalization + multi-term AND, while the desktop uses raw case-insensitive
-substring. We assert AGREEMENT on simple cases that real users hit
-("McCarl" + "policy", a journal name, a keyword string) and document the
-known intentional divergences as expected differences.
+As of the desktop-parity refactor (May 2026), ``search_service`` is a thin
+wrapper around ``modules.searchdata.SearchData`` (which is byte-identical to
+the desktop's ``paperfile/modules/searchdata.py``). All text matching is
+case-insensitive substring (no Unicode normalization, no per-token AND); year
+parsing is strict (both empty -> empty-only mode); vita filtering is strict
+uppercase code equality.
+
+For the parity tests below we provide a wide year range explicitly so the
+strict year filter doesn't dominate the test inputs.
 """
 
 from __future__ import annotations
@@ -74,6 +77,9 @@ def _desktop_journal(parity_callable, records, journal):
     return [r["number"] for r in desktop["records"]]
 
 
+WIDE = {"year_min": "1900", "year_max": "2100"}
+
+
 def test_author_title_simple_query_matches_desktop(parity, common_records):
     """Simple ASCII author+title AND query: web and desktop must agree."""
     from modules.search_service import search_papers
@@ -84,6 +90,7 @@ def test_author_title_simple_query_matches_desktop(parity, common_records):
             common_records,
             query={"author": "mccarl", "title": "policy"},
             search_type="author_title",
+            **WIDE,
         )
     )
     desktop_hits = sorted(_desktop_author_title(parity, common_records, "mccarl", "policy"))
@@ -95,21 +102,20 @@ def test_journal_book_simple_query_matches_desktop(parity, common_records):
 
     web_hits = sorted(
         r["number"]
-        for r in search_papers(common_records, query="american", search_type="journal_book")
+        for r in search_papers(common_records, query="american", search_type="journal_book", **WIDE)
     )
     desktop_hits = sorted(_desktop_journal(parity, common_records, "american"))
     assert web_hits == desktop_hits == ["31"]
 
 
 def test_keyword_query_matches_desktop_via_subject_fields(parity, common_records):
-    """Web's keyword mode searches keywords + subject1 + subject2; desktop
-    searches subject1 + subject2 only. For inputs that hit subject fields
-    they should agree."""
+    """Web's keyword mode searches subject1 + subject2 (matches desktop
+    ``fuzzy_search_by_keyword`` exactly)."""
     from modules.search_service import search_papers
 
     web_hits = sorted(
         r["number"]
-        for r in search_papers(common_records, query="energy", search_type="keyword")
+        for r in search_papers(common_records, query="energy", search_type="keyword", **WIDE)
     )
     desktop_hits = sorted(_desktop_keyword(parity, common_records, "energy"))
     assert web_hits == desktop_hits == ["10"]
@@ -119,9 +125,18 @@ def test_year_only_filter_matches_desktop_year_range(parity, common_records):
     """Year=='2020' returns the same records as a desktop year range [2020,2020]."""
     from modules.search_service import search_papers
 
+    # search_type="year" goes through search_by_year_range(2020, 2020).
+    # No additional outer year filter (year_range here has to be the same
+    # 2020-2020 to avoid double-filtering away every record).
     web_hits = sorted(
         r["number"]
-        for r in search_papers(common_records, query="2020", search_type="year")
+        for r in search_papers(
+            common_records,
+            query="2020",
+            search_type="year",
+            year_min="2020",
+            year_max="2020",
+        )
     )
     desktop_records, _ = parity(
         "searchdata.call",

@@ -51,7 +51,13 @@ from modules.publication_type_report import (
 )
 from modules.readdata import CNTReader
 from modules.author_match import matched_names_for_search
-from modules.search_service import get_number, normalize, search_papers, sort_results
+from modules.search_service import (
+    get_number,
+    normalize,
+    parse_year_range_inputs,
+    search_papers,
+    sort_results,
+)
 from modules.bibtex_import import parse_bibtex_file_to_records
 from modules.bulk_delete_service import (
     apply_deletion,
@@ -182,18 +188,30 @@ def _run_retrieve_form_search(papers, form):
     # Retrieval views permanently hide paper numbers in the rendered citation text.
     omit_number = True
     omit_keywords = "omit_keywords" in form
+    # Parse year inputs once with desktop-strict semantics. ``None`` means the
+    # input is invalid (one box filled / one empty, or non-4-digit / out-of-
+    # range): desktop blocks the search and shows an error popup; the web
+    # mirrors this by returning zero results and surfacing the message via
+    # log_info["year_error"] so the template can render it.
+    year_range = parse_year_range_inputs(year_min, year_max)
+    year_error = None
+    if year_range is None:
+        year_error = (
+            "Invalid year range. Both year boxes must be either empty (to retrieve "
+            "records with an empty year field) or filled with 4-digit years between "
+            "1900 and 2100."
+        )
     if search_type == "author_title":
-        author = (form.get("author_query") or "").strip()
-        title = (form.get("title_query") or "").strip()
-        combined = (form.get("query_author_title") or "").strip()
-        if author or title:
-            query = {"author": author, "title": title}
-        elif combined:
-            # "Text to find" box (query_author_title): same as desktop single-line
-            # search — substring in author OR title (search_service author_title string).
-            query = combined
-        else:
-            query = {"author": "", "title": ""}
+        # Desktop's four author/title inputs (read panel: author_text,
+        # optional_author_text, title_text, optional_title_text). All filled
+        # inputs are ANDed; author inputs go through name-variant expansion
+        # inside search_service to mirror desktop's behavior exactly.
+        query = {
+            "author": (form.get("author_query") or "").strip(),
+            "optional_author": (form.get("optional_author_query") or "").strip(),
+            "title": (form.get("title_query") or "").strip(),
+            "optional_title": (form.get("optional_title_query") or "").strip(),
+        }
     else:
         query_field_map = {
             "number": "query_number",
@@ -202,19 +220,44 @@ def _run_retrieve_form_search(papers, form):
             "journal_book": "query_journal_book",
             "year": "query_year",
             "vita_type": "query_vita_type",
-            "any_field": "query_author_title",
+            "any_field": "query_any_field",
         }
-        field_name = query_field_map.get(search_type, "query_author_title")
+        field_name = query_field_map.get(search_type, "query_any_field")
         query = form.get(field_name, "")
-    pre_filter_results = search_papers(
-        papers,
-        query=query,
-        search_type=search_type,
-        year_min=year_min,
-        year_max=year_max,
-        vita_types=None,
-    )
-    results, vita_debug = _apply_vita_type_filter(pre_filter_results, vita_types)
+
+    if year_error is not None:
+        pre_filter_results: list = []
+    else:
+        pre_filter_results = search_papers(
+            papers,
+            query=query,
+            search_type=search_type,
+            year_range=year_range,
+            vita_types=None,
+        )
+    # Vita-type filter: strict desktop equality on uppercase codes (no label
+    # / plural / alias normalization). Form checkboxes already submit codes.
+    if vita_types:
+        vita_codes_strict = [str(v).strip() for v in vita_types if str(v or "").strip()]
+        results = [r for r in pre_filter_results if r.get("vitatyp") in vita_codes_strict]
+        vita_debug = {
+            "selected_raw": list(vita_types),
+            "resolved_codes": sorted(set(vita_codes_strict)),
+            "resolved_aliases": [],
+            "unresolved_values": [],
+            "pre_count": len(pre_filter_results),
+            "post_count": len(results),
+        }
+    else:
+        results = list(pre_filter_results)
+        vita_debug = {
+            "selected_raw": [],
+            "resolved_codes": [],
+            "resolved_aliases": [],
+            "unresolved_values": [],
+            "pre_count": len(pre_filter_results),
+            "post_count": len(pre_filter_results),
+        }
     results = sort_results(results, sort_by)
     display_opts = {
         "italics": italics,
@@ -236,6 +279,7 @@ def _run_retrieve_form_search(papers, form):
         "query": query,
         "year_min": year_min,
         "year_max": year_max,
+        "year_error": year_error,
         "vita_types": vita_types,
         "pre_vita_filter_n": len(pre_filter_results),
         "vita_debug": vita_debug,

@@ -110,16 +110,22 @@ def matched_names_for_search(
     """Return matched author names for the current search, or an empty list when
     the search type is not author-related.
 
-    ``query`` may be either a string (legacy "any text" mode) or the
-    ``{"author": ..., "title": ...}`` dict produced by ``_run_retrieve_form_search``
-    for the dual-field author/title search.
+    ``query`` may be either a string (legacy "any text" mode) or the desktop-
+    shaped four-input dict produced by ``_run_retrieve_form_search`` for the
+    author/title search:
+
+        {"author": ..., "optional_author": ..., "title": ..., "optional_title": ...}
+
+    The bold-name summary uses the first nonempty author input, mirroring
+    desktop's ``_extract_author_keyword(author_text or optional_author_text)``.
     """
     if not isinstance(query, (str, dict)):
         return []
 
     if search_type == "author_title":
         if isinstance(query, dict):
-            author = (query.get("author") or "").strip()
+            author = (query.get("author") or "").strip() \
+                or (query.get("optional_author") or "").strip()
             if not author:
                 return []
             return collect_matched_names(results, extract_author_keyword(author))
