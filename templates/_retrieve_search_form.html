@@ -43,27 +43,28 @@
                 <div class="sort-group">
                     <div class="sort-group-title">Sort by</div>
 
+                    {% set _sort_by = request.form.get('sort_by', sort_by|default('vita_type')) %}
                     <label>
                         <input type="radio" name="sort_by" value="author"
-                            {% if request.form.get('sort_by') == 'author' %}checked{% endif %}>
+                            {% if _sort_by == 'author' %}checked{% endif %}>
                         author
                     </label>
 
                     <label>
                         <input type="radio" name="sort_by" value="title"
-                            {% if request.form.get('sort_by', 'title') == 'title' %}checked{% endif %}>
+                            {% if _sort_by == 'title' %}checked{% endif %}>
                         title
                     </label>
 
                     <label>
                         <input type="radio" name="sort_by" value="vita_type"
-                            {% if request.form.get('sort_by') == 'vita_type' %}checked{% endif %}>
+                            {% if _sort_by == 'vita_type' %}checked{% endif %}>
                         vita type
                     </label>
 
                     <label>
                         <input type="radio" name="sort_by" value="journal_book"
-                            {% if request.form.get('sort_by') == 'journal_book' %}checked{% endif %}>
+                            {% if _sort_by == 'journal_book' %}checked{% endif %}>
                         journal/book
                     </label>
                 </div>
@@ -133,12 +134,12 @@
 
                     <div class="field-row mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
                         <label for="year_min">First Year wanted</label>
-                        <input class="small-input" type="number" id="year_min" name="year_min" value="{{ request.form.get('year_min', '') }}">
+                        <input class="small-input" type="number" id="year_min" name="year_min" value="{{ request.form.get('year_min', year_min|default('')) }}">
                     </div>
 
                     <div class="field-row mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
                         <label for="year_max">Last Year wanted</label>
-                        <input class="small-input" type="number" id="year_max" name="year_max" value="{{ request.form.get('year_max', '') }}">
+                        <input class="small-input" type="number" id="year_max" name="year_max" value="{{ request.form.get('year_max', year_max|default('')) }}">
                     </div>
                 </div>
 

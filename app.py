@@ -166,10 +166,44 @@ reader = CNTReader()
 PAPERS = reader.get_data()
 
 
+def compute_dataset_year_bounds(papers):
+    """Return (min_year, max_year) over `papers`, mirroring the desktop's
+    ``RightPanel.show_year_range_section`` algorithm verbatim
+    (paperfile/pages/right_panel.py lines 396-421): extract digits from each
+    record's ``year`` field, take the last 4 digits when available, otherwise
+    any digits, then return min/max of the resulting integers. Returns
+    ``(None, None)`` if no usable years are present.
+    """
+    years = []
+    for record in papers or []:
+        y_raw = str(record.get("year", "")).strip()
+        if not y_raw:
+            continue
+        digits = "".join(ch for ch in y_raw if ch.isdigit())
+        if len(digits) >= 4:
+            year_str = digits[-4:]
+        elif digits:
+            year_str = digits
+        else:
+            year_str = ""
+        if year_str and year_str.isdigit():
+            try:
+                years.append(int(year_str))
+            except Exception:
+                continue
+    if not years:
+        return (None, None)
+    return (min(years), max(years))
+
+
+DATASET_YEAR_MIN, DATASET_YEAR_MAX = compute_dataset_year_bounds(PAPERS)
+
+
 def _sync_papers_from_reader():
-    global PAPERS
+    global PAPERS, DATASET_YEAR_MIN, DATASET_YEAR_MAX
     reader.reload_data()
     PAPERS = reader.get_data()
+    DATASET_YEAR_MIN, DATASET_YEAR_MAX = compute_dataset_year_bounds(PAPERS)
 
 
 def _paperfile_read_only() -> bool:
@@ -2548,6 +2582,10 @@ def retrieve():
 
     search_type_display = _search_type_display_from_request()
 
+    is_get = request.method == "GET"
+    default_year_min = "" if DATASET_YEAR_MIN is None else str(DATASET_YEAR_MIN)
+    default_year_max = "" if DATASET_YEAR_MAX is None else str(DATASET_YEAR_MAX)
+
     return render_template(
         "index.html",
         ui_mode=ui_mode,
@@ -2567,9 +2605,11 @@ def retrieve():
         query_author_title=request.form.get("query_author_title", ""),
         author_query=request.form.get("author_query", ""),
         title_query=request.form.get("title_query", ""),
-        sort_by=request.form.get("sort_by", "title"),
-        year_min=request.form.get("year_min", ""),
-        year_max=request.form.get("year_max", ""),
+        sort_by=request.form.get("sort_by", "vita_type"),
+        year_min=request.form.get("year_min", default_year_min if is_get else ""),
+        year_max=request.form.get("year_max", default_year_max if is_get else ""),
+        default_year_min=default_year_min,
+        default_year_max=default_year_max,
         vita_type_pairs=_vita_type_dropdown_pairs(),
         search_meta=search_meta,
     )
