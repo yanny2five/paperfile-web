@@ -1,3 +1,21 @@
+import threading
+
+_tls = threading.local()
+
+
+def _clear_last_error() -> None:
+    _tls.error = None
+
+
+def _set_last_error(msg: str) -> None:
+    _tls.error = msg
+
+
+def get_last_openai_error() -> str:
+    """Return the most recent error from :func:`format_citations_with_chatgpt` in this thread."""
+    return getattr(_tls, "error", None) or ""
+
+
 def format_citations_with_chatgpt(text: str) -> str:
     """
     Use ChatGPT API (gpt-4o) to format the input citation into a structured format.
@@ -12,11 +30,12 @@ def format_citations_with_chatgpt(text: str) -> str:
       1) the ``OPENAI_API_KEY`` environment variable, or
       2) the ``openai_api_key`` value stored in ``config.json``.
     """
-    import json
     import os
     import sys
 
     import openai
+
+    _clear_last_error()
 
     def _config_paths():
         candidates = []
@@ -35,30 +54,43 @@ def format_citations_with_chatgpt(text: str) -> str:
         return out
 
     def _key_from_config():
-        for p in _config_paths():
-            for enc in ("utf-8", "utf-8-sig", "cp1252", "latin-1"):
-                try:
-                    with open(p, "r", encoding=enc) as f:
-                        cfg = json.load(f)
-                    val = (cfg.get("openai_api_key") or "").strip() if isinstance(cfg, dict) else ""
-                    if val:
-                        return val
-                    break
-                except Exception:
-                    continue
+        from modules.readdata import get_config_path, read_json_with_guess
+
+        seen: set[str] = set()
+        paths_to_try: list[str] = []
+        for p in (get_config_path(),) + tuple(_config_paths()):
+            if not p or not os.path.isfile(p):
+                continue
+            n = os.path.normpath(os.path.abspath(p))
+            if n in seen:
+                continue
+            seen.add(n)
+            paths_to_try.append(p)
+        for p in paths_to_try:
+            try:
+                cfg = read_json_with_guess(p)
+                val = (cfg.get("openai_api_key") or "").strip() if isinstance(cfg, dict) else ""
+                if val:
+                    return val
+            except Exception:
+                continue
         return ""
 
     api_key = (os.environ.get("OPENAI_API_KEY") or "").strip() or _key_from_config()
     if not api_key:
-        print(
-            "[OpenAI] No API key. Set the OPENAI_API_KEY environment variable "
-            "or add openai_api_key to config.json."
+        msg = (
+            "No API key found. Set the OPENAI_API_KEY environment variable (recommended on Render) "
+            "or save openai_api_key in Utilities — it is stored in the same config.json as database_path."
         )
+        _set_last_error(msg)
+        print("[OpenAI]", msg)
         return None
 
     try:
         client = openai.OpenAI(api_key=api_key)
     except Exception as e:
+        msg = f"OpenAI client failed to initialize: {e}"
+        _set_last_error(msg)
         print("[OpenAI Initialization Error]:", e)
         return None
 
@@ -200,7 +232,15 @@ def format_citations_with_chatgpt(text: str) -> str:
             temperature=0.2,
             max_tokens=3000
         )
-        return response.choices[0].message.content.strip()
+        raw = response.choices[0].message.content
+        out = (raw or "").strip()
+        if not out:
+            msg = "OpenAI returned an empty message body."
+            _set_last_error(msg)
+            return None
+        return out
     except Exception as e:
+        msg = f"OpenAI API error: {e}"
+        _set_last_error(msg)
         print("[GPT API Error]:", e)
         return None

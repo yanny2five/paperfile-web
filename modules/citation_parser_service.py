@@ -261,7 +261,7 @@ def format_clipboard_text(raw_text: str) -> List[Dict[str, str]]:
         RuntimeError: if the OpenAI key is unset or the API call failed
             (the underlying module returns ``None`` in those cases).
     """
-    from modules.chatgpt_format import format_citations_with_chatgpt
+    from modules.chatgpt_format import format_citations_with_chatgpt, get_last_openai_error
 
     cleaned = preprocess_clipboard_text(raw_text or "")
     if not cleaned.strip():
@@ -269,9 +269,14 @@ def format_clipboard_text(raw_text: str) -> List[Dict[str, str]]:
 
     response = format_citations_with_chatgpt(cleaned)
     if not response:
+        detail = (get_last_openai_error() or "").strip()
+        if not detail:
+            detail = (
+                "No response from the OpenAI client. Verify OPENAI_API_KEY or openai_api_key in config.json."
+            )
         raise RuntimeError(
-            "ChatGPT returned no output. Verify OPENAI_API_KEY is set in your "
-            "environment or openai_api_key is set in config.json."
+            f"ChatGPT returned no output. {detail} "
+            "On hosted deployments (e.g. Render), set OPENAI_API_KEY under Environment."
         )
 
     response = response.strip()
