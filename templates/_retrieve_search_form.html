@@ -76,12 +76,6 @@
                     </label>
 
                     <label>
-                        <input type="checkbox" name="omit_number"
-                            {% if request.form.get('omit_number') %}checked{% endif %}>
-                        Omit number
-                    </label>
-
-                    <label>
                         <input type="checkbox" name="omit_keywords"
                             {% if request.form.get('omit_keywords') %}checked{% endif %}>
                         Omit keywords
@@ -147,17 +141,10 @@
                 </div>
 
                 <div id="vita-box" class="vita-box {% if request.form.get('restrict_vita_types') %}show{% endif %}">
-                    <label><input type="checkbox" name="vita_types" value="journal"
-                        {% if 'journal' in request.form.getlist('vita_types') %}checked{% endif %}> Journal</label>
-
-                    <label><input type="checkbox" name="vita_types" value="book"
-                        {% if 'book' in request.form.getlist('vita_types') %}checked{% endif %}> Book</label>
-
-                    <label><input type="checkbox" name="vita_types" value="conference"
-                        {% if 'conference' in request.form.getlist('vita_types') %}checked{% endif %}> Conference</label>
-
-                    <label><input type="checkbox" name="vita_types" value="report"
-                        {% if 'report' in request.form.getlist('vita_types') %}checked{% endif %}> Report</label>
+                    {% for code, name in vita_type_pairs %}
+                    <label><input type="checkbox" name="vita_types" value="{{ code }}"
+                        {% if code in request.form.getlist('vita_types') %}checked{% endif %}> {{ code }} — {{ name }}</label>
+                    {% endfor %}
                 </div>
             </section>
         </div>
