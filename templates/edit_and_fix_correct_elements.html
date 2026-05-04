@@ -35,12 +35,16 @@
 
     <form class="filters" method="GET" action="{{ url_for('edit_and_fix_correct_elements') }}">
         <div>
-            <label for="field">Field</label>
-            <select name="field" id="field">
-                {% for f in allowed_fields %}
-                <option value="{{ f }}" {% if f == field %}selected{% endif %}>{{ f }}</option>
+            <label style="display:block; margin-bottom:6px;">Field to display</label>
+            <div style="display:flex; flex-wrap:wrap; gap:6px 18px;">
+                {% for code, label in field_pairs %}
+                <label style="font-weight:400; margin-right:0;">
+                    <input type="radio" name="field" value="{{ code }}"
+                           {% if code == field %}checked{% endif %}>
+                    {{ label }}
+                </label>
                 {% endfor %}
-            </select>
+            </div>
         </div>
         <div style="margin-top:10px;">
             <label for="q">Contains (blank = all)</label><br>

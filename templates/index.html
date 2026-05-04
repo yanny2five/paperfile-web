@@ -36,10 +36,10 @@
             <h2>Results</h2>
 
         {% if ui_mode == 'retrieve' %}
-        {% if search_meta and search_meta.get('year_error') %}
-            <div class="year-error"
+        {% if search_meta and search_meta.get('search_error') %}
+            <div class="search-error"
                  style="margin-bottom:10px; padding:10px 14px; border:1px solid #b54a4a; border-radius:6px; background:#fbe7e7; color:#7a1f1f;">
-                <strong>Invalid year input.</strong> {{ search_meta.get('year_error') }}
+                <strong>Invalid search criteria.</strong> {{ search_meta.get('search_error') }}
             </div>
         {% endif %}
         <p class="results-count">Showing {{ formatted_results|length if formatted_results else 0 }} results.</p>

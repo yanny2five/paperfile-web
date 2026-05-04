@@ -151,7 +151,8 @@ Total records to be deleted: {{ plan.indices|length }}</pre>
         </table>
 
         <form method="post" action="{{ url_for('delete_selected_papers') }}" autocomplete="off"
-              style="margin-top:16px;" class="danger">
+              style="margin-top:16px;" class="danger"
+              onsubmit="if (this.elements['action'].value === 'commit') { return window.confirm('Permanently delete {{ plan.indices|length }} record(s) from\n{{ db_path }}?\n\nThis cannot be undone.'); }">
             <input type="hidden" name="action" value="commit">
             <p><label><input type="checkbox" name="backup_before" value="1" checked>
                 Backup full bundle (.cnt + .cng + .cnj) into a timestamped folder first</label></p>

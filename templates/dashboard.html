@@ -122,6 +122,7 @@
         <a class="implemented" href="{{ url_for('retrieve_papers') }}">Retrieve Papers</a>
         <a class="implemented" href="{{ url_for('correct_papers') }}">Correct Papers</a>
 
+        <a class="implemented" href="{{ url_for('retrieve_numbers') }}">Retrieve Paper Numbers</a>
         <a class="implemented" href="{{ url_for('edit_and_fix_entries') }}">Edit and Fix Entries</a>
 
         <a class="implemented" href="{{ url_for('data_export_entry') }}">Data Export</a>
@@ -129,6 +130,13 @@
 
         <a class="implemented" href="{{ url_for('generate_reports') }}">Generate Reports</a>
         <a class="implemented" href="{{ url_for('use_utilities') }}">Use Utilities</a>
+    </div>
+
+    {# Desktop has the same "Current file | Total entries" strip both above
+       AND below the menu grid (paperfile/pages/main_menu.py). #}
+    <div class="file-line">
+        Current file: <strong>{{ db_path }}</strong>
+        &nbsp;|&nbsp; Total entries: <strong>{{ entry_count }}</strong>
     </div>
 
     <div class="exit-row">

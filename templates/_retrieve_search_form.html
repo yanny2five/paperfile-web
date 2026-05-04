@@ -87,28 +87,18 @@
             <section class="form-section">
                 <h3>Filters</h3>
                 <div class="field-panel">
-                    <div class="field-row mode-vita_type active-field-target">
-                        <label for="vita_query">Text to find in Vita Type</label>
-                        <input type="text" id="vita_query" name="query_vita_type" value="{{ request.form.get('query_vita_type', '') }}">
-                    </div>
-
-                    <div class="field-row mode-year active-field-target">
-                        <label for="year_query">Year</label>
-                        <input type="text" id="year_query" name="query_year" value="{{ request.form.get('query_year', '') }}">
-                    </div>
-
                     <div class="field-row mode-keyword active-field-target">
-                        <label for="keyword_query">Keywords and subjects (Subject1 / Subject2)</label>
+                        <label for="keyword_query">Text in Keyword fields</label>
                         <input type="text" id="keyword_query" name="query_keyword" value="{{ request.form.get('query_keyword', '') }}">
                     </div>
 
                     <div class="field-row mode-journal_book active-field-target">
-                        <label for="journal_query">Text to find in Journal/Book field</label>
+                        <label for="journal_query">Text in Book/Journal field</label>
                         <input type="text" id="journal_query" name="query_journal_book" value="{{ request.form.get('query_journal_book', '') }}">
                     </div>
 
                     <div class="field-row mode-any_field active-field-target">
-                        <label for="anyfield_query">Text to find (any field)</label>
+                        <label for="anyfield_query">Text in any field</label>
                         <input type="text" id="anyfield_query" name="query_any_field" value="{{ request.form.get('query_any_field', request.form.get('query_author_title', '')) }}">
                     </div>
 
@@ -118,7 +108,7 @@
                     </div>
 
                     <div class="field-row mode-author_title active-field-target">
-                        <label for="optional_author_query">Optional more text in Author field</label>
+                        <label for="optional_author_query">Optional more text in Author</label>
                         <input type="text" id="optional_author_query" name="optional_author_query" value="{{ request.form.get('optional_author_query', '') }}">
                     </div>
 
@@ -128,16 +118,16 @@
                     </div>
 
                     <div class="field-row mode-author_title active-field-target">
-                        <label for="optional_title_query">Optional more text in Title field</label>
+                        <label for="optional_title_query">Optional more text in Title</label>
                         <input type="text" id="optional_title_query" name="optional_title_query" value="{{ request.form.get('optional_title_query', '') }}">
                     </div>
 
-                    <div class="field-row mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
+                    <div class="field-row mode-vita_type mode-year mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
                         <label for="year_min">First Year wanted</label>
                         <input class="small-input" type="number" id="year_min" name="year_min" value="{{ request.form.get('year_min', year_min|default('')) }}">
                     </div>
 
-                    <div class="field-row mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
+                    <div class="field-row mode-vita_type mode-year mode-author_title mode-keyword mode-journal_book mode-any_field active-field-target">
                         <label for="year_max">Last Year wanted</label>
                         <input class="small-input" type="number" id="year_max" name="year_max" value="{{ request.form.get('year_max', year_max|default('')) }}">
                     </div>
@@ -146,16 +136,23 @@
                 <div class="checkbox-group">
                     <label>
                         <input type="checkbox" id="restrict_vita_types" name="restrict_vita_types"
-                            {% if request.form.get('restrict_vita_types') %}checked{% endif %}>
+                            {% if request.form.get('restrict_vita_types') or search_type_display == 'vita_type' %}checked{% endif %}>
                         Restrict vita types
                     </label>
                 </div>
 
-                <div id="vita-box" class="vita-box {% if request.form.get('restrict_vita_types') %}show{% endif %}">
-                    {% for code, name in vita_type_pairs %}
-                    <label><input type="checkbox" name="vita_types" value="{{ code }}"
-                        {% if code in request.form.getlist('vita_types') %}checked{% endif %}> {{ code }} — {{ name }}</label>
-                    {% endfor %}
+                <div id="vita-box" class="vita-box {% if request.form.get('restrict_vita_types') or search_type_display == 'vita_type' %}show{% endif %}">
+                    <div class="vita-box-header" style="font-weight:600; margin-bottom:8px;">Check vita types to INCLUDE</div>
+                    <div class="vita-box-actions" style="margin-bottom:8px; display:flex; gap:8px;">
+                        <button type="button" id="vita_select_all">Select All</button>
+                        <button type="button" id="vita_unselect_all">Unselect All</button>
+                    </div>
+                    <div class="vita-box-checks">
+                        {% for code, name in vita_type_pairs %}
+                        <label><input type="checkbox" name="vita_types" value="{{ code }}"
+                            {% if code in request.form.getlist('vita_types') %}checked{% endif %}> {{ code }} — {{ name }}</label>
+                        {% endfor %}
+                    </div>
                 </div>
             </section>
         </div>
@@ -171,22 +168,18 @@
             const selected = document.querySelector('input[name="search_type"]:checked');
             const mode = selected ? selected.value : 'author_title';
 
-            console.log('Switching to mode:', mode);
-
             document.querySelectorAll('.field-row').forEach(el => {
                 el.classList.remove('active');
             });
 
             document.querySelectorAll('.mode-' + mode).forEach(el => {
                 el.classList.add('active');
-                console.log('Activated field:', el.querySelector('input')?.id || 'unknown');
             });
         }
 
         function updateVitaBox() {
             const box = document.getElementById('vita-box');
             const checked = document.getElementById('restrict_vita_types').checked;
-
             if (checked) {
                 box.classList.add('show');
             } else {
@@ -194,21 +187,37 @@
             }
         }
 
+        function setAllVitaChecks(value) {
+            document
+                .querySelectorAll('#vita-box input[type="checkbox"][name="vita_types"]')
+                .forEach(cb => { cb.checked = value; });
+        }
+
         document.getElementById('main-search-form').addEventListener('submit', function(e) {
             const selectedSearchType = document.querySelector('input[name="search_type"]:checked');
             if (!selectedSearchType) {
                 document.querySelector('input[name="search_type"][value="author_title"]').checked = true;
             }
-
-            const searchType = document.querySelector('input[name="search_type"]:checked').value;
-            console.log('Form submitting with search_type:', searchType);
         });
 
         document.querySelectorAll('input[name="search_type"]').forEach(radio => {
-            radio.addEventListener('change', updateVisibleFields);
+            radio.addEventListener('change', function () {
+                updateVisibleFields();
+                // Auto-show the vita-restrict checklist when "Select by Vita Type"
+                // is chosen (mirrors desktop's combined vita-radio + year layout).
+                if (this.value === 'vita_type') {
+                    const cb = document.getElementById('restrict_vita_types');
+                    if (!cb.checked) {
+                        cb.checked = true;
+                        updateVitaBox();
+                    }
+                }
+            });
         });
 
         document.getElementById('restrict_vita_types').addEventListener('change', updateVitaBox);
+        document.getElementById('vita_select_all').addEventListener('click', function () { setAllVitaChecks(true); });
+        document.getElementById('vita_unselect_all').addEventListener('click', function () { setAllVitaChecks(false); });
 
         updateVisibleFields();
         updateVitaBox();

@@ -53,8 +53,25 @@
         {% endif %}
     {% endwith %}
 
-    <form method="post" action="{{ url_for('correct_papers_edit') }}">
+    <form id="edit-paper-form" method="post" action="{{ url_for('correct_papers_edit') }}">
         <input type="hidden" name="record_number" value="{{ record_number }}">
+        <input type="hidden" name="action" value="save">
+        <input type="hidden" id="confirm_overwrite" name="confirm_overwrite" value="0">
+
+        <div class="grid2">
+            <div>
+                <label for="number">Number</label>
+                <input type="text" id="number" name="number" value="{{ record_number }}"
+                       data-original-number="{{ record_number }}">
+            </div>
+            <div>
+                <label for="vitatyp_top">&nbsp;</label>
+                <span style="display:block; padding-top:8px; font-size:13px; color:#555;">
+                    Changing the number renames the record. If another paper already
+                    uses the new number, you'll be asked to confirm overwrite.
+                </span>
+            </div>
+        </div>
 
         <div class="grid2">
             <div>
@@ -150,9 +167,65 @@
         <p style="font-size: 14px; margin-top: 14px;"><strong>Date entered</strong> (read-only here): {{ paper.get('dateentered', '') }}</p>
 
         <div class="actions">
-            <button type="submit" {% if read_only %}disabled{% endif %}>Save to .cnt</button>
+            <button type="submit" {% if read_only %}disabled{% endif %}>Save changes</button>
             <a href="{{ url_for('correct_papers') }}" style="font-size: 17px;">Back to search</a>
         </div>
     </form>
+
+    {# Separate Delete form mirrors desktop's "Delete this paper" button.
+       Uses a JS confirm() to mirror desktop's modal Yes/No dialog. #}
+    <form id="delete-paper-form"
+          method="post"
+          action="{{ url_for('correct_papers_edit') }}"
+          style="max-width: 920px; margin-top: 12px; background: rgba(255,255,255,0.4); padding: 14px 18px; border-radius: 8px;">
+        <input type="hidden" name="record_number" value="{{ record_number }}">
+        <input type="hidden" name="action" value="delete">
+        <input type="hidden" name="confirm_delete" value="1">
+        <button type="submit" id="delete-paper-btn"
+                style="background:#a02929; color:#fff; border:0; padding:10px 22px; font-size:18px; cursor:pointer;"
+                {% if read_only %}disabled{% endif %}>
+            Delete this paper
+        </button>
+        <span style="font-size:13px; color:#555; margin-left:8px;">
+            Permanently removes record {{ record_number }} from the .cnt file.
+        </span>
+    </form>
+
+    <script>
+        (function () {
+            var deleteForm = document.getElementById('delete-paper-form');
+            if (deleteForm) {
+                deleteForm.addEventListener('submit', function (e) {
+                    var ok = window.confirm(
+                        'Delete paper {{ record_number }}? This cannot be undone.'
+                    );
+                    if (!ok) { e.preventDefault(); }
+                });
+            }
+
+            var editForm = document.getElementById('edit-paper-form');
+            if (editForm) {
+                var existingNumbers = {{ existing_numbers_json | safe if existing_numbers_json else '[]' }};
+                var existingSet = new Set();
+                existingNumbers.forEach(function (n) { existingSet.add(String(n).trim()); });
+
+                editForm.addEventListener('submit', function (e) {
+                    var numEl = document.getElementById('number');
+                    var hidden = document.getElementById('confirm_overwrite');
+                    if (!numEl || !hidden) { return; }
+                    var newNum = String(numEl.value || '').trim();
+                    var origNum = String(numEl.getAttribute('data-original-number') || '').trim();
+                    if (newNum && newNum !== origNum && existingSet.has(newNum)) {
+                        var ok = window.confirm(
+                            'Number ' + newNum + ' already exists in the database. ' +
+                            'Saving will overwrite that record. Continue?'
+                        );
+                        if (!ok) { e.preventDefault(); return; }
+                        hidden.value = '1';
+                    }
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

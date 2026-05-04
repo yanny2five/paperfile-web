@@ -226,15 +226,10 @@ def _run_retrieve_form_search(papers, form):
     # input is invalid (one box filled / one empty, or non-4-digit / out-of-
     # range): desktop blocks the search and shows an error popup; the web
     # mirrors this by returning zero results and surfacing the message via
-    # log_info["year_error"] so the template can render it.
+    # log_info["search_error"] so the template can render it.
     year_range = parse_year_range_inputs(year_min, year_max)
-    year_error = None
-    if year_range is None:
-        year_error = (
-            "Invalid year range. Both year boxes must be either empty (to retrieve "
-            "records with an empty year field) or filled with 4-digit years between "
-            "1900 and 2100."
-        )
+    year_invalid = year_range is None
+
     if search_type == "author_title":
         # Desktop's four author/title inputs (read panel: author_text,
         # optional_author_text, title_text, optional_title_text). All filled
@@ -259,7 +254,55 @@ def _run_retrieve_form_search(papers, form):
         field_name = query_field_map.get(search_type, "query_any_field")
         query = form.get(field_name, "")
 
-    if year_error is not None:
+    # Desktop-verbatim per-search-type validation messages. Each mirrors the
+    # exact ``messagebox.showerror(...)`` strings emitted by the desktop's
+    # ``LeftPanel.button_retrieve_click`` branch for the same search type
+    # (paperfile/pages/left_panel.py:425-997). When validation fails, the
+    # search is skipped entirely and the message is surfaced verbatim through
+    # ``log_info["search_error"]``.
+    search_error = None
+    if search_type == "author_title":
+        author_title_filled = any(
+            (query.get(k) or "").strip()
+            for k in ("author", "optional_author", "title", "optional_title")
+        )
+        if not author_title_filled or year_invalid:
+            search_error = (
+                "Invalid search criteria entered: At least one field must have "
+                "a value, and year fields must be either both filled or both empty."
+            )
+    elif search_type == "keyword":
+        if not (query or "").strip() or year_invalid:
+            search_error = (
+                "Invalid search criteria entered: Keyword field must have a "
+                "value, and year fields must be either both filled or both empty."
+            )
+    elif search_type == "journal_book":
+        if not (query or "").strip() or year_invalid:
+            search_error = (
+                "Invalid search criteria entered: Book/Journal Title field must "
+                "have a value, and year fields must be either both filled or "
+                "both empty."
+            )
+    elif search_type == "any_field":
+        if not (query or "").strip() or year_invalid:
+            search_error = (
+                "Invalid search criteria entered: Text in any field must have "
+                "a value, and year fields must be either both filled or both empty."
+            )
+    elif search_type == "vita_type":
+        if year_invalid:
+            search_error = (
+                "Invalid year range values entered. Fill both year boxes or "
+                "leave both empty."
+            )
+        elif not vita_types:
+            search_error = "No vita types selected."
+    elif search_type == "year":
+        if year_invalid:
+            search_error = "Invalid year range values entered."
+
+    if search_error is not None:
         pre_filter_results: list = []
     else:
         pre_filter_results = search_papers(
@@ -313,7 +356,7 @@ def _run_retrieve_form_search(papers, form):
         "query": query,
         "year_min": year_min,
         "year_max": year_max,
-        "year_error": year_error,
+        "search_error": search_error,
         "vita_types": vita_types,
         "pre_vita_filter_n": len(pre_filter_results),
         "vita_debug": vita_debug,
@@ -808,6 +851,21 @@ def enter_papers():
             papers = reader.get_data() or []
             next_num = max_record_number(papers) + 1
             merged["number"] = str(next_num)
+
+            # Desktop-parity duplicate-file-number warning. Mirrors
+            # ``EnterPapers`` (paperfile/pages/enterpapers.py:1100):
+            # ``messagebox.showinfo("Duplicate File Number",
+            #     "The file number {file_number} already exists in the data.")``
+            # The desktop dialog is INFORMATIONAL (showinfo, not askyesno),
+            # so we surface the same wording as a flash but do not block save.
+            dup_ok_raw = (merged.get("duplicateoknumber") or "").strip()
+            duplicate_warning = None
+            if dup_ok_raw and _paper_by_number(papers, dup_ok_raw):
+                duplicate_warning = (
+                    f"Duplicate File Number: The file number {dup_ok_raw} "
+                    f"already exists in the data."
+                )
+
             backup_msg = ""
             if request.form.get("backup") == "1":
                 try:
@@ -818,6 +876,9 @@ def enter_papers():
                     return redirect(url_for("enter_papers"))
             append_records_to_cnt(db_path, [merged], gui_messages=False)
             _sync_papers_from_reader()
+
+            if duplicate_warning:
+                flash(duplicate_warning, "warning")
 
             if advance_after_save and queue_active:
                 new_idx = idx + 1
@@ -1065,8 +1126,19 @@ def correct_papers_edit():
     base_vita_pairs = _vita_type_dropdown_pairs()
     read_only = _paperfile_read_only()
 
+    def _existing_numbers_json(records):
+        """Numbers (as strings) of all current records for the JS overwrite-confirm.
+        Mirrors desktop's "if number exists, ask Yes/No" check (correct_panel)."""
+        out = []
+        for r in records or []:
+            n = str(get_number(r)).strip()
+            if n:
+                out.append(n)
+        return json.dumps(out)
+
     if request.method == "POST":
         record_num = (request.form.get("record_number") or "").strip()
+        action = (request.form.get("action") or "save").strip().lower()
         if read_only:
             flash("Read-only mode: saves are disabled (PAPERFILE_READ_ONLY).", "error")
             if record_num:
@@ -1079,9 +1151,78 @@ def correct_papers_edit():
         if not rec:
             flash("Record not found for that number.", "error")
             return redirect(url_for("correct_papers"))
+
+        if action == "delete":
+            if request.form.get("confirm_delete") != "1":
+                flash("Delete requires confirmation.", "error")
+                return redirect(url_for("correct_papers_edit", num=record_num))
+            try:
+                key = normalize(record_num)
+                new_records = [
+                    p for p in papers if normalize(get_number(p)) != key
+                ]
+                if len(new_records) == len(papers):
+                    flash("Record not found for that number; nothing deleted.", "error")
+                    return redirect(url_for("correct_papers_edit", num=record_num))
+                overwrite_all_records_in_cnt(db_path, new_records, gui_messages=False)
+                _sync_papers_from_reader()
+                flash(
+                    f"Deleted record {record_num} from the .cnt file.",
+                    "success",
+                )
+                return redirect(url_for("correct_papers"))
+            except Exception as e:
+                flash(f"Delete failed: {e}", "error")
+                return redirect(url_for("correct_papers_edit", num=record_num))
+
+        # Save path. Re-number support: if the user changed the Number field
+        # and the new number is already in use by ANOTHER record, require
+        # explicit overwrite confirmation (mirrors desktop's modal Yes/No).
+        new_num = (request.form.get("number") or record_num).strip() or record_num
         try:
+            if new_num != record_num:
+                existing_other = _paper_by_number(papers, new_num)
+                if existing_other and normalize(get_number(existing_other)) != normalize(record_num):
+                    if request.form.get("confirm_overwrite") != "1":
+                        flash(
+                            f"Number {new_num} already exists in the database. "
+                            f"Confirm overwrite to replace that record.",
+                            "error",
+                        )
+                        rec = _paper_by_number(papers, record_num) or rec
+                        return render_template(
+                            "correct_papers_edit.html",
+                            paper=rec,
+                            record_number=record_num,
+                            db_path=db_path,
+                            vita_pairs=_vita_pairs_for_paper(rec, base_vita_pairs),
+                            read_only=read_only,
+                            existing_numbers_json=_existing_numbers_json(papers),
+                        )
+                    # User confirmed overwrite. Remove the colliding record
+                    # first, then proceed to save the (now-renumbered) record.
+                    target_key = normalize(new_num)
+                    survivors = [
+                        p for p in papers if normalize(get_number(p)) != target_key
+                    ]
+                    overwrite_all_records_in_cnt(db_path, survivors, gui_messages=False)
+                    _sync_papers_from_reader()
+                    papers = PAPERS or []
+                    rec = _paper_by_number(papers, record_num) or rec
+
             merged = record_from_correct_form(rec, request.form)
-            merged["number"] = record_num
+            merged["number"] = new_num
+
+            # If the number changed, the original record (under record_num)
+            # must also be removed so we don't end up with two copies.
+            if new_num != record_num:
+                old_key = normalize(record_num)
+                survivors = [
+                    p for p in papers if normalize(get_number(p)) != old_key
+                ]
+                overwrite_all_records_in_cnt(db_path, survivors, gui_messages=False)
+                _sync_papers_from_reader()
+
             overwrite_record_in_cnt(db_path, merged, gui_messages=False)
             _sync_papers_from_reader()
             flash(
@@ -1089,7 +1230,7 @@ def correct_papers_edit():
                 "(build_record_block / overwrite_record_in_cnt).",
                 "success",
             )
-            return redirect(url_for("correct_papers_edit", num=record_num))
+            return redirect(url_for("correct_papers_edit", num=new_num))
         except Exception as e:
             flash(str(e), "error")
             papers = reader.get_data() or []
@@ -1101,6 +1242,7 @@ def correct_papers_edit():
                 db_path=db_path,
                 vita_pairs=_vita_pairs_for_paper(rec, base_vita_pairs),
                 read_only=read_only,
+                existing_numbers_json=_existing_numbers_json(papers),
             )
 
     num = (request.args.get("num") or "").strip()
@@ -1118,6 +1260,7 @@ def correct_papers_edit():
         db_path=db_path,
         vita_pairs=_vita_pairs_for_paper(rec, base_vita_pairs),
         read_only=read_only,
+        existing_numbers_json=_existing_numbers_json(papers),
     )
 
 
@@ -1219,6 +1362,11 @@ def edit_and_fix_correct_elements():
         "pages": "Pages",
         "keywords": "Keywords (subject1+2)",
     }
+    # Desktop's Correct Elements screen presents the field choices as
+    # human-readable radios, not as raw column names. Pair the (key, label)
+    # tuples here so the template can render them in the same order as
+    # desktop's Correct Elements panel.
+    field_pairs = [(code, labels.get(code, code)) for code in allowed]
     return render_template(
         "edit_and_fix_correct_elements.html",
         field=field,
@@ -1227,6 +1375,7 @@ def edit_and_fix_correct_elements():
         row_count=len(rows),
         field_label=labels.get(field, field),
         allowed_fields=allowed,
+        field_pairs=field_pairs,
         db_path=getattr(reader, "file_path", None) or "",
     )
 
