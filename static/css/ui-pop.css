@@ -1,0 +1,491 @@
+/*
+ * Paperfile — Neo-brutalist “3D pop” theme (html.pf-pop).
+ * Hard shadows, thick black rims, bold type — inspired by modern retro UI.
+ */
+html.pf-pop {
+    --pop-ink: #0a0a0a;
+    --pop-bg: #f5df2f;
+    --pop-cream: #fffdf3;
+    --pop-mint: #c8f7c5;
+    --pop-mint-deep: #7ddf8a;
+    --pop-orange: #ff5a1f;
+    --pop-lilac: #e9d5ff;
+    --pop-border: 3px solid var(--pop-ink);
+    --pop-shadow: 6px 6px 0 var(--pop-ink);
+    --pop-shadow-sm: 4px 4px 0 var(--pop-ink);
+    --pop-shadow-lg: 10px 10px 0 var(--pop-ink);
+    --pop-radius: 4px;
+    --pop-font: "Segoe UI", system-ui, -apple-system, "Arial Black", Arial, sans-serif;
+}
+
+html.pf-pop {
+    scroll-behavior: smooth;
+}
+
+html.pf-pop body {
+    font-family: var(--pop-font) !important;
+    background: var(--pop-bg) !important;
+    color: var(--pop-ink) !important;
+    margin: 0 !important;
+    padding: 0 0 48px !important;
+    line-height: 1.45 !important;
+    min-height: 100vh;
+    box-sizing: border-box !important;
+}
+
+html.pf-pop body *,
+html.pf-pop body *::before,
+html.pf-pop body *::after {
+    box-sizing: border-box;
+}
+
+/* Top promo bar (dashboard adds .pf-pop-topbar) */
+html.pf-pop .pf-pop-topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 16px 24px;
+    background: var(--pop-cream);
+    border-bottom: var(--pop-border);
+    box-shadow: 0 6px 0 var(--pop-ink);
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 4;
+}
+
+html.pf-pop .pf-pop-logo {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    border: var(--pop-border);
+    padding: 6px 14px;
+    background: #fff;
+    box-shadow: var(--pop-shadow-sm);
+    transform: rotate(-1deg);
+}
+
+html.pf-pop .pf-pop-tagline {
+    font-size: 0.95rem;
+    font-weight: 800;
+    max-width: 420px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+html.pf-pop .pf-pop-float {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #fff;
+    border: var(--pop-border);
+    box-shadow: var(--pop-shadow);
+    font-weight: 800;
+    font-size: 0.85rem;
+    transform: rotate(2deg);
+    animation: pf-pop-wiggle 4s ease-in-out infinite;
+}
+
+@keyframes pf-pop-wiggle {
+    0%,
+    100% {
+        transform: rotate(2deg) translate(0, 0);
+    }
+    50% {
+        transform: rotate(-1deg) translate(2px, -2px);
+    }
+}
+
+html.pf-pop h1,
+html.pf-pop h2,
+html.pf-pop h3 {
+    color: var(--pop-ink) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.03em !important;
+}
+
+html.pf-pop a {
+    color: var(--pop-ink) !important;
+    text-decoration: underline !important;
+    text-decoration-thickness: 2px !important;
+    text-underline-offset: 3px !important;
+    font-weight: 700 !important;
+}
+
+html.pf-pop a:hover {
+    background: var(--pop-ink) !important;
+    color: var(--pop-bg) !important;
+    text-decoration: none !important;
+}
+
+html.pf-pop code {
+    font-family: ui-monospace, Consolas, monospace !important;
+    font-size: 0.88em !important;
+    background: #fff !important;
+    border: 2px solid var(--pop-ink) !important;
+    padding: 0.1em 0.35em !important;
+    box-shadow: 2px 2px 0 var(--pop-ink) !important;
+}
+
+html.pf-pop pre {
+    font-family: ui-monospace, Consolas, monospace !important;
+    font-size: 13px !important;
+    background: var(--pop-cream) !important;
+    border: var(--pop-border) !important;
+    box-shadow: var(--pop-shadow) !important;
+    padding: 14px !important;
+    overflow-x: auto !important;
+}
+
+/* Inputs */
+html.pf-pop input[type="text"],
+html.pf-pop input[type="number"],
+html.pf-pop input[type="search"],
+html.pf-pop input[type="email"],
+html.pf-pop input[type="password"],
+html.pf-pop select,
+html.pf-pop textarea {
+    border: var(--pop-border) !important;
+    border-radius: var(--pop-radius) !important;
+    padding: 10px 12px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    background: #fff !important;
+    color: var(--pop-ink) !important;
+    box-shadow: var(--pop-shadow-sm) !important;
+    max-width: 100%;
+}
+
+html.pf-pop input:focus,
+html.pf-pop select:focus,
+html.pf-pop textarea:focus {
+    outline: none !important;
+    transform: translate(-1px, -1px) !important;
+    box-shadow: var(--pop-shadow) !important;
+}
+
+html.pf-pop button,
+html.pf-pop input[type="submit"],
+html.pf-pop input[type="button"] {
+    border: var(--pop-border) !important;
+    border-radius: var(--pop-radius) !important;
+    padding: 12px 22px !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    cursor: pointer !important;
+    background: var(--pop-orange) !important;
+    color: #fff !important;
+    box-shadow: var(--pop-shadow) !important;
+    transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+html.pf-pop button:hover,
+html.pf-pop input[type="submit"]:hover {
+    transform: translate(-3px, -3px) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+}
+
+html.pf-pop button:active,
+html.pf-pop input[type="submit"]:active {
+    transform: translate(1px, 1px) !important;
+    box-shadow: 3px 3px 0 var(--pop-ink) !important;
+}
+
+html.pf-pop button:disabled,
+html.pf-pop input:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Tables */
+html.pf-pop table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    background: var(--pop-cream) !important;
+    border: var(--pop-border) !important;
+    border-radius: var(--pop-radius) !important;
+    overflow: hidden !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+}
+
+html.pf-pop th,
+html.pf-pop td {
+    padding: 10px 12px !important;
+    border-bottom: 2px solid var(--pop-ink) !important;
+    border-right: 2px solid var(--pop-ink) !important;
+    text-align: left !important;
+    vertical-align: top !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop th:last-child,
+html.pf-pop td:last-child {
+    border-right: none !important;
+}
+
+html.pf-pop th {
+    background: var(--pop-lilac) !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+html.pf-pop tr:nth-child(even) td {
+    background: #fff !important;
+}
+
+html.pf-pop hr {
+    border: none !important;
+    border-top: var(--pop-border) !important;
+    margin: 28px 0 !important;
+}
+
+/* Dashboard */
+html.pf-pop .header {
+    text-align: center !important;
+    margin: 0 auto 20px !important;
+    max-width: 760px !important;
+    padding: 20px !important;
+    background: var(--pop-cream) !important;
+    border: var(--pop-border) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+    transform: rotate(-0.5deg);
+}
+
+html.pf-pop .header h1 {
+    font-size: 1rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+html.pf-pop .header .menu-title {
+    font-size: clamp(1.5rem, 4vw, 2.25rem) !important;
+    margin-top: 12px !important;
+    text-transform: uppercase;
+}
+
+html.pf-pop .file-line {
+    background: #fff !important;
+    border: var(--pop-border) !important;
+    box-shadow: var(--pop-shadow) !important;
+    color: var(--pop-ink) !important;
+    font-weight: 700 !important;
+}
+
+html.pf-pop .grid a {
+    display: block !important;
+    text-align: center !important;
+    padding: 16px 18px !important;
+    font-size: 15px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--pop-ink) !important;
+    background: #fff !important;
+    border: var(--pop-border) !important;
+    border-radius: var(--pop-radius) !important;
+    text-decoration: none !important;
+    box-shadow: var(--pop-shadow) !important;
+    min-height: 52px !important;
+    line-height: 1.3 !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+}
+
+html.pf-pop .grid a:hover {
+    transform: translate(-4px, -4px) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+    background: #fffef0 !important;
+}
+
+html.pf-pop .grid a.implemented {
+    background: var(--pop-mint) !important;
+}
+
+html.pf-pop .grid a.implemented:hover {
+    background: var(--pop-mint-deep) !important;
+}
+
+html.pf-pop body > p[style*="text-align:center"] {
+    border: 2px dashed var(--pop-ink) !important;
+    background: rgba(255, 255, 255, 0.65) !important;
+    padding: 14px !important;
+    font-weight: 600 !important;
+}
+
+/* Retrieve */
+html.pf-pop #main-search-form {
+    background: var(--pop-cream) !important;
+    border: var(--pop-border) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+    padding: 20px !important;
+    transform: rotate(0.3deg);
+}
+
+html.pf-pop .mode-bar a {
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    padding: 10px 16px !important;
+    border: var(--pop-border) !important;
+    background: #fff !important;
+    box-shadow: var(--pop-shadow-sm) !important;
+    text-decoration: none !important;
+    border-radius: var(--pop-radius) !important;
+    transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+html.pf-pop .mode-bar a:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: var(--pop-shadow) !important;
+}
+
+html.pf-pop .mode-bar a.active {
+    background: var(--pop-orange) !important;
+    color: #fff !important;
+}
+
+html.pf-pop .vita-box {
+    border: 2px dashed var(--pop-ink) !important;
+    background: #fff !important;
+}
+
+html.pf-pop .result {
+    border: var(--pop-border) !important;
+    background: #fff !important;
+    box-shadow: var(--pop-shadow-sm) !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop .panel {
+    border: var(--pop-border) !important;
+    background: var(--pop-cream) !important;
+    box-shadow: var(--pop-shadow) !important;
+    color: var(--pop-ink) !important;
+}
+
+/* Utilities & sections */
+html.pf-pop section {
+    border: var(--pop-border) !important;
+    background: var(--pop-cream) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop .parity {
+    border: var(--pop-border) !important;
+    background: #fff !important;
+    box-shadow: var(--pop-shadow-sm) !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop .ro {
+    border: var(--pop-border) !important;
+    background: #fef08a !important;
+    color: var(--pop-ink) !important;
+    font-weight: 700 !important;
+}
+
+html.pf-pop .flash {
+    border: var(--pop-border) !important;
+    font-weight: 700 !important;
+}
+
+html.pf-pop .flash.success {
+    background: var(--pop-mint) !important;
+}
+
+html.pf-pop .flash.error {
+    background: #fecaca !important;
+}
+
+html.pf-pop .flash.warning {
+    background: #fde047 !important;
+}
+
+html.pf-pop body > form:not(#main-search-form) {
+    border: var(--pop-border) !important;
+    background: var(--pop-cream) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+    padding: 20px !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop form:has(.grid2) {
+    border: var(--pop-border) !important;
+    background: var(--pop-cream) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+    padding: 20px !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop .exports a {
+    border: var(--pop-border) !important;
+    background: #fff !important;
+    box-shadow: var(--pop-shadow-sm) !important;
+    padding: 8px 14px !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    display: inline-block;
+    margin: 4px 8px 4px 0 !important;
+}
+
+html.pf-pop .exports a:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: var(--pop-shadow) !important;
+}
+
+/* Enter papers shell */
+html.pf-pop .wrap .card,
+html.pf-pop body .card {
+    border: var(--pop-border) !important;
+    box-shadow: var(--pop-shadow-lg) !important;
+    background: var(--pop-cream) !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop .next-bar {
+    border: var(--pop-border) !important;
+    background: #fff !important;
+    box-shadow: var(--pop-shadow) !important;
+    color: var(--pop-ink) !important;
+}
+
+html.pf-pop .table-wrap {
+    overflow-x: auto !important;
+    margin: 16px 0 !important;
+}
+
+/* Padding for pages without topbar */
+html.pf-pop body {
+    padding-left: clamp(12px, 3vw, 32px) !important;
+    padding-right: clamp(12px, 3vw, 32px) !important;
+}
+
+html.pf-pop body:has(.pf-pop-topbar) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+}
+
+html.pf-pop body:has(.pf-pop-topbar) .header,
+html.pf-pop body:has(.pf-pop-topbar) .file-line,
+html.pf-pop body:has(.pf-pop-topbar) .grid,
+html.pf-pop body:has(.pf-pop-topbar) > p {
+    margin-left: clamp(12px, 3vw, 32px) !important;
+    margin-right: clamp(12px, 3vw, 32px) !important;
+}
+
+html.pf-pop body:has(.pf-pop-topbar) .header,
+html.pf-pop body:has(.pf-pop-topbar) .file-line {
+    max-width: calc(100% - clamp(24px, 6vw, 64px)) !important;
+}
+
+html.pf-pop body:has(.pf-pop-topbar) .grid {
+    padding: 0 clamp(12px, 3vw, 32px);
+}

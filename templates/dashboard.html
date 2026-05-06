@@ -71,33 +71,11 @@
         .grid a.implemented:hover {
             background: #c4d4e4;
         }
-        .exit-row {
-            text-align: center;
-            margin-top: 8px;
-        }
-        .exit-row a, .exit-row button {
-            display: inline-block;
-            min-width: 400px;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #111;
-            background: #c8c8c8;
-            border: 2px solid rgba(0,0,0,0.12);
-            border-radius: 2px;
-            text-decoration: none;
-            cursor: pointer;
-            font-family: inherit;
-        }
-        .exit-row a:hover, .exit-row button:hover {
-            background: #d4d4d4;
-        }
         @media (max-width: 900px) {
             .grid {
                 grid-template-columns: 1fr;
                 max-width: 400px;
             }
-            .exit-row a, .exit-row button { min-width: unset; width: 100%; max-width: 400px; }
         }
     </style>
 </head>
@@ -137,14 +115,6 @@
     <div class="file-line">
         Current file: <strong>{{ db_path }}</strong>
         &nbsp;|&nbsp; Total entries: <strong>{{ entry_count }}</strong>
-    </div>
-
-    {# Desktop mainpage: gray Exit button → app saves DB path then quits. Web: Exit returns to search; persist path via Utilities. #}
-    <div class="exit-row">
-        <a href="{{ url_for('retrieve') }}">Exit</a>
-        <p style="margin: 12px 0 0 0; font-size: 14px; color: #334155; max-width: 520px; margin-left: auto; margin-right: auto;">
-            Same role as the desktop <strong>Exit</strong> button: leave the main menu. To switch the active database file before exiting, use <strong>Use Utilities</strong> first. You can close the browser tab when you are fully done.
-        </p>
     </div>
 </body>
 </html>

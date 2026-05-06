@@ -77,15 +77,6 @@
         .exports a:hover { background: #e5e7eb; }
         .prefs-wrap { max-width: 960px; margin: 20px auto 0; }
         section.prefs { background: rgba(255,255,255,0.45); padding: 18px 22px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.06); }
-        .exit-util { text-align: center; margin-top: 28px; }
-        .exit-util a {
-            display: inline-block; min-width: 400px; padding: 14px 24px; font-size: 16px; font-weight: 600; color: #111;
-            background: #c8c8c8; border: 2px solid rgba(0,0,0,0.12); border-radius: 2px; text-decoration: none;
-        }
-        .exit-util a:hover { background: #d4d4d4; }
-        @media (max-width: 500px) {
-            .exit-util a { min-width: unset; width: 100%; max-width: 400px; }
-        }
     </style>
 </head>
 <body>
@@ -246,11 +237,6 @@
             <button type="submit">Save preferences</button>
         </form>
     </section>
-</div>
-
-<div class="exit-util">
-    <a href="{{ url_for('dashboard') }}">Exit</a>
-    <p style="margin-top: 14px; font-size: 14px; color: #334155;">Returns to the main menu (same idea as desktop Utilities Exit).</p>
 </div>
 
 </body>

@@ -1,0 +1,511 @@
+/*
+ * Paperfile — Soft mesh / glass theme (html.pf-ui-soft).
+ * Cool blue gradient, frosted cards, boosted contrast for readability.
+ */
+html.pf-ui-soft {
+    --soft-ink: #0c1929;
+    --soft-muted: #3d556b;
+    --soft-card: rgba(255, 255, 255, 0.92);
+    --soft-card-solid: #f0f7ff;
+    --soft-line: rgba(255, 255, 255, 0.72);
+    --soft-accent: #0284c7;
+    --soft-accent2: #0ea5e9;
+    --soft-text-on-blue: #f0f9ff;
+    --soft-shadow-text: 0 1px 2px rgba(0, 0, 0, 0.45), 0 2px 16px rgba(0, 0, 0, 0.22);
+    --soft-radius: 18px;
+    --soft-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+html.pf-ui-soft {
+    scroll-behavior: smooth;
+}
+
+html.pf-ui-soft body {
+    font-family: var(--soft-font) !important;
+    margin: 0 !important;
+    padding: 56px 24px 48px !important;
+    min-height: 100vh;
+    line-height: 1.55 !important;
+    color: var(--soft-text-on-blue) !important;
+    background-color: #0c4a6e !important;
+    background-image:
+        radial-gradient(ellipse 110% 85% at 8% 5%, rgba(56, 189, 248, 0.55), transparent 58%),
+        radial-gradient(ellipse 90% 75% at 92% 12%, rgba(129, 140, 248, 0.42), transparent 52%),
+        radial-gradient(ellipse 70% 55% at 48% 95%, rgba(14, 165, 233, 0.5), transparent 48%),
+        linear-gradient(155deg, #0f172a 0%, #172554 22%, #1e40af 48%, #0369a1 72%, #0c4a6e 100%) !important;
+    background-attachment: fixed !important;
+    box-sizing: border-box !important;
+}
+
+html.pf-ui-soft body *,
+html.pf-ui-soft body *::before,
+html.pf-ui-soft body *::after {
+    box-sizing: border-box;
+}
+
+html.pf-ui-soft h1,
+html.pf-ui-soft h2,
+html.pf-ui-soft h3 {
+    color: var(--soft-text-on-blue) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.02em !important;
+    text-shadow: var(--soft-shadow-text);
+}
+
+html.pf-ui-soft .header h1,
+html.pf-ui-soft .header .sub,
+html.pf-ui-soft .header .menu-title {
+    color: var(--soft-ink) !important;
+    text-shadow: none !important;
+}
+
+html.pf-ui-soft p,
+html.pf-ui-soft li,
+html.pf-ui-soft label,
+html.pf-ui-soft .mode-hint,
+html.pf-ui-soft .muted {
+    color: var(--soft-text-on-blue) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+html.pf-ui-soft .header p,
+html.pf-ui-soft .file-line,
+html.pf-ui-soft .file-line strong,
+html.pf-ui-soft table,
+html.pf-ui-soft th,
+html.pf-ui-soft td,
+html.pf-ui-soft .panel,
+html.pf-ui-soft .result,
+html.pf-ui-soft section,
+html.pf-ui-soft form label {
+    color: var(--soft-ink) !important;
+    text-shadow: none !important;
+}
+
+/* Text inside glass cards: no glow */
+html.pf-ui-soft .header p,
+html.pf-ui-soft .file-line p,
+html.pf-ui-soft #main-search-form p,
+html.pf-ui-soft #main-search-form .mode-hint,
+html.pf-ui-soft #main-search-form li,
+html.pf-ui-soft #main-search-form label,
+html.pf-ui-soft section p,
+html.pf-ui-soft section li,
+html.pf-ui-soft section label,
+html.pf-ui-soft form:not(#main-search-form) p,
+html.pf-ui-soft form:not(#main-search-form) li,
+html.pf-ui-soft form:not(#main-search-form) label,
+html.pf-ui-soft .panel p,
+html.pf-ui-soft .result p,
+html.pf-ui-soft .wrap p,
+html.pf-ui-soft .card p {
+    text-shadow: none !important;
+}
+
+html.pf-ui-soft a {
+    color: #7dd3fc !important;
+    font-weight: 600 !important;
+    text-decoration: underline !important;
+    text-decoration-color: rgba(125, 211, 252, 0.85) !important;
+    text-underline-offset: 3px !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+html.pf-ui-soft .header a,
+html.pf-ui-soft .grid a,
+html.pf-ui-soft .mode-bar a,
+html.pf-ui-soft .exports a,
+html.pf-ui-soft table a,
+html.pf-ui-soft #main-search-form a,
+html.pf-ui-soft section a,
+html.pf-ui-soft form a,
+html.pf-ui-soft .panel a,
+html.pf-ui-soft .result a,
+html.pf-ui-soft .wrap a,
+html.pf-ui-soft .card a {
+    color: var(--soft-ink) !important;
+    text-shadow: none !important;
+    text-decoration-color: rgba(12, 25, 41, 0.35) !important;
+}
+
+html.pf-ui-soft a:hover {
+    opacity: 0.92;
+}
+
+html.pf-ui-soft .header a:hover,
+html.pf-ui-soft .grid a:hover,
+html.pf-ui-soft .mode-bar a:hover,
+html.pf-ui-soft .exports a:hover,
+html.pf-ui-soft table a:hover,
+html.pf-ui-soft #main-search-form a:hover,
+html.pf-ui-soft section a:hover,
+html.pf-ui-soft form a:hover,
+html.pf-ui-soft .panel a:hover,
+html.pf-ui-soft .result a:hover,
+html.pf-ui-soft .wrap a:hover,
+html.pf-ui-soft .card a:hover {
+    opacity: 1 !important;
+}
+
+html.pf-ui-soft code {
+    font-family: ui-monospace, Consolas, monospace !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    padding: 0.12em 0.4em !important;
+    border-radius: 6px !important;
+    color: #e0f2fe !important;
+    text-shadow: none !important;
+}
+
+html.pf-ui-soft .header code,
+html.pf-ui-soft .file-line code,
+html.pf-ui-soft section code,
+html.pf-ui-soft form code {
+    background: rgba(0, 0, 0, 0.06) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft pre {
+    font-family: ui-monospace, Consolas, monospace !important;
+    font-size: 13px !important;
+    background: var(--soft-card-solid) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    color: var(--soft-ink) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.pf-ui-soft input[type="text"],
+html.pf-ui-soft input[type="number"],
+html.pf-ui-soft input[type="search"],
+html.pf-ui-soft input[type="email"],
+html.pf-ui-soft input[type="password"],
+html.pf-ui-soft select,
+html.pf-ui-soft textarea {
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    border-radius: 12px !important;
+    padding: 10px 14px !important;
+    font-size: 16px !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: var(--soft-ink) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+    max-width: 100%;
+}
+
+html.pf-ui-soft input:focus,
+html.pf-ui-soft select:focus,
+html.pf-ui-soft textarea:focus {
+    outline: none !important;
+    border-color: var(--soft-accent2) !important;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.35) !important;
+}
+
+html.pf-ui-soft button,
+html.pf-ui-soft input[type="submit"],
+html.pf-ui-soft input[type="button"] {
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 12px 24px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+    color: #fff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 8px 24px rgba(2, 132, 199, 0.45) !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+}
+
+html.pf-ui-soft button:hover,
+html.pf-ui-soft input[type="submit"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 32px rgba(37, 99, 235, 0.45) !important;
+}
+
+html.pf-ui-soft button:active,
+html.pf-ui-soft input[type="submit"]:active {
+    transform: translateY(0) !important;
+}
+
+html.pf-ui-soft button:disabled,
+html.pf-ui-soft input:disabled {
+    opacity: 0.55 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+html.pf-ui-soft table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: var(--soft-radius) !important;
+    overflow: hidden !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.pf-ui-soft th,
+html.pf-ui-soft td {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+    vertical-align: top !important;
+}
+
+html.pf-ui-soft th:last-child,
+html.pf-ui-soft td:last-child {
+    border-right: none !important;
+}
+
+html.pf-ui-soft th {
+    background: rgba(224, 242, 254, 0.95) !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft tr:nth-child(even) td {
+    background: rgba(255, 255, 255, 0.25) !important;
+}
+
+html.pf-ui-soft hr {
+    border: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.35) !important;
+    margin: 28px 0 !important;
+}
+
+/* Dashboard */
+html.pf-ui-soft .header {
+    text-align: center !important;
+    margin: 0 auto 20px !important;
+    max-width: 760px !important;
+    padding: 24px !important;
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: var(--soft-radius) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.pf-ui-soft .file-line {
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1) !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .grid a {
+    display: block !important;
+    text-align: center !important;
+    padding: 16px 18px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: var(--soft-ink) !important;
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: 14px !important;
+    text-decoration: none !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1) !important;
+    min-height: 52px !important;
+    line-height: 1.35 !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+html.pf-ui-soft .grid a:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14) !important;
+}
+
+html.pf-ui-soft .grid a.implemented {
+    background: rgba(255, 255, 255, 0.9) !important;
+}
+
+html.pf-ui-soft body > p[style*="text-align:center"] {
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: 14px !important;
+    padding: 16px !important;
+    color: var(--soft-muted) !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08) !important;
+}
+
+html.pf-ui-soft body > p[style*="text-align:center"] strong {
+    color: var(--soft-ink) !important;
+}
+
+/* Retrieve */
+html.pf-ui-soft #main-search-form {
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: var(--soft-radius) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+    padding: 22px !important;
+}
+
+html.pf-ui-soft .mode-bar a {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    padding: 10px 18px !important;
+    border-radius: 999px !important;
+    background: rgba(15, 23, 42, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    color: var(--soft-text-on-blue) !important;
+    text-decoration: none !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35) !important;
+    transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+
+html.pf-ui-soft .mode-bar a:hover {
+    background: rgba(15, 23, 42, 0.5) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+html.pf-ui-soft .mode-bar a.active {
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: var(--soft-ink) !important;
+    border-color: transparent !important;
+    text-shadow: none !important;
+}
+
+html.pf-ui-soft .vita-box {
+    border: 1px dashed rgba(255, 255, 255, 0.5) !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    border-radius: 12px !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .vita-box label,
+html.pf-ui-soft .vita-box span,
+html.pf-ui-soft .vita-box p {
+    color: var(--soft-ink) !important;
+    text-shadow: none !important;
+}
+
+html.pf-ui-soft .result {
+    border: 1px solid var(--soft-line) !important;
+    background: var(--soft-card-solid) !important;
+    border-radius: 12px !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .panel {
+    border: 1px solid var(--soft-line) !important;
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(12px) !important;
+    border-radius: 14px !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft section {
+    border: 1px solid var(--soft-line) !important;
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(16px) !important;
+    border-radius: var(--soft-radius) !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1) !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft section h2 {
+    color: var(--soft-ink) !important;
+    text-shadow: none !important;
+}
+
+html.pf-ui-soft .parity {
+    border: 1px solid var(--soft-line) !important;
+    background: var(--soft-card-solid) !important;
+    border-radius: 12px !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .ro {
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    background: rgba(255, 248, 200, 0.95) !important;
+    color: var(--soft-ink) !important;
+    border-radius: 10px !important;
+}
+
+html.pf-ui-soft .flash {
+    border-radius: 12px !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+html.pf-ui-soft .flash.success {
+    background: rgba(200, 255, 210, 0.95) !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .flash.error {
+    background: rgba(255, 210, 210, 0.95) !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .flash.warning {
+    background: rgba(255, 245, 180, 0.95) !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft body > form:not(#main-search-form) {
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(18px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: var(--soft-radius) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+    padding: 22px !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft form:has(.grid2) {
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(18px) !important;
+    border: 1px solid var(--soft-line) !important;
+    border-radius: var(--soft-radius) !important;
+    padding: 22px !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .exports a {
+    border: 1px solid var(--soft-line) !important;
+    background: var(--soft-card) !important;
+    border-radius: 999px !important;
+    padding: 8px 16px !important;
+    font-weight: 600 !important;
+}
+
+html.pf-ui-soft .wrap .card,
+html.pf-ui-soft body .card {
+    border: 1px solid var(--soft-line) !important;
+    background: var(--soft-card) !important;
+    backdrop-filter: blur(16px) !important;
+    border-radius: var(--soft-radius) !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1) !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .next-bar {
+    border: 1px solid var(--soft-line) !important;
+    background: var(--soft-card) !important;
+    border-radius: 14px !important;
+    color: var(--soft-ink) !important;
+}
+
+html.pf-ui-soft .table-wrap {
+    overflow-x: auto !important;
+    margin: 16px 0 !important;
+}

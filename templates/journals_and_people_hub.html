@@ -64,26 +64,6 @@
         .hub-grid a:hover {
             background: #d4d4d4;
         }
-        .exit-row {
-            text-align: center;
-            margin-top: 8px;
-        }
-        .exit-row a {
-            display: inline-block;
-            min-width: 400px;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            color: #111;
-            background: #c8c8c8;
-            border: 2px solid rgba(0, 0, 0, 0.12);
-            border-radius: 2px;
-            text-decoration: none;
-            box-sizing: border-box;
-        }
-        .exit-row a:hover {
-            background: #d4d4d4;
-        }
         .web-extra {
             text-align: center;
             margin-top: 28px;
@@ -94,7 +74,7 @@
             color: #1e3a5f;
         }
         @media (max-width: 500px) {
-            .hub-grid, .hub-grid a, .exit-row a {
+            .hub-grid, .hub-grid a {
                 min-width: unset;
                 width: 100%;
                 max-width: 400px;
@@ -117,10 +97,6 @@
     <a href="{{ url_for('edit_journals_cnj') }}">Classify Journals</a>
     <a href="{{ url_for('edit_journals_cnj') }}#classes">Work with journal classes</a>
     <a href="{{ url_for('journals_and_people_manage') }}#people">Define selected people</a>
-</div>
-
-<div class="exit-row">
-    <a href="{{ url_for('dashboard') }}">Exit</a>
 </div>
 
 <p class="web-extra">

@@ -1,0 +1,573 @@
+/*
+ * Paperfile — Modern UI (scoped to html.pf-ui-modern).
+ * Layered over legacy inline styles with !important where needed.
+ */
+html.pf-ui-modern {
+    scroll-behavior: smooth;
+    /* Deep ocean + ink — academic, not generic “AI slop” blue */
+    --pf-bg0: #0c1222;
+    --pf-bg1: #121a2e;
+    --pf-bg2: #1a2540;
+    --pf-surface: rgba(255, 255, 255, 0.92);
+    --pf-surface-soft: rgba(255, 255, 255, 0.78);
+    --pf-glass: rgba(255, 255, 255, 0.12);
+    --pf-glass-border: rgba(255, 255, 255, 0.22);
+    --pf-ink: #0b1220;
+    --pf-muted: #475569;
+    --pf-accent: #0d9488;
+    --pf-accent2: #0891b2;
+    --pf-accent-glow: rgba(13, 148, 136, 0.35);
+    --pf-ring: rgba(8, 145, 178, 0.45);
+    --pf-shadow: 0 18px 50px rgba(8, 15, 35, 0.35);
+    --pf-shadow-sm: 0 8px 24px rgba(8, 15, 35, 0.18);
+    --pf-radius: 14px;
+    --pf-radius-sm: 10px;
+    --pf-font: "Segoe UI", system-ui, -apple-system, "Inter", sans-serif;
+}
+
+html.pf-ui-modern body {
+    font-family: var(--pf-font) !important;
+    color: #e2e8f0 !important;
+    margin: 0 !important;
+    padding: 28px clamp(16px, 4vw, 40px) 56px !important;
+    line-height: 1.55 !important;
+    min-height: 100vh;
+    box-sizing: border-box !important;
+    background-color: var(--pf-bg0) !important;
+    background-image:
+        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(13, 148, 136, 0.22), transparent 55%),
+        radial-gradient(ellipse 90% 60% at 100% 0%, rgba(8, 145, 178, 0.18), transparent 50%),
+        radial-gradient(ellipse 70% 50% at 0% 100%, rgba(59, 130, 246, 0.12), transparent 45%),
+        linear-gradient(165deg, var(--pf-bg1) 0%, var(--pf-bg0) 48%, var(--pf-bg2) 100%) !important;
+    background-attachment: fixed !important;
+}
+
+html.pf-ui-modern body *,
+html.pf-ui-modern body *::before,
+html.pf-ui-modern body *::after {
+    box-sizing: border-box;
+}
+
+/* Headings & copy on dark canvas */
+html.pf-ui-modern h1,
+html.pf-ui-modern h2,
+html.pf-ui-modern h3 {
+    color: #f1f5f9 !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.03em !important;
+    line-height: 1.2 !important;
+}
+
+html.pf-ui-modern h1 {
+    font-size: clamp(1.65rem, 2.8vw, 2.35rem) !important;
+    margin-top: 0.35em !important;
+}
+
+html.pf-ui-modern h2 {
+    font-size: clamp(1.35rem, 2.2vw, 1.85rem) !important;
+}
+
+html.pf-ui-modern p,
+html.pf-ui-modern li,
+html.pf-ui-modern td,
+html.pf-ui-modern th,
+html.pf-ui-modern label {
+    color: inherit;
+}
+
+html.pf-ui-modern p,
+html.pf-ui-modern .mode-hint,
+html.pf-ui-modern .muted {
+    color: #cbd5e1 !important;
+}
+
+html.pf-ui-modern a {
+    color: #5eead4 !important;
+    text-decoration: none !important;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+html.pf-ui-modern a:hover {
+    color: #99f6e4 !important;
+    text-decoration: underline !important;
+}
+
+html.pf-ui-modern code {
+    font-family: ui-monospace, "Cascadia Code", Consolas, monospace !important;
+    font-size: 0.9em !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+    color: #e2e8f0 !important;
+    padding: 0.15em 0.45em !important;
+    border-radius: 6px !important;
+    border: 1px solid rgba(148, 163, 184, 0.25) !important;
+}
+
+html.pf-ui-modern pre {
+    font-family: ui-monospace, Consolas, monospace !important;
+    font-size: 13px !important;
+    background: rgba(15, 23, 42, 0.65) !important;
+    color: #e2e8f0 !important;
+    padding: 14px !important;
+    border-radius: var(--pf-radius-sm) !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    overflow-x: auto !important;
+}
+
+/* Forms */
+html.pf-ui-modern input[type="text"],
+html.pf-ui-modern input[type="number"],
+html.pf-ui-modern input[type="search"],
+html.pf-ui-modern input[type="email"],
+html.pf-ui-modern input[type="password"],
+html.pf-ui-modern select,
+html.pf-ui-modern textarea {
+    border: 1px solid rgba(148, 163, 184, 0.35) !important;
+    border-radius: var(--pf-radius-sm) !important;
+    padding: 10px 14px !important;
+    font-size: 16px !important;
+    font-family: inherit !important;
+    background: rgba(15, 23, 42, 0.55) !important;
+    color: #f1f5f9 !important;
+    max-width: 100%;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+html.pf-ui-modern input::placeholder,
+html.pf-ui-modern textarea::placeholder {
+    color: #64748b !important;
+}
+
+html.pf-ui-modern input:focus,
+html.pf-ui-modern select:focus,
+html.pf-ui-modern textarea:focus {
+    outline: none !important;
+    border-color: var(--pf-accent) !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.15), 0 0 0 3px var(--pf-ring) !important;
+}
+
+html.pf-ui-modern button,
+html.pf-ui-modern input[type="submit"],
+html.pf-ui-modern input[type="button"] {
+    border-radius: var(--pf-radius-sm) !important;
+    padding: 11px 22px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    border: none !important;
+    background: linear-gradient(135deg, var(--pf-accent) 0%, var(--pf-accent2) 100%) !important;
+    color: #042f2e !important;
+    font-family: inherit !important;
+    box-shadow: 0 4px 16px var(--pf-accent-glow) !important;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease !important;
+}
+
+html.pf-ui-modern button:hover,
+html.pf-ui-modern input[type="submit"]:hover {
+    filter: brightness(1.06) !important;
+    box-shadow: 0 6px 22px var(--pf-accent-glow) !important;
+    transform: translateY(-1px) !important;
+}
+
+html.pf-ui-modern button:active,
+html.pf-ui-modern input[type="submit"]:active {
+    transform: translateY(0) !important;
+}
+
+html.pf-ui-modern button:disabled,
+html.pf-ui-modern input:disabled {
+    opacity: 0.45 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Tables */
+html.pf-ui-modern table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: var(--pf-surface) !important;
+    color: var(--pf-ink) !important;
+    border-radius: var(--pf-radius) !important;
+    overflow: hidden !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+}
+
+html.pf-ui-modern th,
+html.pf-ui-modern td {
+    padding: 12px 14px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    text-align: left !important;
+    vertical-align: top !important;
+    color: var(--pf-ink) !important;
+}
+
+html.pf-ui-modern th {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    box-shadow: 0 1px 0 #e2e8f0 !important;
+}
+
+html.pf-ui-modern tr:nth-child(even) td {
+    background: #f8fafc !important;
+}
+
+html.pf-ui-modern tr:last-child td {
+    border-bottom: none !important;
+}
+
+html.pf-ui-modern hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.45), transparent) !important;
+    margin: 32px 0 !important;
+}
+
+/* ——— Dashboard ——— */
+html.pf-ui-modern .header {
+    text-align: center !important;
+    margin: 0 auto 28px !important;
+    max-width: 720px !important;
+    padding: 28px 24px 22px !important;
+    background: var(--pf-glass) !important;
+    backdrop-filter: blur(14px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(140%) !important;
+    border: 1px solid var(--pf-glass-border) !important;
+    border-radius: var(--pf-radius) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+}
+
+html.pf-ui-modern .header h1 {
+    font-size: clamp(1.1rem, 2vw, 1.35rem) !important;
+    color: #f8fafc !important;
+    letter-spacing: 0.02em !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    opacity: 0.92 !important;
+}
+
+html.pf-ui-modern .header .sub {
+    color: #cbd5e1 !important;
+    font-size: 1.05rem !important;
+}
+
+html.pf-ui-modern .header .menu-title {
+    margin-top: 18px !important;
+    font-size: clamp(1.5rem, 3vw, 2rem) !important;
+    font-weight: 800 !important;
+    background: linear-gradient(120deg, #f8fafc 0%, #99f6e4 45%, #5eead4 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+html.pf-ui-modern .file-line {
+    background: var(--pf-surface-soft) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    border-radius: var(--pf-radius-sm) !important;
+    color: var(--pf-ink) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+    padding: 14px 18px !important;
+}
+
+html.pf-ui-modern .file-line strong {
+    color: #0f172a !important;
+}
+
+html.pf-ui-modern .grid a {
+    display: block !important;
+    text-align: center !important;
+    padding: 16px 20px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%) !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: var(--pf-radius-sm) !important;
+    text-decoration: none !important;
+    box-shadow: 0 4px 14px rgba(8, 15, 35, 0.12) !important;
+    min-height: 52px !important;
+    line-height: 1.35 !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+html.pf-ui-modern .grid a::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--pf-accent2), var(--pf-accent));
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+html.pf-ui-modern .grid a:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 28px rgba(8, 15, 35, 0.2) !important;
+    border-color: rgba(13, 148, 136, 0.35) !important;
+    background: linear-gradient(180deg, #ffffff 0%, #ecfeff 100%) !important;
+}
+
+html.pf-ui-modern .grid a:hover::before {
+    opacity: 1;
+}
+
+html.pf-ui-modern .grid a.implemented {
+    background: linear-gradient(145deg, #ecfdf5 0%, #d1fae5 40%, #ccfbf1 100%) !important;
+    border-color: rgba(13, 148, 136, 0.35) !important;
+}
+
+html.pf-ui-modern .grid a.implemented::before {
+    opacity: 1;
+}
+
+/* Centered hosting blurb on dashboard */
+html.pf-ui-modern body > p[style*="text-align:center"] {
+    color: #94a3b8 !important;
+    background: rgba(15, 23, 42, 0.35) !important;
+    padding: 14px 18px !important;
+    border-radius: var(--pf-radius-sm) !important;
+    border: 1px solid rgba(148, 163, 184, 0.2) !important;
+    max-width: 920px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+html.pf-ui-modern body > p[style*="text-align:center"] strong {
+    color: #e2e8f0 !important;
+}
+
+/* ——— Retrieve / search (index) ——— */
+html.pf-ui-modern #main-search-form {
+    background: var(--pf-surface-soft) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    border-radius: var(--pf-radius) !important;
+    padding: 22px 22px 26px !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+    color: var(--pf-ink) !important;
+}
+
+html.pf-ui-modern #main-search-form .radio-group label,
+html.pf-ui-modern #main-search-form .checkbox-group label,
+html.pf-ui-modern #main-search-form .sort-group label,
+html.pf-ui-modern #main-search-form .field-row label {
+    color: #1e293b !important;
+}
+
+html.pf-ui-modern #main-search-form .sort-group-title {
+    color: #0f172a !important;
+}
+
+html.pf-ui-modern .mode-bar a {
+    font-size: 15px !important;
+    padding: 10px 18px !important;
+    color: #e2e8f0 !important;
+    background: var(--pf-glass) !important;
+    border: 1px solid var(--pf-glass-border) !important;
+    border-radius: 999px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+
+html.pf-ui-modern .mode-bar a:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
+    color: #fff !important;
+}
+
+html.pf-ui-modern .mode-bar a.active {
+    background: linear-gradient(135deg, var(--pf-accent) 0%, var(--pf-accent2) 100%) !important;
+    border-color: transparent !important;
+    color: #042f2e !important;
+    box-shadow: 0 4px 16px var(--pf-accent-glow) !important;
+}
+
+html.pf-ui-modern .vita-box {
+    background: rgba(15, 23, 42, 0.06) !important;
+    border: 1px solid rgba(15, 23, 42, 0.1) !important;
+    border-radius: var(--pf-radius-sm) !important;
+}
+
+html.pf-ui-modern .vita-box label {
+    color: #334155 !important;
+}
+
+html.pf-ui-modern .result {
+    background: var(--pf-surface) !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    border-radius: var(--pf-radius-sm) !important;
+    box-shadow: 0 4px 16px rgba(8, 15, 35, 0.08) !important;
+    color: var(--pf-ink) !important;
+}
+
+html.pf-ui-modern .panel {
+    background: var(--pf-surface-soft) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    border-radius: var(--pf-radius-sm) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+    color: var(--pf-ink) !important;
+}
+
+/* ——— Common page shells (correct papers, utilities, etc.) ——— */
+html.pf-ui-modern .nav {
+    margin-bottom: 16px !important;
+}
+
+html.pf-ui-modern section {
+    background: var(--pf-surface-soft) !important;
+    color: var(--pf-ink) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    border-radius: var(--pf-radius) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+}
+
+html.pf-ui-modern section h2 {
+    color: #0f172a !important;
+}
+
+html.pf-ui-modern .note {
+    color: #64748b !important;
+}
+
+html.pf-ui-modern .parity {
+    background: var(--pf-surface-soft) !important;
+    color: var(--pf-ink) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: var(--pf-radius-sm) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+}
+
+html.pf-ui-modern .ro {
+    background: rgba(251, 191, 36, 0.15) !important;
+    border: 1px solid rgba(251, 191, 36, 0.4) !important;
+    color: #fef3c7 !important;
+    border-radius: var(--pf-radius-sm) !important;
+}
+
+html.pf-ui-modern .flash {
+    border-radius: var(--pf-radius-sm) !important;
+    border-width: 1px !important;
+    border-style: solid !important;
+}
+
+html.pf-ui-modern .flash.success {
+    background: rgba(16, 185, 129, 0.18) !important;
+    border-color: rgba(52, 211, 153, 0.45) !important;
+    color: #a7f3d0 !important;
+}
+
+html.pf-ui-modern .flash.error {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(248, 113, 113, 0.45) !important;
+    color: #fecaca !important;
+}
+
+html.pf-ui-modern .flash.warning {
+    background: rgba(251, 191, 36, 0.12) !important;
+    border-color: rgba(251, 191, 36, 0.4) !important;
+    color: #fde68a !important;
+}
+
+/* Forms that use light inline wrappers */
+html.pf-ui-modern form {
+    color: inherit;
+}
+
+html.pf-ui-modern body > form:not(#main-search-form) {
+    background: var(--pf-surface-soft) !important;
+    color: var(--pf-ink) !important;
+    padding: 20px !important;
+    border-radius: var(--pf-radius) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+}
+
+html.pf-ui-modern body > form:not(#main-search-form) label {
+    color: #334155 !important;
+}
+
+/* Edit / correct forms (not the main retrieve form) */
+html.pf-ui-modern form:has(.grid2) {
+    background: var(--pf-surface-soft) !important;
+    color: var(--pf-ink) !important;
+    padding: 22px !important;
+    border-radius: var(--pf-radius) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+}
+
+html.pf-ui-modern form:has(.grid2) label {
+    color: #334155 !important;
+}
+
+html.pf-ui-modern .meta {
+    color: #94a3b8 !important;
+}
+
+html.pf-ui-modern .exports a {
+    padding: 8px 14px !important;
+    border-radius: 999px !important;
+    background: var(--pf-glass) !important;
+    border: 1px solid var(--pf-glass-border) !important;
+    margin-right: 10px !important;
+    margin-bottom: 8px !important;
+    font-weight: 600 !important;
+}
+
+/* Enter Papers .wrap stays readable: lift card on dark bg */
+html.pf-ui-modern .wrap {
+    color: var(--pf-ink) !important;
+}
+
+html.pf-ui-modern .wrap .card,
+html.pf-ui-modern body .card {
+    background: var(--pf-surface) !important;
+    color: var(--pf-ink) !important;
+    border: 1px solid rgba(15, 23, 42, 0.06) !important;
+}
+
+html.pf-ui-modern .next-bar {
+    background: var(--pf-surface-soft) !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    color: var(--pf-ink) !important;
+}
+
+html.pf-ui-modern .next-bar strong {
+    color: var(--pf-accent) !important;
+}
+
+html.pf-ui-modern .top-nav a {
+    color: #5eead4 !important;
+}
+
+/* Tables wrapper */
+html.pf-ui-modern .table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin: 16px 0 !important;
+    border-radius: var(--pf-radius) !important;
+    box-shadow: var(--pf-shadow-sm) !important;
+}
+
+/* Textarea output blocks */
+html.pf-ui-modern textarea[readonly],
+html.pf-ui-modern textarea:not([name]) {
+    background: rgba(15, 23, 42, 0.45) !important;
+    color: #e2e8f0 !important;
+    border-color: rgba(148, 163, 184, 0.3) !important;
+}
