@@ -958,8 +958,21 @@ def enter_papers():
     )
 
 
-@app.route("/journals-and-people", methods=["GET", "POST"])
+@app.route("/journals-and-people", methods=["GET"])
 def journals_and_people():
+    """Desktop hub: same four actions as ``pages/journalsandpeople.py`` (no giant tables)."""
+    _sync_papers_from_reader()
+    db_path = getattr(reader, "file_path", None) or "(no database path)"
+    return render_template(
+        "journals_and_people_hub.html",
+        db_path=db_path,
+        entry_count=len(PAPERS) if PAPERS else 0,
+    )
+
+
+@app.route("/journals-and-people/manage", methods=["GET", "POST"])
+def journals_and_people_manage():
+    """Faculty .cng editor + journal table / upload (web-only convenience)."""
     cfg_path, faculty_path, journal_path = resolve_faculty_and_journal_paths()
     read_only = _paperfile_read_only()
 
@@ -967,17 +980,17 @@ def journals_and_people():
         action = (request.form.get("action") or "").strip()
         if read_only:
             flash("Read-only mode: changes are disabled (PAPERFILE_READ_ONLY).", "error")
-            return redirect(url_for("journals_and_people"))
+            return redirect(url_for("journals_and_people_manage"))
         try:
             if action == "save_faculty":
                 if not faculty_path:
                     flash("config.json has no faculty_file path.", "error")
-                    return redirect(url_for("journals_and_people"))
+                    return redirect(url_for("journals_and_people_manage"))
                 rows = faculty_rows_from_post(request.form)
                 parent = os.path.dirname(os.path.abspath(faculty_path))
                 if parent and not os.path.isdir(parent):
                     flash("Faculty file directory does not exist.", "error")
-                    return redirect(url_for("journals_and_people"))
+                    return redirect(url_for("journals_and_people_manage"))
                 if os.path.isfile(faculty_path):
                     backup_sidecar_file(faculty_path)
                 save_faculty_cng(faculty_path, rows)
@@ -988,15 +1001,15 @@ def journals_and_people():
             elif action == "upload_cnj":
                 if not journal_path:
                     flash("config.json has no journal_definition_file path.", "error")
-                    return redirect(url_for("journals_and_people"))
+                    return redirect(url_for("journals_and_people_manage"))
                 uf = request.files.get("cnj_file")
                 if not uf or not uf.filename:
                     flash("Choose a .cnj file first.", "error")
-                    return redirect(url_for("journals_and_people"))
+                    return redirect(url_for("journals_and_people_manage"))
                 data = uf.read()
                 if len(data) > 50 * 1024 * 1024:
                     flash("That file is too large (max 50 MB).", "error")
-                    return redirect(url_for("journals_and_people"))
+                    return redirect(url_for("journals_and_people_manage"))
                 try:
                     text = data.decode("utf-8")
                 except UnicodeDecodeError:
@@ -1006,11 +1019,11 @@ def journals_and_people():
                         "Upload rejected: file must contain CLASSCOUNT and STARTJOURNALS (standard .cnj).",
                         "error",
                     )
-                    return redirect(url_for("journals_and_people"))
+                    return redirect(url_for("journals_and_people_manage"))
                 parent = os.path.dirname(os.path.abspath(journal_path))
                 if parent and not os.path.isdir(parent):
                     flash("Journal file directory does not exist.", "error")
-                    return redirect(url_for("journals_and_people"))
+                    return redirect(url_for("journals_and_people_manage"))
                 if os.path.isfile(journal_path):
                     backup_sidecar_file(journal_path)
                 with open(journal_path, "wb") as out:
@@ -1023,8 +1036,10 @@ def journals_and_people():
                 flash("Unknown action.", "error")
         except Exception as e:
             flash(str(e), "error")
-        return redirect(url_for("journals_and_people"))
+        return redirect(url_for("journals_and_people_manage"))
 
+    _sync_papers_from_reader()
+    db_path = getattr(reader, "file_path", None) or "(no database path)"
     faculty_rows = load_faculty_rows(faculty_path)
     for idx, row in enumerate(faculty_rows):
         row["form_id"] = idx
@@ -1050,10 +1065,12 @@ def journals_and_people():
     )
 
     return render_template(
-        "journals_and_people.html",
+        "journals_and_people_manage.html",
         cfg_path=cfg_path or "",
         faculty_path=faculty_path or "",
         journal_path=journal_path or "",
+        db_path=db_path,
+        entry_count=len(PAPERS) if PAPERS else 0,
         faculty_rows=faculty_rows,
         faculty_next_id=faculty_next_id,
         journal_rows=journal_rows,

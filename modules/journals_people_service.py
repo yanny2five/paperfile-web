@@ -11,14 +11,20 @@ import shutil
 import urllib.parse
 from typing import Any, Dict, List, Optional, Tuple
 
-from modules.readdata import abs_from_config, get_config_path, read_json_with_guess, read_text_with_guess
+import modules.readdata as _readdata
+from modules.readdata import abs_from_config, read_json_with_guess, read_text_with_guess
+
+
+def _config_path():
+    """Delegates to ``readdata.get_config_path`` so test mocks on that module apply."""
+    return _readdata.get_config_path()
 
 DEFAULT_FACULTY_TAIL = "none;;-1;;-1;;-1;;-1;;"
 
 
 def resolve_faculty_and_journal_paths() -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """Returns (config_path, faculty_abs, journal_abs)."""
-    cfg = get_config_path()
+    cfg = _config_path()
     if not cfg:
         return None, None, None
     config = read_json_with_guess(cfg)

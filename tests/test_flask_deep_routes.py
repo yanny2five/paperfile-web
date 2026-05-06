@@ -26,6 +26,7 @@ from tests.isolated_app_env import write_deep_isolated_env
         ("/data-export", (200,), True),
         ("/retrieve-numbers", (200,), True),
         ("/journals-and-people", (200,), False),
+        ("/journals-and-people/manage", (200,), False),
         ("/correct-papers", (200,), False),
         ("/correct-papers/edit?num=10", (200,), False),
         ("/edit-and-fix-entries", (200,), False),
