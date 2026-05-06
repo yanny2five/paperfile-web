@@ -15,7 +15,9 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DESKTOP_MODULES = REPO_ROOT / "paperfile" / "modules"
-WEB_MODULES = REPO_ROOT / "paperfile-web" / "modules"
+_WEB_MODULES_SEPARATE = REPO_ROOT / "paperfile-web" / "modules"
+# CI / single-tree clone: only `paperfile/` exists (same as tests/parity/conftest.py WEB_ROOT).
+WEB_MODULES = _WEB_MODULES_SEPARATE if _WEB_MODULES_SEPARATE.is_dir() else DESKTOP_MODULES
 
 
 # Modules that the project intends to keep in lock-step. If any of these
