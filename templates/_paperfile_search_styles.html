@@ -172,6 +172,130 @@
             font-weight: 400;
         }
 
+        /* Desktop parity: retrievepapers_restrictvitatype (Tk #a6caf0 strip + white grooved frame, 3 cols) */
+        .retrieve-vita-desktop {
+            background: #a6caf0;
+            margin-top: 18px;
+            margin-left: 0;
+            margin-right: 0;
+            padding: 14px 16px 16px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        .retrieve-vita-desktop .restrict-vita-top {
+            margin-top: 0;
+        }
+
+        .restrict-vita-label {
+            font-size: 15px;
+            font-weight: 700;
+            font-family: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        }
+
+        .retrieve-vita-desktop .vita-box-desktop {
+            margin-left: 0;
+            margin-top: 10px;
+            padding: 10px 12px 14px;
+            background: #ffffff;
+            border: 2px groove #9aa7b8;
+            border-radius: 0;
+            box-sizing: border-box;
+        }
+
+        .vita-desktop-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px 12px;
+            margin-bottom: 10px;
+        }
+
+        .vita-desktop-heading {
+            font-size: 15px;
+            font-weight: 700;
+            font-family: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        }
+
+        .vita-desktop-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .vita-desktop-btn {
+            font-size: 12px;
+            padding: 6px 12px;
+            min-width: 76px;
+            background: #d1d5db;
+            border: 2px outset #e5e7eb;
+            border-radius: 2px;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .vita-desktop-btn:active {
+            border-style: inset;
+        }
+
+        .vita-desktop-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            column-gap: 10px;
+            row-gap: 4px;
+            align-items: start;
+        }
+
+        .vita-desktop-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 0;
+            font-size: 14px;
+            font-weight: 400;
+            font-family: "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+        }
+
+        .vita-desktop-row input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .vita-desktop-name {
+            line-height: 1.35;
+        }
+
+        @media (max-width: 720px) {
+            .vita-desktop-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vita-desktop-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Themed shells (soft / pop / modern) override .vita-box — keep desktop strip */
+        html.pf-ui-soft .retrieve-vita-desktop,
+        html.pf-ui-pop .retrieve-vita-desktop,
+        html.pf-ui-modern .retrieve-vita-desktop {
+            background: #a6caf0 !important;
+        }
+
+        html.pf-ui-soft .retrieve-vita-desktop .vita-box-desktop,
+        html.pf-ui-pop .retrieve-vita-desktop .vita-box-desktop,
+        html.pf-ui-modern .retrieve-vita-desktop .vita-box-desktop {
+            border: 2px groove #9aa7b8 !important;
+            background: #ffffff !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+
         .button-row {
             margin-top: 18px;
             display: flex;

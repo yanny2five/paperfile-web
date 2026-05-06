@@ -133,25 +133,32 @@
                     </div>
                 </div>
 
-                <div class="checkbox-group">
-                    <label>
-                        <input type="checkbox" id="restrict_vita_types" name="restrict_vita_types"
-                            {% if request.form.get('restrict_vita_types') or search_type_display == 'vita_type' %}checked{% endif %}>
-                        Restrict vita types
-                    </label>
-                </div>
-
-                <div id="vita-box" class="vita-box {% if request.form.get('restrict_vita_types') or search_type_display == 'vita_type' %}show{% endif %}">
-                    <div class="vita-box-header" style="font-weight:600; margin-bottom:8px;">Check vita types to INCLUDE</div>
-                    <div class="vita-box-actions" style="margin-bottom:8px; display:flex; gap:8px;">
-                        <button type="button" id="vita_select_all">Select All</button>
-                        <button type="button" id="vita_unselect_all">Unselect All</button>
+                <div class="retrieve-vita-desktop">
+                    <div class="checkbox-group restrict-vita-top">
+                        <label class="restrict-vita-label">
+                            <input type="checkbox" id="restrict_vita_types" name="restrict_vita_types"
+                                {% if request.form.get('restrict_vita_types') or search_type_display == 'vita_type' %}checked{% endif %}>
+                            Restrict vita types
+                        </label>
                     </div>
-                    <div class="vita-box-checks">
-                        {% for code, name in vita_type_pairs %}
-                        <label><input type="checkbox" name="vita_types" value="{{ code }}"
-                            {% if code in request.form.getlist('vita_types') %}checked{% endif %}> {{ code }} — {{ name }}</label>
-                        {% endfor %}
+
+                    <div id="vita-box" class="vita-box vita-box-desktop {% if request.form.get('restrict_vita_types') or search_type_display == 'vita_type' %}show{% endif %}">
+                        <div class="vita-desktop-toolbar">
+                            <span class="vita-desktop-heading">Check vita types to INCLUDE</span>
+                            <span class="vita-desktop-btns">
+                                <button type="button" id="vita_select_all" class="vita-desktop-btn">Select All</button>
+                                <button type="button" id="vita_unselect_all" class="vita-desktop-btn">Unselect All</button>
+                            </span>
+                        </div>
+                        <div class="vita-desktop-grid">
+                            {% for code, name in vita_type_pairs %}
+                            <label class="vita-desktop-row">
+                                <input type="checkbox" name="vita_types" value="{{ code }}"
+                                    {% if code in request.form.getlist('vita_types') %}checked{% endif %}>
+                                <span class="vita-desktop-name">{{ name }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </section>

@@ -79,6 +79,41 @@ VITATYPE_ORDER = [
     "MS",
 ]
 
+# Row-major order for the retrieve / restrict-vita grid to match
+# ``pages/retrievepapers_restrictvitatype.py`` (three columns, top-to-bottom
+# then left-to-right visually → row-major for CSS grid).
+RETRIEVE_VITA_TYPES_DESKTOP_VISUAL_ORDER = [
+    "J",
+    "PS",
+    "N",
+    "JR",
+    "F",
+    "SV",
+    "JD",
+    "DP",
+    "CN",
+    "PA",
+    "CP",
+    "TH",
+    "B",
+    "SM",
+    "TS",
+    "BC",
+    "BR",
+    "O",
+    "SB",
+    "CD",
+    "OI",
+    "IP",
+    "WS",
+    "P",
+    "PR",
+    "U",
+    "EC",
+    "SP",
+    "OP",
+]
+
 DEFAULT_VITA_PREFERENCE = [
     "J",
     "PA",

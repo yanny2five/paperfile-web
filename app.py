@@ -27,6 +27,7 @@ from modules.report_funding import (
     filter_funding_rows,
 )
 from modules.report_group_output import (
+    RETRIEVE_VITA_TYPES_DESKTOP_VISUAL_ORDER,
     VITATYPE_ORDER,
     VITA_TYPE_NAMES,
     generate_group_output,
@@ -391,6 +392,20 @@ def _vita_type_dropdown_pairs():
     out = []
     seen = set()
     for code in VITATYPE_ORDER:
+        if code in VITA_TYPE_NAMES:
+            out.append((code, VITA_TYPE_NAMES[code]))
+            seen.add(code)
+    for code in sorted(VITA_TYPE_NAMES.keys()):
+        if code not in seen:
+            out.append((code, VITA_TYPE_NAMES[code]))
+    return out
+
+
+def _vita_type_pairs_retrieve_desktop():
+    """Vita checkboxes in the same order / layout intent as desktop restrict panel."""
+    out = []
+    seen = set()
+    for code in RETRIEVE_VITA_TYPES_DESKTOP_VISUAL_ORDER:
         if code in VITA_TYPE_NAMES:
             out.append((code, VITA_TYPE_NAMES[code]))
             seen.add(code)
@@ -1114,7 +1129,7 @@ def correct_papers():
         search_type_display=search_type_display,
         display_opts=display_opts,
         read_only=_paperfile_read_only(),
-        vita_type_pairs=_vita_type_dropdown_pairs(),
+        vita_type_pairs=_vita_type_pairs_retrieve_desktop(),
     )
 
 
@@ -2759,7 +2774,7 @@ def retrieve():
         year_max=request.form.get("year_max", default_year_max if is_get else ""),
         default_year_min=default_year_min,
         default_year_max=default_year_max,
-        vita_type_pairs=_vita_type_dropdown_pairs(),
+        vita_type_pairs=_vita_type_pairs_retrieve_desktop(),
         search_meta=search_meta,
     )
 
