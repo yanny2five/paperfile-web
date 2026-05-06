@@ -21,9 +21,14 @@ from typing import Any, Dict
 import pytest
 
 
+# parity/conftest.py → …/paperfile/tests/parity/conftest.py
+# parents[2] = paperfile app root (modules/, app.py)
+# parents[3] = outer folder (e.g. paperfile_web/) when the repo is paperfile_web/paperfile/
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DESKTOP_ROOT = REPO_ROOT / "paperfile"
-WEB_ROOT = REPO_ROOT / "paperfile-web"
+_WEB_SEPARATE = REPO_ROOT / "paperfile-web"
+# CI / typical clone: web and Tk sources both live under `paperfile/` (no second tree).
+WEB_ROOT = _WEB_SEPARATE if _WEB_SEPARATE.is_dir() else DESKTOP_ROOT
 RUNNER = Path(__file__).parent / "_runner.py"
 
 

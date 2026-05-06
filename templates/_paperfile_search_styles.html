@@ -172,14 +172,14 @@
             font-weight: 400;
         }
 
-        /* Desktop parity: retrievepapers_restrictvitatype (Tk #a6caf0 strip + white grooved frame, 3 cols) */
+        /* Restrict vita block: white grooved inner panel + 3-col grid (no full-width blue wrapper) */
         .retrieve-vita-desktop {
-            background: #a6caf0;
+            background: transparent;
             margin-top: 18px;
             margin-left: 0;
             margin-right: 0;
-            padding: 14px 16px 16px;
-            border-radius: 4px;
+            padding: 0;
+            border-radius: 0;
             box-sizing: border-box;
             max-width: 100%;
         }
@@ -280,13 +280,7 @@
             }
         }
 
-        /* Themed shells (soft / pop / modern) override .vita-box — keep desktop strip */
-        html.pf-ui-soft .retrieve-vita-desktop,
-        html.pf-ui-pop .retrieve-vita-desktop,
-        html.pf-ui-modern .retrieve-vita-desktop {
-            background: #a6caf0 !important;
-        }
-
+        /* Themed shells: keep grooved white vita panel; no outer blue fill */
         html.pf-ui-soft .retrieve-vita-desktop .vita-box-desktop,
         html.pf-ui-pop .retrieve-vita-desktop .vita-box-desktop,
         html.pf-ui-modern .retrieve-vita-desktop .vita-box-desktop {
