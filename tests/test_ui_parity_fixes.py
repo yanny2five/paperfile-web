@@ -286,6 +286,19 @@ class TestSearchValidationMessages:
         )
         assert "Invalid year range values entered." in body
 
+    def test_year_mode_with_valid_range_shows_matching_papers(self, web_client):
+        """Select by Year has no query field; range alone must retrieve rows."""
+        body = _body(
+            self._post(
+                web_client,
+                search_type="year",
+                year_min="2024",
+                year_max="2024",
+            )
+        )
+        assert "Invalid year range values entered." not in body
+        assert "Second" in body
+
     def test_search_error_banner_uses_invalid_search_criteria_headline(
         self, web_client
     ):

@@ -396,8 +396,10 @@ def search_papers(
         - For ``author_title``: dict with keys ``author``, ``optional_author``,
           ``title``, ``optional_title`` (any may be omitted/empty), or a legacy
           string (substring in author OR title).
-        - For ``keyword``, ``journal_book``, ``any_field``, ``year``,
-          ``number``, ``vita_type``: a string.
+        - For ``keyword``, ``journal_book``, ``any_field``, ``number``,
+          ``vita_type``: a string.
+        - For ``year``: the ``query`` string is ignored; desktop Select by Year
+          uses only ``year_min`` / ``year_max`` (or ``year_range``).
         - For ``multiple_numbers``: a comma-separated string.
     year_min, year_max : str or None
         Raw year inputs from the form. Parsed via ``parse_year_range_inputs``
@@ -466,14 +468,10 @@ def search_papers(
         return _filter_by_vita_codes_strict(results, vita_codes)
 
     if search_type == "year":
-        q = (str(query) if query is not None else "").strip()
-        if not q:
-            results = []
-        elif q.isdigit():
-            results = sd.search_by_year_range(int(q), int(q))
-        else:
-            results = []
-        results = apply_year_filter(results, year_range)
+        # Desktop ``left_panel.py`` "year" branch: ``_apply_year_filter(data,
+        # year_range)`` on the full dataset only — no separate text query. The
+        # web form never posts ``query_year``; an empty query must still work.
+        results = apply_year_filter(list(papers), year_range)
         return _filter_by_vita_codes_strict(results, vita_codes)
 
     if search_type == "number":

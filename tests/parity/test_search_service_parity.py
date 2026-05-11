@@ -122,17 +122,15 @@ def test_keyword_query_matches_desktop_via_subject_fields(parity, common_records
 
 
 def test_year_only_filter_matches_desktop_year_range(parity, common_records):
-    """Year=='2020' returns the same records as a desktop year range [2020,2020]."""
+    """Select-by-Year uses the same filtering as desktop ``_apply_year_filter``
+    for range [2020, 2020] (no text query)."""
     from modules.search_service import search_papers
 
-    # search_type="year" goes through search_by_year_range(2020, 2020).
-    # No additional outer year filter (year_range here has to be the same
-    # 2020-2020 to avoid double-filtering away every record).
     web_hits = sorted(
         r["number"]
         for r in search_papers(
             common_records,
-            query="2020",
+            query="",
             search_type="year",
             year_min="2020",
             year_max="2020",

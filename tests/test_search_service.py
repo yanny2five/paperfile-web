@@ -392,10 +392,11 @@ def test_search_papers_keyword_subject1_subject2_only():
     assert r3 == []
 
 
-def test_search_papers_year_search_uses_search_by_year_range():
-    """search_type='year' calls SearchData.search_by_year_range(int, int)."""
+def test_search_papers_year_mode_filters_by_year_range_only():
+    """Select-by-Year mirrors desktop: filter full dataset by First/Last year;
+    no separate query field (``query`` may be empty)."""
     papers = sample_papers()
-    r = search_papers(papers, query="2018", search_type="year",
+    r = search_papers(papers, query="", search_type="year",
                       year_min="2018", year_max="2018")
     assert [get_number(p) for p in r] == ["12"]
 
