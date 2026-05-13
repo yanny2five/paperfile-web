@@ -1172,7 +1172,10 @@ def correct_papers_edit():
         record_num = (request.form.get("record_number") or "").strip()
         action = (request.form.get("action") or "save").strip().lower()
         if read_only:
-            flash("Read-only mode: saves are disabled (PAPERFILE_READ_ONLY).", "error")
+            flash(
+                "Read-only mode: saves and deletes are disabled (PAPERFILE_READ_ONLY).",
+                "error",
+            )
             if record_num:
                 return redirect(url_for("correct_papers_edit", num=record_num))
             return redirect(url_for("correct_papers"))

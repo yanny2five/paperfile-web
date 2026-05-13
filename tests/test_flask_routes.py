@@ -149,3 +149,27 @@ class TestFlaskAppIsolated:
         )
         assert r.status_code == 200
         assert b"Showing 0 results." in r.data
+
+    def test_correct_papers_delete_removes_record(self):
+        r_view = self.client.get("/correct-papers/edit?num=10")
+        assert r_view.status_code == 200
+        assert b"delete-paper-form" in r_view.data
+        before = CNTReader(self._cnt)
+        before.read_file()
+        assert len(before.get_data() or []) == 2
+        r_del = self.client.post(
+            "/correct-papers/edit",
+            data={
+                "record_number": "10",
+                "action": "delete",
+                "confirm_delete": "1",
+            },
+            follow_redirects=True,
+        )
+        assert r_del.status_code == 200
+        assert b"Deleted record 10" in r_del.data
+        after = CNTReader(self._cnt)
+        after.read_file()
+        nums = [str(r.get("number", "")).strip() for r in (after.get_data() or [])]
+        assert "10" not in nums
+        assert len(after.get_data() or []) == 1

@@ -25,10 +25,37 @@ import pytest
 # parents[2] = paperfile app root (modules/, app.py)
 # parents[3] = outer folder (e.g. paperfile_web/) when the repo is paperfile_web/paperfile/
 REPO_ROOT = Path(__file__).resolve().parents[3]
-DESKTOP_ROOT = REPO_ROOT / "paperfile"
+THIS_REPO_ROOT = REPO_ROOT / "paperfile"
 _WEB_SEPARATE = REPO_ROOT / "paperfile-web"
 # CI / typical clone: web and Tk sources both live under `paperfile/` (no second tree).
-WEB_ROOT = _WEB_SEPARATE if _WEB_SEPARATE.is_dir() else DESKTOP_ROOT
+WEB_ROOT = _WEB_SEPARATE if _WEB_SEPARATE.is_dir() else THIS_REPO_ROOT
+
+
+def _resolve_desktop_root() -> Path:
+    """Find the desktop/source-of-truth tree used by parity tests.
+
+    Resolution order:
+      1) PARITY_DESKTOP_ROOT env var (explicit, preferred)
+      2) Common sibling folders under ~/python_projects
+      3) Fallback to this repo's paperfile folder
+    """
+    env = (os.environ.get("PARITY_DESKTOP_ROOT") or "").strip()
+    if env:
+        return Path(env).expanduser().resolve()
+
+    py_projects = Path.home() / "python_projects"
+    candidates = [
+        py_projects / "test_case" / "paperfile",
+        py_projects / "paperfile (1)" / "paperfile",
+        REPO_ROOT / "paperfile",
+    ]
+    for c in candidates:
+        if c.is_dir() and c.resolve() != WEB_ROOT.resolve():
+            return c.resolve()
+    return THIS_REPO_ROOT
+
+
+DESKTOP_ROOT = _resolve_desktop_root()
 RUNNER = Path(__file__).parent / "_runner.py"
 
 
