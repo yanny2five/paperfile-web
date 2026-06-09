@@ -2025,9 +2025,10 @@ def reports_group_output():
         scope = "whole"
 
     pref = load_vitatype_preference()
+    present_types = {p.get("vitatyp", "") for p in papers}
     vita_options = []
     for code in VITATYPE_ORDER:
-        if code in VITA_TYPE_NAMES:
+        if code in VITA_TYPE_NAMES and code in present_types:
             vita_options.append(
                 {
                     "code": code,
