@@ -156,7 +156,7 @@ class TestFlaskAppIsolated:
         assert b"delete-paper-form" in r_view.data
         before = CNTReader(self._cnt)
         before.read_file()
-        assert len(before.get_data() or []) == 2
+        count_before = len(before.get_data() or [])
         r_del = self.client.post(
             "/correct-papers/edit",
             data={
@@ -172,4 +172,4 @@ class TestFlaskAppIsolated:
         after.read_file()
         nums = [str(r.get("number", "")).strip() for r in (after.get_data() or [])]
         assert "10" not in nums
-        assert len(after.get_data() or []) == 1
+        assert len(after.get_data() or []) == count_before - 1

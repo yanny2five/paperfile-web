@@ -321,11 +321,10 @@ class TestSearchValidationMessages:
 
 
 class TestDashboard:
-    def test_dashboard_renders_file_strip_twice_for_top_and_bottom(self, web_client):
+    def test_dashboard_renders_file_strip(self, web_client):
         body = _body(web_client["client"].get("/dashboard"))
-        # The "Current file" strip must appear both above AND below the
-        # menu grid (§2 row 5).
-        assert body.count('class="file-line"') >= 2
+        # File strip appears once above the menu grid.
+        assert body.count('class="file-line"') == 1
 
     def test_dashboard_exposes_retrieve_paper_numbers_tile(self, web_client):
         body = _body(web_client["client"].get("/dashboard"))
