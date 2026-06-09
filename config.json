@@ -1,5 +1,5 @@
 {
-    "database_path": "data/2025amccarl.cnt",
+    "database_path": "data/online_database.cnt",
     "faculty_file": "data/faculty.cng",
     "journal_definition_file": "data/journal.cnj",
     "rank_range_sjr_pct": {
