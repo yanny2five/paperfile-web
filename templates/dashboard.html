@@ -40,11 +40,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-        .change-db-toggle { font-size: 13px; color: #336; cursor: pointer; text-decoration: underline; margin-top: 4px; display: inline-block; }
-        #change-db-form { display: none; margin-top: 8px; }
-        .change-db input[type="text"] { font-size: 14px; padding: 5px 8px; width: 340px; border-radius: 4px; border: 1px solid #aaa; }
-        .change-db button { font-size: 14px; padding: 5px 12px; margin-left: 6px; cursor: pointer; border-radius: 4px; border: 1px solid #aaa; background: #ddd; }
-        .change-db button:hover { background: #ccc; }
         .grid {
             display: grid;
             grid-template-columns: 400px 400px;
@@ -96,16 +91,6 @@
     <div class="file-line">
         Current file: <strong>{{ db_path.split('/')[-1].split('\\')[-1] }}</strong>
         &nbsp;|&nbsp; Total entries: <strong>{{ entry_count }}</strong>
-        <div>
-            <span class="change-db-toggle" onclick="document.getElementById('change-db-form').style.display = document.getElementById('change-db-form').style.display === 'none' ? 'block' : 'none'">Change file</span>
-        </div>
-        <div id="change-db-form">
-            <form class="change-db" method="POST" action="{{ url_for('use_utilities') }}">
-                <input type="hidden" name="action" value="switch_db">
-                <input type="text" name="database_path" value="{{ db_path }}" placeholder="path/to/file.cnt">
-                <button type="submit">Switch</button>
-            </form>
-        </div>
     </div>
 
     <div class="grid">
