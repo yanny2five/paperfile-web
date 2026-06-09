@@ -401,16 +401,17 @@ def _vita_type_dropdown_pairs():
     return out
 
 
-def _vita_type_pairs_retrieve_desktop():
-    """Vita checkboxes in the same order / layout intent as desktop restrict panel."""
+def _vita_type_pairs_retrieve_desktop(papers=None):
+    """Vita checkboxes filtered to types that actually exist in the loaded papers."""
+    present = {p.get("vitatyp", "") for p in (papers or [])} if papers else None
     out = []
     seen = set()
     for code in RETRIEVE_VITA_TYPES_DESKTOP_VISUAL_ORDER:
-        if code in VITA_TYPE_NAMES:
+        if code in VITA_TYPE_NAMES and (present is None or code in present):
             out.append((code, VITA_TYPE_NAMES[code]))
             seen.add(code)
     for code in sorted(VITA_TYPE_NAMES.keys()):
-        if code not in seen:
+        if code not in seen and (present is None or code in present):
             out.append((code, VITA_TYPE_NAMES[code]))
     return out
 
@@ -1146,7 +1147,7 @@ def correct_papers():
         search_type_display=search_type_display,
         display_opts=display_opts,
         read_only=_paperfile_read_only(),
-        vita_type_pairs=_vita_type_pairs_retrieve_desktop(),
+        vita_type_pairs=_vita_type_pairs_retrieve_desktop(PAPERS),
     )
 
 
@@ -2794,7 +2795,7 @@ def retrieve():
         year_max=request.form.get("year_max", default_year_max if is_get else ""),
         default_year_min=default_year_min,
         default_year_max=default_year_max,
-        vita_type_pairs=_vita_type_pairs_retrieve_desktop(),
+        vita_type_pairs=_vita_type_pairs_retrieve_desktop(PAPERS),
         search_meta=search_meta,
     )
 
