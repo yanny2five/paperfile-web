@@ -186,9 +186,8 @@ class TestRetrieveGetDefaults:
             )
 
     def test_post_with_empty_year_boxes_is_preserved_not_replaced(self):
-        """Strict desktop parity: an empty year box on POST must remain empty
-        (triggers the empty-only filter); the GET-time default must NOT
-        leak into POST handling."""
+        """Empty year boxes = no year filter; all records matching the author
+        query should be returned. The GET-time default must NOT leak into POST."""
         r = self.client.post(
             "/retrieve",
             data={
@@ -201,10 +200,8 @@ class TestRetrieveGetDefaults:
         )
         assert r.status_code == 200
         body = r.data.decode("utf-8", errors="replace")
-        # No matching empty-year records exist in this fixture, so the
-        # response should report 0 results (proves the empty year boxes
-        # actually triggered empty_only mode).
-        assert b"Showing 0 results." in r.data
+        # Alpha exists in the fixture so results > 0 (no year filter applied)
+        assert b"Showing 0 results." not in r.data
         # Year boxes in the POST-response form should remain empty
         # (request.form has them as ''), not silently replaced with bounds.
         assert 'id="year_min" name="year_min" value=""' in body

@@ -259,7 +259,7 @@ def test_author_variants_search_finds_records_in_either_storage_form():
 @pytest.mark.parametrize(
     "first,last,expected",
     [
-        ("",     "",     {"mode": "empty_only"}),
+        ("",     "",     {"mode": "any"}),
         ("2010", "2020", {"mode": "range", "first_year": 2010, "last_year": 2020}),
         ("2010", "",     None),
         ("",     "2020", None),
@@ -286,14 +286,14 @@ def test_apply_year_filter_range_mode_drops_non_4_digit():
     assert years == ["2020", "2015"]
 
 
-def test_search_papers_year_both_empty_returns_year_empty_records_only():
+def test_search_papers_year_both_empty_returns_all_records():
     papers = sample_papers() + [{"number": "99", "year": ""}]
     r = search_papers(
         papers, query={"author": "", "title": ""},
         search_type="author_title",
     )
-    nums = sorted(get_number(p) for p in r)
-    assert nums == ["99"]
+    # Both year boxes empty = no year filter; all records returned
+    assert len(r) == len(papers)
 
 
 def test_search_papers_invalid_year_input_returns_empty():
@@ -443,9 +443,10 @@ def test_search_papers_any_field_cross_field_tokens_do_NOT_match():
 # passes_year_range — backward-compat wrapper
 # ---------------------------------------------------------------------------
 
-def test_passes_year_range_both_empty_only_matches_year_empty():
+def test_passes_year_range_both_empty_matches_all():
+    # Both year boxes empty = no year filter; all records pass
     assert passes_year_range({"year": ""}, None, None) is True
-    assert passes_year_range({"year": "2020"}, None, None) is False
+    assert passes_year_range({"year": "2020"}, None, None) is True
 
 
 def test_passes_year_range_invalid_input_blocks():

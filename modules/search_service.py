@@ -120,7 +120,7 @@ def parse_year_range_inputs(first_raw, last_raw):
     first = (str(first_raw) if first_raw is not None else "").strip()
     last = (str(last_raw) if last_raw is not None else "").strip()
     if not first and not last:
-        return {"mode": "empty_only"}
+        return {"mode": "any"}
     if not first or not last:
         return None
 
@@ -149,6 +149,8 @@ def apply_year_filter(records, year_range):
     if year_range is None:
         return []
     mode = year_range.get("mode")
+    if mode == "any":
+        return list(records)
     out = []
     for record in records:
         raw = str(record.get("year", "") or "").strip()
