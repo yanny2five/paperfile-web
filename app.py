@@ -314,8 +314,8 @@ def _run_retrieve_form_search(papers, form):
                 "Invalid year range values entered. Fill both year boxes or "
                 "leave both empty."
             )
-        elif not vita_types:
-            search_error = "No vita types selected."
+        elif not (query or "").strip():
+            search_error = "No vita type selected."
     elif search_type == "year":
         if year_invalid:
             search_error = "Invalid year range values entered."
