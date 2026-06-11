@@ -1140,6 +1140,9 @@ def correct_papers():
     ]
     search_type_display = _search_type_display_from_request()
 
+    is_get = request.method == "GET"
+    default_year_min = "" if DATASET_YEAR_MIN is None else str(DATASET_YEAR_MIN)
+    default_year_max = "" if DATASET_YEAR_MAX is None else str(DATASET_YEAR_MAX)
     return render_template(
         "correct_papers.html",
         results=results,
@@ -1148,6 +1151,10 @@ def correct_papers():
         display_opts=display_opts,
         read_only=_paperfile_read_only(),
         vita_type_pairs=_vita_type_pairs_retrieve_desktop(PAPERS),
+        year_min=request.form.get("year_min", default_year_min if is_get else ""),
+        year_max=request.form.get("year_max", default_year_max if is_get else ""),
+        default_year_min=default_year_min,
+        default_year_max=default_year_max,
     )
 
 
