@@ -223,9 +223,11 @@ class CNTReader:
                 year = int(details[1]) if len(details) > 1 and details[1].isdigit() else None
                 citations = int(details[2]) if len(details) > 2 and details[2].isdigit() else None
 
+                from modules.extract_names import normalize_person_name
                 faculty_data.append(
                     {
                         "name": name,
+                        "match_name": normalize_person_name(name),
                         "positions": positions,
                         "year": year,
                         "citations": citations,

@@ -166,6 +166,23 @@ def inject_ui_theme():
 reader = CNTReader()
 PAPERS = reader.get_data()
 
+_VITA_TYPE_MAPPING = {
+    "J": "Journal Articles", "JD": "Drafts of Journal Articles", "PA": "Published Abstracts",
+    "B": "Books", "BC": "Book Chapters", "SB": "Govt/Univ/Research Reports",
+    "IP": "Invited Papers", "P": "Published Proceedings", "U": "Unpublished Proceedings",
+    "SP": "Selected Papers", "PS": "Posters", "F": "Contract Reports",
+    "DP": "Departmental Papers", "CP": "Center Papers", "SM": "Seminar Papers",
+    "BR": "Book Reviews", "CD": "Computer Programs and Docs", "WS": "Web Sites",
+    "PR": "Funding Proposals", "EC": "Extension Publications", "OP": "Outreach Presentations",
+    "PO": "Popular Articles", "N": "Newsletters", "SV": "Slides and Video Materials",
+    "CN": "Class Notes and Materials", "TH": "Theses", "TS": "Theses Supervised",
+    "O": "Other Misc.", "OI": "Inactive Draft", "MS": "No vita type specified",
+}
+_ONLINE_VITA_DEFAULT = {
+    "J", "JD", "PA", "B", "BC", "SB", "IP", "P", "U", "SP",
+    "PS", "DP", "CP", "SM", "BR", "WS", "EC", "OP", "PO", "N",
+}
+
 
 def compute_dataset_year_bounds(papers):
     """Return (min_year, max_year) over `papers`, mirroring the desktop's
@@ -2475,6 +2492,93 @@ def reports_composite_summary():
     )
 
 
+@app.route("/reports/combined", methods=["GET", "POST"])
+def reports_combined():
+    reader.reload_data()
+    papers = reader.get_data()
+    faculty = reader.get_faculty()
+    y_floor, y_cap = _paper_year_bounds(papers)
+
+    pref = load_vitatype_preference()
+    present_types = {p.get("vitatyp", "") for p in (papers or [])}
+    vita_options = [
+        {"code": code, "label": VITA_TYPE_NAMES[code], "checked": code in pref}
+        for code in VITATYPE_ORDER
+        if code in VITA_TYPE_NAMES and code in present_types
+    ]
+
+    who_options_full = ordered_people_choices(faculty) if faculty else []
+    who_selected = who_options_full[0] if who_options_full else "All people"
+    if (
+        session.get("report_for_enabled")
+        and session.get("report_for_person")
+        and str(session.get("report_for_person")) in who_options_full
+    ):
+        who_selected = str(session.get("report_for_person"))
+
+    try:
+        y0 = int(request.values.get("y0", y_floor))
+    except (TypeError, ValueError):
+        y0 = y_floor
+    try:
+        y1 = int(request.values.get("y1", y_cap))
+    except (TypeError, ValueError):
+        y1 = y_cap
+
+    add_ranking = False
+    norm_ranking = False
+    output_text = None
+    count_rows = []
+
+    if request.method == "POST" and request.form.get("action") == "run":
+        selected_vita = request.form.getlist("vita")
+        if selected_vita:
+            _save_vitatype_preference(selected_vita)
+        else:
+            selected_vita = [o["code"] for o in vita_options if o["checked"]]
+        for o in vita_options:
+            o["checked"] = o["code"] in selected_vita
+        add_ranking = "add_ranking" in request.form
+        norm_ranking = "norm_ranking" in request.form
+        who_selected = (request.form.get("who") or who_selected).strip() or who_selected
+        try:
+            y0 = int(request.form.get("y0", y_floor))
+        except (TypeError, ValueError):
+            y0 = y_floor
+        try:
+            y1 = int(request.form.get("y1", y_cap))
+        except (TypeError, ValueError):
+            y1 = y_cap
+
+        journal_info = build_journal_info_from_reader(reader)
+        names_from_papers = get_all_formatted_names(papers)
+        output_text, count_rows = generate_group_output(
+            all_records=papers,
+            faculty_data=faculty or [],
+            selected=who_selected,
+            first_year=y0,
+            last_year=y1,
+            selected_vita_types=selected_vita,
+            add_ranking=add_ranking,
+            norm_ranking=norm_ranking,
+            journal_info=journal_info,
+            all_people_fallback_names=names_from_papers,
+        )
+
+    return render_template(
+        "reports_combined.html",
+        who_options=who_options_full or ["All people"],
+        who_selected=who_selected,
+        y0=y0,
+        y1=y1,
+        add_ranking=add_ranking,
+        norm_ranking=norm_ranking,
+        vita_options=vita_options,
+        output_text=output_text,
+        count_rows=count_rows,
+    )
+
+
 @app.route("/utilities", methods=["GET", "POST"])
 def use_utilities():
     cfg_path = get_config_path() or ""
@@ -2631,6 +2735,28 @@ def use_utilities():
                 with open(cfg_path, "w", encoding="utf-8") as f:
                     json.dump(cfg, f, indent=2, ensure_ascii=False)
                 flash("Preferences saved.", "success")
+            elif action == "save_online_vitatypes":
+                if not cfg_path:
+                    flash("config.json not found.", "error")
+                    return redirect(url_for("use_utilities"))
+                _all_codes = list(_VITA_TYPE_MAPPING.keys())
+                online_action = (request.form.get("online_action") or "save").strip()
+                if online_action == "select_all":
+                    selected_online = _all_codes
+                elif online_action == "unselect_all":
+                    selected_online = []
+                elif online_action == "default":
+                    selected_online = list(_ONLINE_VITA_DEFAULT)
+                else:
+                    selected_online = request.form.getlist("online_vita")
+                try:
+                    cfg = read_json_with_guess(cfg_path)
+                except Exception:
+                    cfg = {}
+                cfg["online_export_vitatype_preference"] = selected_online
+                with open(cfg_path, "w", encoding="utf-8") as f:
+                    json.dump(cfg, f, indent=2, ensure_ascii=False)
+                flash("Online Data Export vita types saved.", "success")
             else:
                 flash("Unknown action.", "error")
         except Exception as e:
@@ -2643,6 +2769,7 @@ def use_utilities():
 
     vita_codes_text = ""
     merge_vita_codes_text = ""
+    online_vita_checked = set(_ONLINE_VITA_DEFAULT)
     if cfg_path:
         try:
             cfg = read_json_with_guess(cfg_path)
@@ -2652,6 +2779,9 @@ def use_utilities():
             mp = cfg.get("merge_vitatype_preference")
             if isinstance(mp, list):
                 merge_vita_codes_text = "\n".join(str(x) for x in mp)
+            ovp = cfg.get("online_export_vitatype_preference")
+            if isinstance(ovp, list):
+                online_vita_checked = set(ovp)
         except Exception:
             pass
 
@@ -2664,6 +2794,8 @@ def use_utilities():
         openai_api_key=read_config_value("openai_api_key"),
         vita_codes_text=vita_codes_text,
         merge_vita_codes_text=merge_vita_codes_text,
+        vita_type_mapping=_VITA_TYPE_MAPPING,
+        online_vita_checked=online_vita_checked,
     )
 
 

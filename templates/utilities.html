@@ -237,6 +237,28 @@
             <button type="submit">Save preferences</button>
         </form>
     </section>
+
+    <section>
+        <h2>Default Vita Types — Online Data Export</h2>
+        <p>Controls which vita types are included when exporting the online (public) version of the database.</p>
+        <form method="POST" action="{{ url_for('use_utilities') }}">
+            <input type="hidden" name="action" value="save_online_vitatypes">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 16px;margin:12px 0;">
+                {% for code, label in vita_type_mapping.items() %}
+                <label style="font-weight:normal;font-size:14px;">
+                    <input type="checkbox" name="online_vita" value="{{ code }}" {% if code in online_vita_checked %}checked{% endif %}>
+                    {{ label }} ({{ code }})
+                </label>
+                {% endfor %}
+            </div>
+            <div style="margin-top:10px;">
+                <button type="submit" name="online_action" value="save">Save</button>
+                <button type="submit" name="online_action" value="select_all" style="margin-left:10px;">Select All</button>
+                <button type="submit" name="online_action" value="unselect_all" style="margin-left:6px;">Unselect All</button>
+                <button type="submit" name="online_action" value="default" style="margin-left:6px;">Default</button>
+            </div>
+        </form>
+    </section>
 </div>
 
 </body>

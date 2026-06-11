@@ -52,7 +52,7 @@
 
     {% if headers and rows %}
     <div class="table-wrap">
-        <table>
+        <table id="report-table">
             <thead>
                 <tr>{% for h in headers %}<th>{{ h }}</th>{% endfor %}</tr>
             </thead>
@@ -69,9 +69,37 @@
         {% else %}
         <a href="{{ url_for(request.endpoint, mode=mode, y0=y0, y1=y1, inc=inc, export='tsv') }}">Download tab-separated (.txt)</a>
         {% endif %}
+        &nbsp;&nbsp;
+        <button type="button" onclick="copyTableAsHtml('report-table','copy-msg')" style="font-size:14px;padding:6px 14px;cursor:pointer;">Copy table (paste into Word)</button>
+        <span id="copy-msg" style="margin-left:10px;color:green;font-size:14px;display:none;">Copied!</span>
     </p>
     {% else %}
     <p>No data for these settings.</p>
     {% endif %}
+    <script>
+    function copyTableAsHtml(tableId, msgId) {
+        var tbl = document.getElementById(tableId);
+        if (!tbl) return;
+        var html = '<table border="1" cellspacing="0" cellpadding="4" style="border-collapse:collapse;">' + tbl.innerHTML + '</table>';
+        var plain = "";
+        tbl.querySelectorAll("tr").forEach(function(tr) {
+            plain += Array.from(tr.querySelectorAll("th,td")).map(function(c){return c.innerText;}).join("\t") + "\n";
+        });
+        try {
+            navigator.clipboard.write([new ClipboardItem({
+                "text/html": new Blob([html], {type:"text/html"}),
+                "text/plain": new Blob([plain], {type:"text/plain"})
+            })]).then(function(){
+                var msg = document.getElementById(msgId);
+                msg.style.display = "inline"; setTimeout(function(){ msg.style.display = "none"; }, 2000);
+            });
+        } catch(e) {
+            navigator.clipboard.writeText(plain).then(function(){
+                var msg = document.getElementById(msgId);
+                msg.style.display = "inline"; setTimeout(function(){ msg.style.display = "none"; }, 2000);
+            });
+        }
+    }
+    </script>
 </body>
 </html>

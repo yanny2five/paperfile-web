@@ -154,13 +154,45 @@ def normalize_us_spelling(text: str) -> str:
 
     return s
 def normalize_period_sequences(text: str) -> str:
+    """Collapse multiple periods into a single period."""
+    if not text:
+        return ""
+    return re.sub(r'\.{2,}', '.', text)
+
+
+def normalize_double_single_quotes(text: str) -> str:
+    """Normalize doubled single quotes to a standard double quote: ''title'' -> "title" """
+    if not text:
+        return ""
+    return text.replace("''", '"')
+
+
+def normalize_comma_sequences(text: str) -> str:
+    """Reduce repeated adjacent commas to a single comma: ',,' -> ','"""
+    if not text:
+        return ""
+    s = text
+    for _ in range(4):
+        s = re.sub(r',\s*,+', ',', s)
+    return s
+
+
+def normalize_authors_and_connector(text: str) -> str:
     """
-    Collapse multiple periods into a single period.
+    Normalize author connector formatting.
+    - Replace ' and ' with ', and '
+    - Remove spaces before commas
+    - Reduce repeated commas to one
+    - Collapse repeated spaces
     """
     if not text:
         return ""
-
-    return re.sub(r'\.{2,}', '.', text)
+    s = text
+    s = s.replace(" and ", ", and ")
+    s = s.replace(" ,", ",")
+    s = normalize_comma_sequences(s)
+    s = re.sub(r'\s{2,}', ' ', s)
+    return s.strip()
 
 def fix_unmatched_left_parenthesis(text: str) -> str:
     """
