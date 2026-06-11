@@ -7,9 +7,16 @@ from __future__ import annotations
 from collections import Counter
 from typing import Dict, List, Optional, Sequence, Tuple
 
+import re
+
 from modules.extract_names import process_authors
 from modules.readdata import get_config_path, read_json_with_guess
 from modules.report_year_utils import extract_year_int
+
+
+def _norm_name(name: str) -> str:
+    """Normalize a name for comparison: strip dots, lowercase, collapse spaces."""
+    return re.sub(r"\s+", " ", name.replace(".", "").lower()).strip()
 
 VITA_TYPE_NAMES = {
     "J": "Journal Articles",
@@ -241,7 +248,8 @@ def generate_group_output(
             continue
         authors_raw = record.get("authors", "")
         parsed_names, _ = process_authors(authors_raw or "")
-        if names_to_match and any(tgt in parsed_names for tgt in names_to_match):
+        parsed_norm = {_norm_name(n) for n in parsed_names}
+        if names_to_match and any(_norm_name(tgt) in parsed_norm for tgt in names_to_match):
             matched_records.append(record)
 
     sorted_records = sorted(
